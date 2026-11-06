@@ -2,278 +2,286 @@
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Young+Serif&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Young+Serif&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;1,400;1,500&family=JetBrains+Mono:wght@400;500&display=swap">
 <style>
-/* Layout: an atlas plate. The map is the page; a field-notes panel sits beside it (below it on phones). */
+/* Layout: an atlas plate (map with frame, compass, scale and layer controls) beside a field-notes panel. */
 :root {
-  --sea: #cfe6f2;          /* ocean behind the map */
-  --sea-2: #eef6f3;
-  --sat: 78%; --lt: 68%;   /* state fills: hsl(zone hue, sat, lt) */
-  --shadow: rgba(30, 60, 80, .28);
-  --paper: #f6f7f4;        /* panel ground */
-  --ink: #1d2a2f;          /* text */
-  --ink-2: #56656b;        /* secondary text */
-  --rule: #c9d3d4;         /* hairlines */
-  --accent: #b2452c;       /* survey red: selection and highlights */
-  --accent-ink: #ffffff;
-  --good: #2f7d4f;
-  --bad: #b2452c;
-  --t1: #e8dcbc; --t2: #cddcc0; --t3: #ecd1c6; --t4: #d6d4e6; --t5: #f0dcae;
-  --border-line: #7b6a5a;
-  --dim: 0.28;
+  --paper: #f7f7f4; --ink: #1f2b30; --ink-2: #5a676c; --rule: #d4dbdb; --accent: #b8432a; --accent-ink: #fff;
+  --good: #2f7d4f; --bad: #c0392b;
+  --sea: #cfe2ea; --waterline: #a8c8d5; --frame: #2d3b40;
+  --land-n: #ebe6dc; --land-n-edge: #b3aa9b; --land-n-ink: #8b8272; --land-flat: #f3efe6;
+  --state-edge: #ffffff; --sat: 56%; --lt: 74%;
+  --river: #2471c8; --river-case: rgba(255,255,255,.7); --range: #8a5a35; --pass: #7a3e12;
+  --grid: rgba(40, 70, 85, .35); --tropic: #c0392b;
+  --mk-edge: #ffffff; --label: #2a3438; --label-halo: rgba(255,255,255,.75); --sea-ink: #5f8696;
   --font-display: "Young Serif", Georgia, "Times New Roman", serif;
   --font-body: "Instrument Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --sea: #0b2233; --sea-2: #0f1a22; --sat: 55%; --lt: 40%; --shadow: rgba(0,0,0,.6); --paper: #152126; --ink: #e5ebe8; --ink-2: #9aaaa9; --rule: #2a3a40;
-    --accent: #ef7d5e; --accent-ink: #1a0f0b; --good: #6fcf97; --bad: #ef7d5e;
-    --t1: #4a4434; --t2: #3a4836; --t3: #4d3a36; --t4: #3c3b4f; --t5: #52482f;
-    --border-line: #9c8d7e; --dim: 0.22; color-scheme: dark;
+    --paper: #141e22; --ink: #e4eae8; --ink-2: #98a7a8; --rule: #2a3a40; --accent: #ef7d5e; --accent-ink: #1a0f0b;
+    --good: #6fcf97; --bad: #ff8a75;
+    --sea: #0c1f2a; --waterline: #163447; --frame: #8fa3a8;
+    --land-n: #1d282c; --land-n-edge: #3b4a4f; --land-n-ink: #6f8186; --land-flat: #253238;
+    --state-edge: #0f191d; --sat: 40%; --lt: 36%;
+    --river: #6cbcff; --river-case: rgba(5,15,25,.65); --range: #e0a878; --pass: #ffc27a;
+    --grid: rgba(160, 200, 215, .28); --tropic: #ff8a75;
+    --mk-edge: #0f191d; --label: #e8eeec; --label-halo: rgba(8,16,20,.7); --sea-ink: #6f9fb2;
+    color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
-  --sea: #0b2233; --sea-2: #0f1a22; --sat: 55%; --lt: 40%; --shadow: rgba(0,0,0,.6); --paper: #152126; --ink: #e5ebe8; --ink-2: #9aaaa9; --rule: #2a3a40;
-  --accent: #ef7d5e; --accent-ink: #1a0f0b; --good: #6fcf97; --bad: #ef7d5e;
-  --t1: #4a4434; --t2: #3a4836; --t3: #4d3a36; --t4: #3c3b4f; --t5: #52482f;
-  --border-line: #9c8d7e; --dim: 0.22; color-scheme: dark;
+  --paper: #141e22; --ink: #e4eae8; --ink-2: #98a7a8; --rule: #2a3a40; --accent: #ef7d5e; --accent-ink: #1a0f0b;
+  --good: #6fcf97; --bad: #ff8a75;
+  --sea: #0c1f2a; --waterline: #163447; --frame: #8fa3a8;
+  --land-n: #1d282c; --land-n-edge: #3b4a4f; --land-n-ink: #6f8186; --land-flat: #253238;
+  --state-edge: #0f191d; --sat: 40%; --lt: 36%;
+  --river: #6cbcff; --river-case: rgba(5,15,25,.65); --range: #e0a878; --pass: #ffc27a;
+  --grid: rgba(160, 200, 215, .28); --tropic: #ff8a75;
+  --mk-edge: #0f191d; --label: #e8eeec; --label-halo: rgba(8,16,20,.7); --sea-ink: #6f9fb2;
+  color-scheme: dark;
 }
 
 * { box-sizing: border-box; }
+[hidden] { display: none !important; }
 html, body { height: 100%; }
-body {
-  background: var(--paper); color: var(--ink);
-  font-family: var(--font-body); font-size: 15px; line-height: 1.5;
-  margin: 0;
-}
-button, input { font: inherit; color: inherit; }
+body { background: var(--paper); color: var(--ink); font-family: var(--font-body); font-size: 15px; line-height: 1.5; margin: 0; }
+button, input, select { font: inherit; color: inherit; }
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
-.app { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(320px, 1fr); min-height: 100%; }
-@media (max-width: 860px) { .app { grid-template-columns: minmax(0, 1fr); } }
+.app { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(330px, 1fr); min-height: 100%; }
+@media (max-width: 900px) { .app { grid-template-columns: minmax(0, 1fr); } }
 
 /* ---------- Map plate ---------- */
 .plate {
-  background: var(--sea); position: relative;
-  padding-block: 18px 14px;
-  padding-left: max(16px, env(safe-area-inset-left, 0px));
-  padding-right: max(16px, env(safe-area-inset-right, 0px));
-  display: flex; flex-direction: column; gap: 12px; min-width: 0;
+  background: var(--paper); display: flex; flex-direction: column; gap: 10px; min-width: 0;
+  padding-block: 16px 12px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
 }
-@media (min-width: 861px) { .plate { position: sticky; top: 0; height: 100vh; height: 100dvh; } }
+@media (min-width: 901px) { .plate { position: sticky; top: 0; height: 100vh; height: 100dvh; } }
 .masthead { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
-.masthead h1 { font-family: var(--font-display); font-weight: 400; font-size: 1.6rem; line-height: 1.1; margin: 0; letter-spacing: -0.01em; }
-.masthead .sub { font-family: var(--font-mono); font-size: 0.72rem; color: var(--ink-2); letter-spacing: 0.06em; text-transform: uppercase; }
+.masthead h1 { font-family: var(--font-display); font-weight: 400; font-size: 1.55rem; line-height: 1.1; margin: 0; }
+.masthead .sub { font-family: var(--font-mono); font-size: 0.7rem; color: var(--ink-2); letter-spacing: 0.08em; text-transform: uppercase; }
 
-.mapwrap { flex: 1; min-height: 0; position: relative; display: flex; align-items: center; justify-content: center; }
-svg.map { width: 100%; height: 100%; max-height: 100%; max-width: 100%; display: block; touch-action: manipulation; }
-@media (max-width: 860px) { svg.map { height: auto; max-height: 78vh; } }
+.mapwrap { flex: 1; min-height: 0; position: relative; border: 1.5px solid var(--frame); background: var(--sea); overflow: hidden; }
+.mapwrap::after { content: ""; position: absolute; inset: 4px; border: .5px solid var(--frame); pointer-events: none; opacity: .5; }
+@media (max-width: 900px) { .mapwrap { flex: none; height: min(72vh, 132vw); } }
+svg.map { width: 100%; height: 100%; display: block; touch-action: pan-y; cursor: grab; user-select: none; -webkit-user-select: none; }
+svg.map.zoomed { touch-action: none; }
+svg.map.dragging { cursor: grabbing; }
 
-.region path.shape { stroke: var(--border-line); stroke-width: 0.45; stroke-linejoin: round; transition: fill .15s, opacity .2s; cursor: pointer; }
-.region.c1 path.shape { fill: var(--t1); } .region.c2 path.shape { fill: var(--t2); }
-.region.c3 path.shape { fill: var(--t3); } .region.c4 path.shape { fill: var(--t4); }
-.region.c5 path.shape { fill: var(--t5); }
-.region:hover path.shape { fill: color-mix(in srgb, var(--accent) 22%, var(--paper)); }
-.region path.hit { fill: none; stroke: var(--accent); stroke-opacity: 0.18; stroke-width: 7; stroke-linejoin: round; pointer-events: stroke; cursor: pointer; }
-.region.selected path.shape, .region.lit path.shape { fill: var(--accent); }
-.region.selected path.shape { stroke: var(--ink); stroke-width: 0.8; }
-.region.selected path.hit, .region.lit path.hit { stroke-opacity: 0.55; }
-.map.filtering .region:not(.lit):not(.selected) { opacity: var(--dim); }
-.region.right path.shape { fill: var(--good) !important; }
-.region.wrong path.shape { fill: var(--bad) !important; }
-.region.reveal path.shape { fill: var(--good) !important; animation: pulse 0.9s ease-in-out 3; }
-.region.right path.hit, .region.reveal path.hit { stroke: var(--good); stroke-opacity: .6; }
-@keyframes pulse { 50% { opacity: 0.35; } }
-@media (prefers-reduced-motion: reduce) { .region.reveal path.shape { animation: none; } }
+/* Base map */
+.sea { fill: var(--sea); }
+.wl use { fill: none; stroke: var(--waterline); stroke-linejoin: round; }
+.wl1 { stroke-width: 3; opacity: .9; } .wl2 { stroke-width: 9; opacity: .45; } .wl3 { stroke-width: 18; opacity: .22; }
+.nb path { fill: var(--land-n); stroke: var(--land-n-edge); stroke-width: .6; vector-effect: non-scaling-stroke; }
+.region path.shape { fill: hsl(calc(var(--h) + var(--dh, 0)) var(--sat) calc(var(--lt) + var(--dl, 0) * 0.8%)); stroke: var(--state-edge); stroke-width: .9; stroke-linejoin: round; vector-effect: non-scaling-stroke; cursor: pointer; transition: fill .15s, opacity .2s, filter .2s; }
+.region path.hit { fill: none; stroke: hsl(calc(var(--h) + var(--dh, 0)) 70% 50%); stroke-opacity: .25; stroke-width: 8; vector-effect: non-scaling-stroke; stroke-linejoin: round; pointer-events: stroke; cursor: pointer; }
+.region:hover path.shape { filter: brightness(1.06) saturate(1.3); }
+.region.selected path.shape { stroke: var(--ink); stroke-width: 2.2; filter: saturate(1.5); }
+.map.filtering .region:not(.lit):not(.selected) path.shape { filter: grayscale(1); opacity: .45; }
+.region.lit path.shape { filter: saturate(1.45); }
+.uline { fill: none; stroke: var(--state-edge); stroke-width: 1.2; stroke-dasharray: 3 2; vector-effect: non-scaling-stroke; pointer-events: none; }
 
-.labels text { font-family: var(--font-mono); font-size: 7px; fill: var(--ink); fill-opacity: 0.7; pointer-events: none; text-anchor: middle; dominant-baseline: middle; letter-spacing: 0.04em; }
-.labels text.on { fill: var(--accent-ink); fill-opacity: 1; }
-.map.quiz .labels { display: none; }
-.uline { fill: none; stroke: var(--border-line); stroke-width: 0.45; stroke-dasharray: 1.6 1.2; pointer-events: none; }
+/* Theme maps: regions go flat so the zones show through, borders stay on top */
+.map[data-base="soils"] .region path.shape, .map[data-base="climate"] .region path.shape { fill: transparent; filter: none; }
+.map[data-base="crops"] .region path.shape { fill: var(--land-flat); }
+.map[data-base="crops"] .region.rank1 path.shape { fill: #2f7d4f; } .map[data-base="crops"] .region.rank2 path.shape { fill: #63a96d; }
+.map[data-base="crops"] .region.rank3 path.shape { fill: #a7d39a; }
+.theme-layer path { stroke: none; opacity: .82; transition: opacity .2s; pointer-events: none; }
+.theme-layer.focus path:not(.on) { opacity: .15; }
+.map:not([data-base="soils"]):not([data-base="climate"]) .theme-layer { display: none; }
+.map[data-base="soils"] .uline, .map[data-base="climate"] .uline { stroke: var(--ink); opacity: .5; }
 
-.tip {
-  position: absolute; pointer-events: none; background: var(--ink); color: var(--paper);
-  font-size: 0.8rem; padding: 3px 8px; border-radius: 3px; white-space: nowrap; transform: translate(-50%, -140%);
-}
-.compass { position: absolute; left: 4px; bottom: 4px; font-family: var(--font-mono); font-size: 0.66rem; color: var(--ink-2); line-height: 1.35; pointer-events: none; }
-@media (max-width: 860px) { .compass { display: none; } }
+/* Lines */
+.grid line { stroke: var(--grid); stroke-width: .6; stroke-dasharray: 1.5 2.5; vector-effect: non-scaling-stroke; }
+.grid > text { font-family: var(--font-mono); font-size: calc(7px * var(--ls, 1)); fill: var(--ink-2); }
+.gline { cursor: pointer; }
+.gline .vis { stroke: var(--tropic); stroke-width: 1.4; stroke-dasharray: 6 3; vector-effect: non-scaling-stroke; fill: none; }
+.gline .hitl { stroke: transparent; stroke-width: 8; vector-effect: non-scaling-stroke; pointer-events: stroke; stroke-dasharray: none; }
+.gline.on .vis { stroke-width: 3; }
+.gline text { font-family: var(--font-body); font-style: italic; font-size: calc(7.5px * var(--ls, 1)); font-weight: 600; fill: var(--tropic); paint-order: stroke; stroke: var(--label-halo); stroke-width: 2.4px; }
 
-/* Filters */
-.filters { display: flex; flex-direction: column; gap: 6px; }
-.fgroup { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
-.fgroup .glabel { font-family: var(--font-mono); font-size: 0.66rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--ink-2); min-width: 86px; }
-.chip {
-  border: 1px solid var(--rule); background: var(--paper); border-radius: 999px; padding: 2px 10px; font-size: 0.8rem; cursor: pointer;
-}
-.chip:hover { border-color: var(--accent); }
-.chip[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
-.map.quiz ~ .filters, .plate.quizzing .filters { display: none; }
+.river { cursor: pointer; }
+.river path { fill: none; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+.river .case { stroke: var(--river-case); stroke-width: 3.2; } .river .line { stroke: var(--river); stroke-width: 1.2; }
+.river.r1 .case { stroke-width: 4; } .river.r1 .line { stroke-width: 2; }
+.river .hitline { stroke: transparent; stroke-width: 10; pointer-events: stroke; }
+.river:hover .line { stroke-width: 3; }
+.river.on .line { stroke-width: 4; } .river.on .case { stroke-width: 6.5; }
+.map.focusing .river:not(.on) { opacity: .4; }
+
+.range { cursor: pointer; }
+.range path { fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.range path { vector-effect: non-scaling-stroke; }
+.range .band { stroke: var(--range); stroke-width: 7; opacity: .13; }
+.range .ticks { stroke: var(--range); stroke-width: 3.4; stroke-dasharray: 1 2.6; opacity: .75; }
+.range .spine { stroke: var(--range); stroke-width: .8; opacity: .85; }
+.range .hitr { stroke: transparent; stroke-width: 12; pointer-events: stroke; }
+.range:hover .band { opacity: .3; } .range.on .band { opacity: .45; stroke-width: 10; }
+.range text { font-family: var(--font-body); font-style: italic; font-weight: 600; font-size: calc(6.5px * var(--ls, 1)); letter-spacing: .12em; fill: var(--range); paint-order: stroke; stroke: var(--label-halo); stroke-width: 1.3px; stroke-linejoin: round; pointer-events: none; text-transform: uppercase; }
+
+/* Markers are counter-scaled so they stay about the same size when zooming */
+.cs { transform: scale(var(--mk, 1)); }
+.ls { transform: scale(var(--ls, 1)); }
+.mk { cursor: pointer; }
+.mk .sym { stroke: var(--mk-edge); stroke-width: .9; stroke-linejoin: round; transition: transform .15s; }
+.mk:hover .sym, .mk.on .sym { transform: scale(1.5); }
+.mk .hitc { fill: transparent; }
+.mk text { font-size: 7px; font-weight: 600; fill: var(--label); paint-order: stroke; stroke: var(--label-halo); stroke-width: 2.4px; pointer-events: none; display: none; }
+.mk.on text, .mk:hover text { display: block; }
+.map[data-z="2"] .mk.capital text, .map[data-z="3"] .mk.capital text, .map[data-z="3"] .mk.pass text { display: block; }
+.mk.capital .sym { fill: var(--ink); } .mk.capital.national .sym { fill: var(--accent); }
+.mk.capital text { font-weight: 500; font-size: 6.5px; }
+.mk.pass .sym { fill: var(--pass); }
+.mk.site .sym { fill: #7b4fb5; } .mk.site.N .sym { fill: #2b8a3e; } .mk.site.M .sym { fill: #0f8f8a; }
+.mk.park .sym { fill: #e07b1a; } .mk.park.N .sym { fill: #4c9a2a; }
+.mk.wet .sym { fill: #1c7ed6; }
+.mk.on .sym { stroke: var(--ink); stroke-width: 1.2; }
+
+/* Labels */
+.lbl { pointer-events: none; }
+.lbl text { text-anchor: middle; dominant-baseline: middle; paint-order: stroke; }
+.st text { font-family: var(--font-body); font-weight: 600; font-size: 7.5px; letter-spacing: .14em; fill: var(--label); fill-opacity: .82; stroke: var(--label-halo); stroke-width: 1.6px; }
+.st.sm text { font-size: 5.6px; letter-spacing: .08em; }
+.st.xs { display: none; } .map[data-z="2"] .st.xs, .map[data-z="3"] .st.xs { display: block; }
+.st.on text { fill: var(--ink); fill-opacity: 1; }
+.map.quiz .labels, .map.quiz .overlay { display: none; }
+.ctry text { font-family: var(--font-body); font-weight: 500; font-size: 8.5px; letter-spacing: .3em; fill: var(--land-n-ink); stroke: none; }
+.seal text { font-family: var(--font-body); font-style: italic; font-size: 10px; letter-spacing: .32em; fill: var(--sea-ink); stroke: none; }
+.seal.sm text { font-size: 6.5px; letter-spacing: .14em; }
+.rl text { font-family: var(--font-body); font-style: italic; font-weight: 600; font-size: 6.5px; fill: var(--river); stroke: var(--river-case); stroke-width: 2px; }
+.map[data-base="soils"] .st text, .map[data-base="climate"] .st text { fill: var(--ink); }
+
+/* Map furniture (HTML overlays) */
+.tip { position: absolute; pointer-events: none; background: var(--ink); color: var(--paper); font-size: 0.8rem; padding: 3px 8px; border-radius: 3px; white-space: nowrap; transform: translate(-50%, -150%); z-index: 3; }
+.zoombar { position: absolute; top: 12px; right: 12px; display: flex; flex-direction: column; border: 1px solid var(--rule); border-radius: 6px; overflow: hidden; background: var(--paper); z-index: 2; box-shadow: 0 2px 6px rgba(0,0,0,.12); }
+.zoombar button { width: 34px; height: 32px; border: 0; background: none; cursor: pointer; font-size: 1.1rem; line-height: 1; }
+.zoombar button + button { border-top: 1px solid var(--rule); }
+.zoombar button:hover { background: color-mix(in srgb, var(--accent) 10%, var(--paper)); }
+.compass { position: absolute; top: 12px; left: 12px; width: 44px; height: 44px; pointer-events: none; z-index: 2; color: var(--frame); }
+.compass path { stroke: var(--frame); stroke-width: .8; }
+.compass .n { fill: var(--frame); } .compass .s { fill: var(--paper); }
+.compass text { font-family: var(--font-display); font-size: 9px; fill: var(--frame); text-anchor: middle; }
+.scalebar { position: absolute; left: 12px; bottom: 12px; z-index: 2; pointer-events: none; font-family: var(--font-mono); font-size: 0.66rem; color: var(--ink); background: color-mix(in srgb, var(--paper) 80%, transparent); padding: 4px 6px 3px; border-radius: 3px; }
+.scalebar .bar { height: 5px; border: 1px solid var(--ink); border-top: 0; background: linear-gradient(90deg, var(--ink) 50%, transparent 50%); margin-top: 2px; }
+.legendbox { position: absolute; right: 12px; bottom: 12px; z-index: 2; background: color-mix(in srgb, var(--paper) 92%, transparent); border: 1px solid var(--rule); border-radius: 6px; padding: 8px 10px; font-size: .74rem; max-width: 52%; display: flex; flex-direction: column; gap: 3px; }
+.legendbox b { font-weight: 600; font-size: .78rem; }
+.legendbox span { display: flex; align-items: center; gap: 6px; }
+.legendbox i { width: 11px; height: 11px; border-radius: 2px; flex: none; }
+@media (max-width: 520px) { .legendbox { display: none; } .compass { width: 34px; height: 34px; } }
+
+/* Layer controls */
+.controls { display: flex; flex-direction: column; gap: 8px; }
+.crow { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.crow .glabel { font-family: var(--font-mono); font-size: 0.64rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--ink-2); min-width: 72px; }
+.seg { display: inline-flex; border: 1px solid var(--rule); border-radius: 999px; overflow: hidden; }
+.seg button { border: 0; background: none; padding: 3px 11px; font-size: .8rem; cursor: pointer; }
+.seg button + button { border-left: 1px solid var(--rule); }
+.seg button[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
+.chip { --chip: var(--accent); border: 1px solid color-mix(in srgb, var(--chip) 40%, var(--rule)); background: var(--paper); border-radius: 999px; padding: 2px 10px; font-size: 0.78rem; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
+.chip::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--chip); }
+.chip:hover { border-color: var(--chip); }
+.chip[aria-pressed="true"] { background: var(--chip); border-color: var(--chip); color: #fff; }
+.chip[aria-pressed="true"]::before { background: #fff; }
+select#hl { border: 1px solid var(--rule); background: var(--paper); border-radius: 6px; padding: 3px 8px; font-size: .8rem; max-width: 100%; }
+.plate.quizzing .controls { display: none; }
 
 /* ---------- Notes panel ---------- */
-.panel {
-  padding-block: 18px 40px;
-  padding-left: max(20px, env(safe-area-inset-left, 0px));
-  padding-right: max(20px, env(safe-area-inset-right, 0px));
-  border-left: 1px solid var(--rule); min-width: 0; display: flex; flex-direction: column; gap: 18px;
-}
-@media (max-width: 860px) { .panel { border-left: 0; border-top: 1px solid var(--rule); padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); } }
-
+.panel { padding-block: 16px 40px; padding-left: max(20px, env(safe-area-inset-left, 0px)); padding-right: max(20px, env(safe-area-inset-right, 0px)); border-left: 1px solid var(--rule); min-width: 0; display: flex; flex-direction: column; gap: 18px; }
+@media (max-width: 900px) { .panel { border-left: 0; border-top: 1px solid var(--rule); padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); } }
 .tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--rule); }
 .tab { background: none; border: 0; padding: 8px 12px; cursor: pointer; font-weight: 500; color: var(--ink-2); border-bottom: 2px solid transparent; margin-bottom: -1px; }
 .tab[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--accent); }
-
-.search { position: relative; }
 .search input { width: 100%; padding: 9px 12px; border: 1px solid var(--rule); border-radius: 6px; background: var(--paper); }
 .results { display: flex; flex-direction: column; margin-top: 6px; border: 1px solid var(--rule); border-radius: 6px; overflow: hidden; }
 .results button { text-align: left; background: none; border: 0; border-bottom: 1px solid var(--rule); padding: 7px 12px; cursor: pointer; display: flex; justify-content: space-between; gap: 12px; }
 .results button:last-child { border-bottom: 0; }
 .results button:hover { background: color-mix(in srgb, var(--accent) 8%, var(--paper)); }
 .results small { color: var(--ink-2); text-align: right; }
-
 .eyebrow { font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); }
-h2 { font-family: var(--font-display); font-weight: 400; font-size: 2rem; line-height: 1.1; margin: 4px 0 0; text-wrap: balance; }
-h3 { font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-2); margin: 0 0 6px; font-weight: 500; }
-
+h2 { font-family: var(--font-display); font-weight: 400; font-size: 1.9rem; line-height: 1.12; margin: 4px 0 0; text-wrap: balance; }
+h3 { font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-2); margin: 0 0 6px; font-weight: 500; }
 .card { display: flex; flex-direction: column; gap: 16px; }
-.facts-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px 20px; padding: 12px 0; border-block: 1px solid var(--rule); }
-.facts-grid div { min-width: 0; }
-.facts-grid dt { font-family: var(--font-mono); font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--ink-2); }
+.hero { border-radius: 12px; padding: 18px 18px 16px; color: #fff; position: relative; overflow: hidden; background: linear-gradient(135deg, hsl(var(--h) 55% 36%), hsl(calc(var(--h) + 30) 60% 48%)); }
+.hero::after { content: attr(data-code); position: absolute; right: 12px; bottom: -14px; font-family: var(--font-display); font-size: 3.4rem; opacity: .14; line-height: 1; white-space: nowrap; }
+.hero .eyebrow { color: rgba(255,255,255,.85); } .hero h2 { color: #fff; }
+.hero .zone { display: inline-block; margin-top: 8px; font-size: .78rem; background: rgba(255,255,255,.2); padding: 2px 10px; border-radius: 999px; }
+.facts-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin: 0; }
+.facts-grid > div { min-width: 0; background: color-mix(in srgb, hsl(var(--h) 60% 50%) 8%, var(--paper)); border-radius: 8px; padding: 9px 12px; }
+.facts-grid > div:last-child:nth-child(odd) { grid-column: 1 / -1; }
+.facts-grid dt { font-family: var(--font-mono); font-size: 0.66rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--ink-2); }
 .facts-grid dd { margin: 2px 0 0; font-weight: 500; }
 .tags { display: flex; flex-wrap: wrap; gap: 6px; }
-.tag { font-size: 0.82rem; padding: 2px 9px; border-radius: 4px; background: color-mix(in srgb, var(--ink) 7%, var(--paper)); }
-.tag.flag { background: color-mix(in srgb, var(--accent) 14%, var(--paper)); }
+.tag { font-size: 0.82rem; padding: 2px 9px; border-radius: 4px; background: color-mix(in srgb, var(--sec, var(--ink)) 12%, var(--paper)); border: 1px solid color-mix(in srgb, var(--sec, var(--ink)) 25%, transparent); }
+button.tag { cursor: pointer; font: inherit; font-size: .82rem; color: inherit; }
+button.tag:hover { border-color: var(--sec, var(--accent)); }
+.sec h3 { display: flex; align-items: center; gap: 8px; color: var(--sec); }
+.sec h3::before { content: ""; width: 9px; height: 9px; border-radius: 2px; background: var(--sec); }
+.sec.facts { --sec: #c2410c; } .sec.rivers { --sec: #1c6ed1; } .sec.parks { --sec: #2b8a3e; } .sec.culture { --sec: #b5265a; }
+.sec.people { --sec: #c27803; } .sec.passes { --sec: #9a4f25; } .sec.sites { --sec: #7b4fb5; } .sec.wet { --sec: #0f7fb8; } .sec.ranges { --sec: #8a5a35; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .sec { filter: brightness(1.45); } }
+:root[data-theme="dark"] .sec { filter: brightness(1.45); }
 ul.notes { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 6px; max-width: 62ch; }
-.backrow { display: flex; gap: 8px; flex-wrap: wrap; }
+ul.notes li::marker { color: var(--sec, var(--accent)); }
+.backrow { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
 .link { background: none; border: 0; padding: 0; color: var(--accent); cursor: pointer; font-weight: 500; }
 .link:hover { text-decoration: underline; }
-
 .overview p { margin: 0; max-width: 60ch; color: var(--ink-2); }
-.stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
-.stat { border-top: 2px solid var(--ink); padding-top: 6px; }
-.stat b { display: block; font-family: var(--font-display); font-size: 1.8rem; font-weight: 400; line-height: 1.1; font-variant-numeric: tabular-nums; }
-.stat span { font-size: 0.8rem; color: var(--ink-2); }
+.stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.stat { border-radius: 10px; padding: 10px 12px; color: #fff; }
+.stat b { display: block; font-family: var(--font-display); font-size: 1.6rem; font-weight: 400; line-height: 1.1; font-variant-numeric: tabular-nums; }
+.stat span { font-size: .76rem; color: rgba(255,255,255,.92); }
+.stat:nth-child(1) { background: #b8432a; } .stat:nth-child(2) { background: #2366a8; } .stat:nth-child(3) { background: #6a4c9c; }
+.stat:nth-child(4) { background: #7b4fb5; } .stat:nth-child(5) { background: #c46a12; } .stat:nth-child(6) { background: #137a9e; }
 .index { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2px 16px; }
-.index button { text-align: left; background: none; border: 0; padding: 3px 0; cursor: pointer; font-size: 0.9rem; display: flex; justify-content: space-between; gap: 8px; border-bottom: 1px dotted var(--rule); }
-.index button:hover { color: var(--accent); }
-.index button small { font-family: var(--font-mono); font-size: 0.68rem; color: var(--ink-2); }
+.index button { text-align: left; background: none; border: 0; padding: 3px 0; cursor: pointer; font-size: .88rem; display: flex; align-items: flex-start; gap: 8px; border-bottom: 1px dotted var(--rule); }
+.index button::before { content: ""; flex: none; width: 9px; height: 9px; border-radius: 50%; margin-top: 6px; background: var(--dot, hsl(calc(var(--h) + var(--dh, 0)) 60% 52%)); }
+.index button span { flex: 1; min-width: 0; }
+.index button small { font-family: var(--font-mono); font-size: 0.66rem; color: var(--ink-2); }
+.index button:hover span { color: var(--accent); }
 @media (max-width: 420px) { .index { grid-template-columns: minmax(0, 1fr); } }
+details.more { border-top: 1px solid var(--rule); padding-top: 8px; }
+details.more summary { cursor: pointer; font-family: var(--font-mono); font-size: .7rem; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-2); padding: 4px 0; }
+details.more[open] summary { margin-bottom: 8px; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: .8rem; }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.legend i { width: 12px; height: 12px; border-radius: 3px; background: hsl(var(--h) 60% 55%); }
+.zlist { display: flex; flex-direction: column; gap: 6px; }
+.zlist button { display: flex; gap: 10px; text-align: left; border: 1px solid var(--rule); background: var(--paper); border-radius: 8px; padding: 8px 10px; cursor: pointer; }
+.zlist button:hover, .zlist button[aria-pressed="true"] { border-color: var(--ink); }
+.zlist i { width: 16px; height: 16px; border-radius: 3px; flex: none; margin-top: 2px; }
+.zlist small { display: block; color: var(--ink-2); }
 
 /* Practice */
 .modes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
-.mode { text-align: left; border: 1px solid var(--rule); background: var(--paper); border-radius: 8px; padding: 12px; cursor: pointer; display: flex; flex-direction: column; gap: 2px; }
-.mode:hover { border-color: var(--accent); }
-.mode b { font-weight: 600; }
-.mode span { font-size: 0.82rem; color: var(--ink-2); }
+.mode { text-align: left; border: 0; color: #fff; padding: 12px; border-radius: 10px; cursor: pointer; display: flex; flex-direction: column; gap: 2px; background: linear-gradient(135deg, var(--m1), var(--m2)); transition: transform .15s; }
+.mode:hover { transform: translateY(-2px); }
+.mode b { font-weight: 600; } .mode span { font-size: .8rem; color: rgba(255,255,255,.9); }
+.mode:nth-child(1) { --m1: #b8432a; --m2: #d9822b; } .mode:nth-child(2) { --m1: #2366a8; --m2: #2f9fa0; }
+.mode:nth-child(3) { --m1: #2b7a3e; --m2: #7ab33d; } .mode:nth-child(4) { --m1: #6a4c9c; --m2: #b8457a; }
+.mode:nth-child(5) { --m1: #1c6ed1; --m2: #3fb3d8; } .mode:nth-child(6) { --m1: #7a4318; --m2: #c98a2b; }
+.mode:nth-child(7) { --m1: #5b3f9e; --m2: #8f6bd1; } .mode:nth-child(8) { --m1: #a3324b; --m2: #d1705a; }
+@media (prefers-reduced-motion: reduce) { .mode, .mk .sym, .region path.shape { transition: none; } }
 .btn { background: var(--accent); color: var(--accent-ink); border: 0; border-radius: 6px; padding: 9px 16px; font-weight: 600; cursor: pointer; }
 .btn.ghost { background: none; color: var(--ink); border: 1px solid var(--rule); }
 .qbox { display: flex; flex-direction: column; gap: 14px; }
 .progress { display: flex; gap: 4px; }
-.progress i { flex: 1; height: 4px; border-radius: 2px; background: var(--rule); }
+.progress i { flex: 1; height: 6px; border-radius: 3px; background: var(--rule); }
 .progress i.right { background: var(--good); } .progress i.wrong { background: var(--bad); } .progress i.now { background: var(--ink); }
-.prompt { font-family: var(--font-display); font-size: 1.55rem; line-height: 1.2; text-wrap: balance; }
+.prompt { font-family: var(--font-display); font-size: 1.5rem; line-height: 1.2; text-wrap: balance; }
 .prompt em { font-style: normal; color: var(--accent); }
-.feedback { min-height: 3em; }
-.feedback.right { color: var(--good); } .feedback.wrong { color: var(--bad); }
-.scoreline { font-family: var(--font-mono); font-size: 0.8rem; color: var(--ink-2); font-variant-numeric: tabular-nums; }
-.missed li { margin-bottom: 4px; }
-
-footer { font-size: 0.75rem; color: var(--ink-2); max-width: 62ch; margin-top: auto; padding-top: 16px; border-top: 1px solid var(--rule); }
+.feedback { min-height: 3em; } .feedback.right { color: var(--good); } .feedback.wrong { color: var(--bad); }
+.scoreline { font-family: var(--font-mono); font-size: 0.78rem; color: var(--ink-2); font-variant-numeric: tabular-nums; }
+.mode .scoreline { color: rgba(255,255,255,.85); }
+.region.right path.shape { fill: var(--good) !important; filter: none; }
+.region.wrong path.shape { fill: var(--bad) !important; filter: none; }
+.region.reveal path.shape { fill: var(--good) !important; filter: none; animation: pulse .9s ease-in-out 3; }
+@keyframes pulse { 50% { opacity: .35; } }
+@media (prefers-reduced-motion: reduce) { .region.reveal path.shape { animation: none; } }
+footer { font-size: 0.74rem; color: var(--ink-2); max-width: 64ch; margin-top: auto; padding-top: 16px; border-top: 1px solid var(--rule); }
 footer a { color: inherit; }
-
-/* ---------- Colour layer ---------- */
-.plate { background: radial-gradient(120% 90% at 30% 20%, var(--sea-2), var(--sea)); }
-.region path.shape { fill: hsl(calc(var(--h) + var(--dh, 0)) var(--sat) calc(var(--lt) + var(--dl, 0) * 1%)) !important; stroke: rgba(255,255,255,.85); stroke-width: .6; }
-:root:not([data-theme="light"]) .region path.shape { stroke: rgba(255,255,255,.85); }
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .region path.shape { stroke: rgba(10,20,25,.9); } }
-:root[data-theme="dark"] .region path.shape { stroke: rgba(10,20,25,.9); }
-#map > g:first-of-type { filter: drop-shadow(0 6px 10px var(--shadow)); }
-.region:hover path.shape { filter: brightness(1.08) saturate(1.25); }
-.region.selected path.shape { stroke: var(--ink) !important; stroke-width: 1.3; filter: saturate(1.4) brightness(1.05); }
-.map.filtering .region:not(.lit):not(.selected) { opacity: .5; filter: grayscale(1); }
-.region.lit path.shape { filter: saturate(1.35); }
-.region path.hit { stroke: hsl(var(--h) 80% 50%); stroke-opacity: .35; }
-.labels text { font-weight: 600; fill-opacity: .78; paint-order: stroke; stroke: rgba(255,255,255,.55); stroke-width: 1.6px; }
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .labels text { stroke: rgba(0,0,0,.5); } }
-:root[data-theme="dark"] .labels text { stroke: rgba(0,0,0,.5); }
-.labels text.on { fill: var(--ink); fill-opacity: 1; }
-.masthead h1 { background: linear-gradient(90deg, #e4572e, #f2a541 30%, #2fa36b 60%, #2a7fd4 85%, #8e5bd6); -webkit-background-clip: text; background-clip: text; color: transparent; }
-
-.chip { --chip: var(--accent); border-color: color-mix(in srgb, var(--chip) 45%, var(--rule)); color: var(--ink); }
-.chip::before { content: ""; display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--chip); margin-right: 6px; vertical-align: 1px; }
-.chip:hover { border-color: var(--chip); background: color-mix(in srgb, var(--chip) 10%, var(--paper)); }
-.chip[aria-pressed="true"] { background: var(--chip); border-color: var(--chip); color: #fff; }
-.chip[aria-pressed="true"]::before { background: #fff; }
-
-.hero { border-radius: 14px; padding: 18px 18px 16px; color: #fff; position: relative; overflow: hidden;
-  background: linear-gradient(135deg, hsl(var(--h) 70% 42%), hsl(calc(var(--h) + 35) 75% 55%)); box-shadow: 0 10px 24px -12px hsl(var(--h) 70% 35%); }
-.hero::after { content: attr(data-code); position: absolute; right: 10px; bottom: -18px; font-family: var(--font-display); font-size: 3.6rem; opacity: .14; line-height: 1; }
-.hero .eyebrow { color: rgba(255,255,255,.85); }
-.hero h2 { color: #fff; }
-.hero .zone { display: inline-block; margin-top: 8px; font-size: .78rem; background: rgba(255,255,255,.2); padding: 2px 10px; border-radius: 999px; }
-.facts-grid { border: 0; padding: 0; gap: 10px; }
-.facts-grid > div:last-child:nth-child(odd) { grid-column: 1 / -1; }
-.facts-grid > div { background: color-mix(in srgb, hsl(var(--h) 70% 50%) 9%, var(--paper)); border-radius: 10px; padding: 10px 12px; }
-.sec h3 { display: flex; align-items: center; gap: 8px; color: var(--sec); }
-.sec h3::before { content: ""; width: 10px; height: 10px; border-radius: 3px; background: var(--sec); }
-.sec .tag { background: color-mix(in srgb, var(--sec) 15%, var(--paper)); border: 1px solid color-mix(in srgb, var(--sec) 30%, transparent); }
-.sec.facts { --sec: #d9480f; } .sec.rivers { --sec: #1c7ed6; } .sec.parks { --sec: #2b8a3e; }
-.sec.culture { --sec: #c2255c; } .sec.people { --sec: #e8890c; }
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .sec { filter: brightness(1.35); } }
-:root[data-theme="dark"] .sec { filter: brightness(1.35); }
-ul.notes li::marker { color: var(--sec, var(--accent)); }
-
-.stat { border: 0; border-radius: 12px; padding: 12px; color: #fff; }
-.stat span { color: rgba(255,255,255,.9); }
-.stat:nth-child(1) { background: linear-gradient(135deg, #e4572e, #f2a541); }
-.stat:nth-child(2) { background: linear-gradient(135deg, #2a7fd4, #2fb5a3); }
-.stat:nth-child(3) { background: linear-gradient(135deg, #8e5bd6, #d6457f); }
-.index button::before { content: ""; flex: none; width: 10px; height: 10px; border-radius: 50%; margin-top: 6px; background: hsl(calc(var(--h) + var(--dh, 0)) 70% 55%); }
-.index button { justify-content: flex-start; align-items: flex-start; }
-.index button span { flex: 1; }
-.legend { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: .8rem; }
-.legend span { display: inline-flex; align-items: center; gap: 6px; }
-.legend i { width: 12px; height: 12px; border-radius: 3px; background: hsl(var(--h) 70% 55%); }
-
-.mode { border: 0; color: #fff; padding: 14px; border-radius: 12px; background: linear-gradient(135deg, var(--m1), var(--m2)); box-shadow: 0 8px 18px -12px var(--m1); transition: transform .15s; }
-.mode:hover { transform: translateY(-2px); }
-.mode span, .mode .scoreline { color: rgba(255,255,255,.88); }
-.mode:nth-child(1) { --m1: #e4572e; --m2: #f2a541; } .mode:nth-child(2) { --m1: #2a7fd4; --m2: #2fb5a3; }
-.mode:nth-child(3) { --m1: #2b8a3e; --m2: #94c93d; } .mode:nth-child(4) { --m1: #8e5bd6; --m2: #d6457f; }
-.btn { background: linear-gradient(135deg, #e4572e, #d6457f); color: #fff; }
-.progress i { height: 6px; }
-.prompt em { background: linear-gradient(90deg, #e4572e, #8e5bd6); -webkit-background-clip: text; background-clip: text; color: transparent; }
-@media (prefers-reduced-motion: reduce) { .mode { transition: none; } }
-
-/* ---------- Rivers and passes ---------- */
-:root { --river: #1769d1; --river-case: rgba(255,255,255,.75); --pass: #7a3e12; --pass-edge: #fff; }
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --river: #6cc0ff; --river-case: rgba(5,15,25,.7); --pass: #ffc27a; --pass-edge: #1a1208; } }
-:root[data-theme="dark"] { --river: #6cc0ff; --river-case: rgba(5,15,25,.7); --pass: #ffc27a; --pass-edge: #1a1208; }
-.map.quiz .overlay { display: none; }
-.overlay[hidden] { display: none; }
-.river { cursor: pointer; }
-.river path { fill: none; stroke-linecap: round; stroke-linejoin: round; }
-.river .case { stroke: var(--river-case); stroke-width: 2.2; }
-.river .line { stroke: var(--river); stroke-width: 1.1; }
-.river.r1 .case { stroke-width: 2.8; } .river.r1 .line { stroke-width: 1.6; }
-.river .hitline { stroke: transparent; stroke-width: 5; pointer-events: stroke; }
-.river:hover .line { stroke-width: 2.4; }
-.river.on .line { stroke-width: 3; filter: drop-shadow(0 0 2px var(--river)); }
-.river.on .case { stroke-width: 4.6; }
-.map.riverfocus .river:not(.on) { opacity: .35; }
-.rlabels text { font-family: var(--font-body); font-style: italic; font-weight: 600; font-size: 6.5px; fill: var(--river); paint-order: stroke; stroke: var(--river-case); stroke-width: 2px; pointer-events: none; text-anchor: middle; }
-.pass { cursor: pointer; }
-.pass .tri { fill: var(--pass); stroke: var(--pass-edge); stroke-width: .8; stroke-linejoin: round; transition: transform .15s; }
-.pass .phit { fill: transparent; }
-.pass:hover .tri { transform: scale(1.4); }
-.pass.on .tri { transform: scale(1.8); fill: var(--accent); }
-.pass text { font-size: 6.5px; font-weight: 600; fill: var(--ink); paint-order: stroke; stroke: var(--paper); stroke-width: 2px; pointer-events: none; }
-.pass:not(.on) text { display: none; }
-@media (prefers-reduced-motion: reduce) { .pass .tri { transition: none; } }
-.tag.go { cursor: pointer; font: inherit; font-size: .82rem; color: inherit; }
-.tag.go:hover { outline: 1px solid var(--sec, var(--accent)); }
-.sec.passes { --sec: #a0522d; }
-.mode:nth-child(5) { --m1: #1769d1; --m2: #3fc1e0; } .mode:nth-child(6) { --m1: #8a4b1c; --m2: #d9962b; }
 </style>
 
 <div class="app">
@@ -283,11 +291,14 @@ ul.notes li::marker { color: var(--sec, var(--accent)); }
       <span class="sub">28 States · 8 Union Territories</span>
     </div>
     <div class="mapwrap" id="mapwrap">
-      <svg class="map" id="map" role="img" aria-label="Map of India's states and union territories"></svg>
+      <svg class="map" id="map" role="img" aria-label="Map of India with states, rivers, ranges and other layers"></svg>
+      <svg class="compass" viewBox="-22 -22 44 44" aria-hidden="true"><path class="n" d="M0,-15 L4,0 L0,-2 L-4,0Z"/><path class="s" d="M0,15 L4,0 L0,2 L-4,0Z"/><circle r="8" fill="none" stroke="currentColor" stroke-width=".6" opacity=".5"/><text y="-16.5">N</text></svg>
+      <div class="zoombar"><button id="zin" aria-label="Zoom in">+</button><button id="zout" aria-label="Zoom out">−</button><button id="zreset" aria-label="Reset view" style="font-size:.85rem">⟲</button></div>
+      <div class="scalebar"><span id="scalelabel">500 km</span><div class="bar" id="scalebarline" style="width:80px"></div></div>
+      <div class="legendbox" id="legendbox" hidden></div>
       <div class="tip" id="tip" hidden></div>
-      <div class="compass">N ↑<br>Not to scale</div>
     </div>
-    <div class="filters" id="filters"></div>
+    <div class="controls" id="controls"></div>
   </section>
 
   <section class="panel">
@@ -297,29 +308,33 @@ ul.notes li::marker { color: var(--sec, var(--accent)); }
     </div>
     <div id="view"></div>
     <footer>
-      Map outline from <a href="https://github.com/VictorCazanave/svg-maps" target="_blank" rel="noopener">@svg-maps/india</a> (CC BY 4.0), modified: Ladakh is drawn separately from Jammu and Kashmir, and Dadra and Nagar Haveli is merged with Daman and Diu. The Ladakh–J&amp;K line is approximate. Rivers from <a href="https://www.naturalearthdata.com/" target="_blank" rel="noopener">Natural Earth</a> (public domain); pass locations are approximate. Boundaries are for study, not survey.
+      State outlines from <a href="https://github.com/VictorCazanave/svg-maps" target="_blank" rel="noopener">@svg-maps/india</a> (CC BY 4.0), modified to show Ladakh and the merged Dadra and Nagar Haveli and Daman and Diu. The J&amp;K–Ladakh boundary is from <a href="https://github.com/udit-001/india-maps-data" target="_blank" rel="noopener">india-maps-data</a>. Rivers and neighbouring countries (India's view) from <a href="https://www.naturalearthdata.com/" target="_blank" rel="noopener">Natural Earth</a>. Markers, ranges and soil and climate zones are approximate. For study, not survey.
     </footer>
   </section>
 </div>
 
 <script>/*REGIONS_JS*/</script>
 <script>/*GEO_JS*/</script>
-<script>window.RIVER_PATHS = /*RIVERS_JSON*/;</script>
-<script>window.MAP = /*MAP_JSON*/;</script>
+<script>/*LAYERS_JS*/</script>
+<script>window.MAP = /*MAP_JSON*/; window.RIVER_PATHS = /*RIVERS_JSON*/; window.NEIGHBOURS = /*NEIGHBOURS_JSON*/; window.JK_LINE = /*JKLINE_JSON*/;</script>
 <script>
 (function () {
   "use strict";
   const NS = "http://www.w3.org/2000/svg";
   const R = window.REGIONS, L = window.LAYERS, M = window.MAP;
   const byId = Object.fromEntries(R.map((r) => [r.id, r]));
-  const $ = (s, el = document) => el.querySelector(s);
+  const $ = (s, root = document) => root.querySelector(s);
   const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
   const store = {
     get(k, d) { try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
     set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} },
   };
+  const P = (ll) => window.PROJECT(ll[0], ll[1]);
+  const el = (tag, attrs, parent) => { const e = document.createElementNS(NS, tag); for (const k in attrs || {}) e.setAttribute(k, attrs[k]); if (parent) parent.append(e); return e; };
+  const shuffle = (a) => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+  const names = (ids) => ids.map((i) => byId[i].name).join(", ");
 
-  // Colours follow the Zonal Councils: one hue per zone, a different shade per state ([hue shift, lightness shift]).
+  // ---------- Zones (state colours) ----------
   const ZONES = [
     { id: "north", label: "Northern", h: 8, m: { jk:[-10,2], la:[12,8], hp:[2,-8], pb:[14,-2], hr:[-6,8], rj:[-12,-6], dl:[22,-12], ch:[22,-12] } },
     { id: "central", label: "Central", h: 268, m: { ut:[-22,6], up:[8,-4], mp:[-12,7], ct:[26,-6] } },
@@ -332,413 +347,585 @@ ul.notes li::marker { color: var(--sec, var(--accent)); }
   const ZONE_OF = {};
   ZONES.forEach((z) => Object.entries(z.m).forEach(([id, [dh, dl]]) => (ZONE_OF[id] = { z, dh, dl })));
   const zoneStyle = (id) => { const o = ZONE_OF[id]; return `--h:${o.z.h};--dh:${o.dh};--dl:${o.dl}`; };
-  ZONES.forEach((z) => L.push({ id: "zone-" + z.id, group: "Zones", label: z.label, ids: Object.keys(z.m), h: z.h }));
-  const GROUP_COLOR = { Borders: "#e4572e", Geography: "#1c7ed6", Constitution: "#8e5bd6" };
-  const SHORT = { jk:"J&K", la:"LADAKH", hp:"HP", pb:"PB", hr:"HR", ut:"UK", up:"UP", rj:"RJ", gj:"GJ", mp:"MP", mh:"MH",
-    ka:"KA", kl:"KL", tn:"TN", ap:"AP", tg:"TG", ct:"CG", or:"OD", jh:"JH", br:"BR", wb:"WB", as:"AS", ar:"AR", nl:"NL",
-    mn:"MN", mz:"MZ", tr:"TR", ml:"ML", an:"A&N", ld:"LD" };
-  const TINY = new Set(["ch", "dl", "dh", "py", "ld", "an", "ga", "sk", "tr"]);
+  const zoneLabel = (id) => { const z = ZONE_OF[id].z; return z.id === "ne" ? z.label : z.id === "islands" ? "Island territory" : z.label + " Zonal Council"; };
+  ZONES.forEach((z) => L.push({ id: "zone-" + z.id, group: "Zonal councils", label: z.label, ids: Object.keys(z.m) }));
+  L.push({ id: "tropic-states", group: "Lines", label: "Tropic of Cancer passes through", ids: window.LINES[0].states });
+  L.push({ id: "meridian-states", group: "Lines", label: "82.5° E meridian passes through", ids: window.LINES[1].states });
 
-  // Ladakh: the northern and eastern part of the old J&K outline. The dividing line runs
-  // roughly along the Great Himalaya from the PoK/Gilgit-Baltistan line, past Zoji La, to the HP border.
-  const SPLIT = [[80,48],[118,49],[135,56],[150,61],[155,71],[164,81],[164,91],[173,98],[178,102]];
-  const LA_POLY = SPLIT.concat([[178,140],[300,140],[300,-10],[80,-10]]);
-  const pts = (a) => a.map((p) => p.join(",")).join(" ");
+  // ---------- Feature registry (everything other than states) ----------
+  const UN_NOTES = window.UNESCO_NOTES, RS_NOTES = window.RESERVE_NOTES;
+  const K = {
+    river: { list: window.RIVERS, layer: "rivers", noun: "River" },
+    pass: { list: window.PASSES.map((p) => Object.assign(p, { at: [p.lat, p.lon] })), layer: "passes", noun: "Pass" },
+    range: { list: window.RANGES, layer: "ranges", noun: "Range" },
+    line: { list: window.LINES, layer: "grid", noun: "Line" },
+    site: { list: window.UNESCO, layer: "unesco", noun: "World Heritage Site" },
+    park: { list: window.RESERVES, layer: "parks", noun: "Protected area" },
+    wet: { list: window.RAMSAR, layer: "ramsar", noun: "Ramsar site" },
+  };
+  Object.values(K).forEach((k) => (k.byId = Object.fromEntries(k.list.map((x) => [x.id, x]))));
 
-  // ---------- Build map ----------
+  // ---------- Map construction ----------
+  const VB0 = { x: -36, y: -28, w: 684, h: 758 };
   const svg = $("#map");
-  svg.setAttribute("viewBox", M.viewBox);
-  svg.innerHTML = `<defs>
-      <clipPath id="clip-la"><polygon points="${pts(LA_POLY)}"/></clipPath>
-      <clipPath id="clip-jk"><path clip-rule="evenodd" d="M-50,-50H700V750H-50Z M${pts(LA_POLY).replace(/ /g, " L")}Z"/></clipPath>
-      <clipPath id="clip-old"><path d="${M.paths.jk}"/></clipPath>
-    </defs>`;
-  const gRegions = document.createElementNS(NS, "g");
-  const gLabels = document.createElementNS(NS, "g"); gLabels.setAttribute("class", "labels");
-  svg.append(gRegions);
+  svg.setAttribute("viewBox", `${VB0.x} ${VB0.y} ${VB0.w} ${VB0.h}`);
+  const defs = el("defs", {}, svg);
+
+  // J&K / Ladakh split: the real UT boundary, extended past the old outline at both ends.
+  const JL = window.JK_LINE;
+  const ext = (a, b, d) => { const dx = a[0] - b[0], dy = a[1] - b[1], n = Math.hypot(dx, dy) || 1; return [a[0] + (dx / n) * d, a[1] + (dy / n) * d]; };
+  const SPLIT = [ext(JL[0], JL[2], 18)].concat(JL, [ext(JL[JL.length - 1], JL[JL.length - 3], 4)]);
+  const sEnd = SPLIT[SPLIT.length - 1], sStart = SPLIT[0];
+  const LA_POLY = SPLIT.concat([[sEnd[0], 170], [330, 170], [330, -60], [40, -60], [40, sStart[1]]]);
+  const pts = (a) => a.map((p) => p[0].toFixed(2) + "," + p[1].toFixed(2)).join(" ");
+  defs.innerHTML = `
+    <clipPath id="clip-la"><polygon points="${pts(LA_POLY)}"/></clipPath>
+    <clipPath id="clip-jk"><path clip-rule="evenodd" d="M-100,-100H800V900H-100Z M${pts(LA_POLY).replace(/ /g, " L")}Z"/></clipPath>
+    <clipPath id="clip-old"><path d="${M.paths.jk}"/></clipPath>
+    <clipPath id="clip-india"><path d="${window.NEIGHBOURS.IND.d}"/>${Object.values(M.paths).map((d) => `<path d="${d}"/>`).join("")}</clipPath>
+    <g id="landmass">${Object.values(window.NEIGHBOURS).map((n) => `<path d="${n.d}"/>`).join("")}</g>`;
+
+  el("rect", { class: "sea", x: VB0.x - 400, y: VB0.y - 400, width: VB0.w + 800, height: VB0.h + 800 }, svg);
+  const gWater = el("g", { class: "wl" }, svg);
+  ["wl3", "wl2", "wl1"].forEach((c) => el("use", { href: "#landmass", class: c }, gWater));
+  const gNb = el("g", { class: "nb" }, svg);
+  Object.entries(window.NEIGHBOURS).forEach(([code, n]) => { if (code !== "IND") el("path", { d: n.d }, gNb); });
+  const gTheme = el("g", { class: "theme-layer", "clip-path": "url(#clip-india)" }, svg);
+  const gRegions = el("g", {}, svg);
 
   const pathsFor = { la: [M.paths.jk], jk: [M.paths.jk], dh: [M.paths.dn, M.paths.dd] };
+  const TINY = new Set(["ch", "dl", "dh", "py", "ld", "an"]);
   const els = {};
   R.forEach((r) => {
-    const g = document.createElementNS(NS, "g");
-    g.setAttribute("class", "region"); g.setAttribute("style", zoneStyle(r.id));
-    g.dataset.id = r.id;
+    const g = el("g", { class: "region", style: zoneStyle(r.id), "data-id": r.id }, gRegions);
     if (r.id === "jk") g.setAttribute("clip-path", "url(#clip-jk)");
     if (r.id === "la") g.setAttribute("clip-path", "url(#clip-la)");
     (pathsFor[r.id] || [M.paths[r.id]]).forEach((d) => {
-      const p = document.createElementNS(NS, "path");
-      p.setAttribute("d", d); p.setAttribute("class", "shape");
-      g.append(p);
-      if (TINY.has(r.id) && !["ga", "sk", "tr"].includes(r.id)) {
-        const h = p.cloneNode(); h.setAttribute("class", "hit"); g.insertBefore(h, p);
-      }
+      if (TINY.has(r.id)) el("path", { d, class: "hit" }, g);
+      el("path", { d, class: "shape" }, g);
     });
-    const t = document.createElementNS(NS, "title"); t.textContent = r.name; g.append(t);
-    gRegions.append(g); els[r.id] = g;
+    el("title", {}, g).textContent = r.name;
+    els[r.id] = g;
   });
-  const uline = document.createElementNS(NS, "polyline");
-  uline.setAttribute("points", pts(SPLIT)); uline.setAttribute("class", "uline"); uline.setAttribute("clip-path", "url(#clip-old)");
-  gRegions.append(uline);
-  // ---------- Rivers and passes ----------
-  const RV = window.RIVERS, PS = window.PASSES;
-  const riverById = Object.fromEntries(RV.map((r) => [r.id, r]));
-  const passById = Object.fromEntries(PS.map((p) => [p.id, p]));
-  const clipIndia = document.createElementNS(NS, "clipPath"); clipIndia.id = "clip-india";
-  Object.values(M.paths).forEach((d) => { const p = document.createElementNS(NS, "path"); p.setAttribute("d", d); clipIndia.append(p); });
-  svg.querySelector("defs").append(clipIndia);
-  const gRivers = document.createElementNS(NS, "g"); gRivers.setAttribute("class", "overlay rivers-layer");
-  const gRiverClip = document.createElementNS(NS, "g"); gRiverClip.setAttribute("clip-path", "url(#clip-india)");
-  const gRLabels = document.createElementNS(NS, "g"); gRLabels.setAttribute("class", "rlabels");
-  gRivers.append(gRiverClip, gRLabels);
-  const riverEls = {};
-  RV.forEach((rv) => {
-    const d = window.RIVER_PATHS[rv.id]; if (!d) return;
-    const g = document.createElementNS(NS, "g"); g.setAttribute("class", `river r${rv.rank}`); g.dataset.river = rv.id;
-    ["case", "line", "hitline"].forEach((c) => { const p = document.createElementNS(NS, "path"); p.setAttribute("d", d); p.setAttribute("class", c); g.append(p); });
-    gRiverClip.append(g); riverEls[rv.id] = g;
-  });
-  const gPasses = document.createElementNS(NS, "g"); gPasses.setAttribute("class", "overlay passes-layer");
-  const passEls = {};
-  PS.forEach((ps) => {
-    const [x, y] = window.PROJECT(ps.lat, ps.lon);
-    const g = document.createElementNS(NS, "g"); g.setAttribute("class", "pass"); g.dataset.pass = ps.id;
-    g.setAttribute("transform", `translate(${x.toFixed(1)},${y.toFixed(1)})`);
-    g.innerHTML = `<circle class="phit" r="6"></circle><path class="tri" d="M0,-4.4L3.9,2.6H-3.9Z"></path><text x="5" y="2">${esc(ps.name)}</text>`;
-    gPasses.append(g); passEls[ps.id] = g;
-  });
-  svg.append(gRivers, gLabels, gPasses);
+  el("polyline", { points: pts(JL), class: "uline", "clip-path": "url(#clip-old)" }, gRegions);
 
-  // Name the main rivers at a point well inside India.
-  function placeRiverLabels() {
+  // Layer groups above the states.
+  const layerG = {};
+  ["grid", "ranges", "rivers", "parks", "ramsar", "unesco", "passes", "capitals"].forEach((n) => (layerG[n] = el("g", { class: "overlay layer-" + n }, svg)));
+  layerG.grid.classList.add("grid");
+  layerG.rivers.setAttribute("clip-path", "url(#clip-india)");
+  const gRiverLabels = el("g", { class: "overlay rlabels" }, svg);
+  const gLabels = el("g", { class: "labels" }, svg);
+  svg.append(layerG.passes, layerG.capitals);
+
+  // Graticule, Tropic of Cancer and the Standard Meridian.
+  const yOfLat = (lat) => P([lat, 80])[1], xOfLon = (lon) => P([20, lon])[0];
+  for (let lat = 10; lat <= 35; lat += 5) {
+    const y = yOfLat(lat);
+    el("line", { x1: VB0.x, x2: VB0.x + VB0.w, y1: y, y2: y }, layerG.grid);
+    el("text", { x: VB0.x + 12, y: y - 2 }, layerG.grid).textContent = lat + "°N";
+  }
+  for (let lon = 70; lon <= 95; lon += 5) {
+    const x = xOfLon(lon);
+    el("line", { x1: x, x2: x, y1: VB0.y, y2: VB0.y + VB0.h }, layerG.grid);
+    el("text", { x: x + 2, y: VB0.y + VB0.h - 8 }, layerG.grid).textContent = lon + "°E";
+  }
+  const lineEls = {};
+  window.LINES.forEach((ln) => {
+    const g = el("g", { class: "gline", "data-kind": "line", "data-id": ln.id }, layerG.grid);
+    let a, b, tx, ty, rot = "";
+    if (ln.lat) { const y = yOfLat(ln.lat); a = [VB0.x, y]; b = [VB0.x + VB0.w, y]; tx = VB0.x + 40; ty = y - 3; }
+    else { const x = xOfLon(ln.lon); a = [x, VB0.y]; b = [x, VB0.y + VB0.h]; tx = x - 3; ty = 640; rot = `rotate(-90 ${tx} ${ty})`; }
+    ["vis", "hitl"].forEach((c) => el("line", { x1: a[0], y1: a[1], x2: b[0], y2: b[1], class: c }, g));
+    el("text", { x: tx, y: ty, transform: rot }, g).textContent = ln.lat ? "Tropic of Cancer · 23°26′ N" : "Standard Meridian · 82°30′ E";
+    lineEls[ln.id] = g;
+  });
+
+  // Mountain ranges: smoothed lines with a hachure.
+  const smooth = (p) => {
+    let d = `M${p[0][0].toFixed(1)},${p[0][1].toFixed(1)}`;
+    for (let i = 0; i < p.length - 1; i++) {
+      const p0 = p[i - 1] || p[i], p1 = p[i], p2 = p[i + 1], p3 = p[i + 2] || p2;
+      const c1 = [p1[0] + (p2[0] - p0[0]) / 6, p1[1] + (p2[1] - p0[1]) / 6], c2 = [p2[0] - (p3[0] - p1[0]) / 6, p2[1] - (p3[1] - p1[1]) / 6];
+      d += `C${c1[0].toFixed(1)},${c1[1].toFixed(1)} ${c2[0].toFixed(1)},${c2[1].toFixed(1)} ${p2[0].toFixed(1)},${p2[1].toFixed(1)}`;
+    }
+    return d;
+  };
+  const rangeEls = {};
+  window.RANGES.forEach((rg) => {
+    const xy = rg.line.map(P), d = smooth(xy);
+    const g = el("g", { class: "range", "data-kind": "range", "data-id": rg.id }, layerG.ranges);
+    ["band", "ticks", "spine", "hitr"].forEach((c) => el("path", { d, class: c }, g));
+    // Label path runs left to right so the text is never upside down.
+    el("path", { d: xy[0][0] > xy[xy.length - 1][0] ? smooth(xy.slice().reverse()) : d, id: "rp-" + rg.id, fill: "none", stroke: "none" }, g);
+    const t = el("text", { dy: -5 }, g);
+    el("textPath", { href: "#rp-" + rg.id, startOffset: "50%", "text-anchor": "middle" }, t).textContent = rg.name.replace(/ \(.*\)/, "").replace(" Range", "");
+    rangeEls[rg.id] = g;
+  });
+
+  // Rivers.
+  const riverEls = {};
+  window.RIVERS.forEach((rv) => {
+    const d = window.RIVER_PATHS[rv.id]; if (!d) return;
+    const g = el("g", { class: `river r${rv.rank}`, "data-kind": "river", "data-id": rv.id }, layerG.rivers);
+    ["case", "line", "hitline"].forEach((c) => el("path", { d, class: c }, g));
+    riverEls[rv.id] = g;
+  });
+
+  // Point markers.
+  const SYM = {
+    capital: '<circle class="sym" r="2.1"></circle>',
+    national: '<path class="sym" d="M0,-4.2 1.2,-1.3 4.2,-1.3 1.8,.6 2.7,3.6 0,1.8 -2.7,3.6 -1.8,.6 -4.2,-1.3 -1.2,-1.3Z"></path>',
+    pass: '<path class="sym" d="M0,-4.2L3.8,2.6H-3.8Z"></path>',
+    site: '<path class="sym" d="M0,-3.6L3.6,0 0,3.6 -3.6,0Z"></path>',
+    park: '<path class="sym" d="M-2.7,-2.7H2.7V2.7H-2.7Z"></path>',
+    parkN: '<circle class="sym" r="2.9"></circle>',
+    wet: '<path class="sym" d="M0,-4C1.6,-1.6 3,0 3,1.4 3,3.1 1.7,4 0,4 -1.7,4 -3,3.1 -3,1.4 -3,0 -1.6,-1.6 0,-4Z"></path>',
+  };
+  const markerEls = { capital: {}, pass: {}, site: {}, park: {}, wet: {} };
+  function addMarker(kind, item, group, symKey, extraClass, label) {
+    const [x, y] = P(item.at);
+    const g = el("g", { class: `mk ${kind} ${extraClass || ""}`, "data-kind": kind, "data-id": item.id, transform: `translate(${x.toFixed(1)},${y.toFixed(1)})` }, group);
+    g.innerHTML = `<g class="cs"><circle class="hitc" r="6"></circle>${SYM[symKey]}<text x="5" y="2.4">${esc(label)}</text></g>`;
+    markerEls[kind][item.id] = g;
+  }
+  window.CAPITALS.forEach((c) => addMarker("capital", c, layerG.capitals, c.national ? "national" : "capital", c.national ? "national" : "", c.city));
+  K.pass.list.forEach((p) => addMarker("pass", p, layerG.passes, "pass", "", p.name));
+  K.site.list.forEach((s) => addMarker("site", s, layerG.unesco, "site", s.type, s.name));
+  K.park.list.forEach((s) => addMarker("park", s, layerG.parks, s.kind === "T" ? "park" : "parkN", s.kind, s.name));
+  K.wet.list.forEach((s) => addMarker("wet", s, layerG.ramsar, "wet", "", s.name));
+
+  // ---------- Labels ----------
+  const LABEL = { rj: "RAJASTHAN", mp: "MADHYA|PRADESH", mh: "MAHARASHTRA", up: "UTTAR|PRADESH", gj: "GUJARAT", ka: "KARNATAKA",
+    ap: "ANDHRA|PRADESH", tg: "TELANGANA", ct: "CHHATTIS-|GARH", or: "ODISHA", jh: "JHARKHAND", br: "BIHAR", wb: "WEST|BENGAL",
+    tn: "TAMIL|NADU", kl: "KERALA", ar: "ARUNACHAL|PRADESH", as: "ASSAM", la: "LADAKH", jk: "JAMMU &|KASHMIR", hp: "HIMACHAL|PRADESH",
+    pb: "PUNJAB", hr: "HARYANA", ut: "UTTARA-|KHAND", ml: "MEGHALAYA", nl: "NAGALAND", mn: "MANIPUR", mz: "MIZORAM", tr: "TRIPURA",
+    sk: "SIKKIM", ga: "GOA", an: "ANDAMAN &|NICOBAR|ISLANDS", ld: "LAKSHA-|DWEEP", dl: "DELHI", ch: "CHANDIGARH", dh: "DNH & DD", py: "PUDUCHERRY" };
+  const SMALL = new Set(["ml", "nl", "mn", "mz", "tr", "sk", "ga", "hr", "pb", "ut", "kl", "hp", "an", "ld"]);
+  const XS = new Set(["dl", "ch", "dh", "py"]);
+  const FIXED = { jk: [134, 80], la: [196, 46], an: [488, 600], ld: [56, 616], ap: [262, 470], wb: [404, 330], dl: [186, 214], ch: [170, 154], dh: [84, 402], py: [266, 535], up: [262, 243], mh: [175, 420], tn: [218, 600], ar: [552, 212], kl: [178, 605], ga: [110, 512] };
+  const labelEls = {};
+  function addLabel(group, cls, x, y, text) {
+    const g = el("g", { class: "lbl " + cls, transform: `translate(${x.toFixed(1)},${y.toFixed(1)})` }, group);
+    const t = el("text", {}, el("g", { class: "ls" }, g)), lines = text.split("|");
+    lines.forEach((ln, i) => { el("tspan", { x: 0, dy: i === 0 ? `${-(lines.length - 1) * 0.6}em` : "1.2em" }, t).textContent = ln; });
+    return g;
+  }
+  function poleOf(path) {
+    const b = path.getBBox(), step = Math.max(b.width, b.height) / 24, inside = [], outside = [];
+    for (let x = b.x - step; x <= b.x + b.width + step; x += step)
+      for (let y = b.y - step; y <= b.y + b.height + step; y += step) {
+        const sp = svg.createSVGPoint(); sp.x = x; sp.y = y; (path.isPointInFill(sp) ? inside : outside).push([x, y]);
+      }
+    let best = null, bd = -1;
+    inside.forEach(([x, y]) => { let m = Infinity; for (const [ox, oy] of outside) { const d = (x - ox) ** 2 + (y - oy) ** 2; if (d < m) m = d; } if (m > bd) { bd = m; best = [x, y]; } });
+    return best || [b.x + b.width / 2, b.y + b.height / 2];
+  }
+  R.forEach((r) => {
+    const pt = FIXED[r.id] || poleOf(els[r.id].querySelector("path.shape"));
+    labelEls[r.id] = addLabel(gLabels, "st" + (SMALL.has(r.id) || XS.has(r.id) ? " sm" : "") + (XS.has(r.id) ? " xs" : ""), pt[0], pt[1], LABEL[r.id] || r.name);
+  });
+  [["PAKISTAN", 27.2, 67.4], ["AFGHANISTAN", 36.7, 69.7], ["CHINA", 33.6, 85.5], ["NEPAL", 28.25, 83.9], ["BHUTAN", 27.5, 90.45],
+   ["BANGLADESH", 23.9, 90.2], ["MYANMAR", 21.8, 95.6], ["SRI LANKA", 7.6, 80.7], ["MALDIVES", 5.9, 73.3]]
+    .forEach(([n, lat, lon]) => { const [x, y] = P([lat, lon]); addLabel(gLabels, "ctry", x, y, n); });
+  [["ARABIAN SEA", 15.5, 67.8, ""], ["BAY OF BENGAL", 15.2, 87.6, ""], ["INDIAN OCEAN", 6.0, 85.2, ""], ["LACCADIVE SEA", 8.2, 75.2, "sm"],
+   ["ANDAMAN SEA", 11.0, 96.0, "sm"], ["Gulf of Kutch", 22.75, 68.55, "sm"], ["Gulf of Khambhat", 21.2, 71.9, "sm"], ["Gulf of Mannar", 8.6, 78.8, "sm"], ["Palk Strait", 10.05, 79.75, "sm"]]
+    .forEach(([n, lat, lon, c]) => { const [x, y] = P([lat, lon]); addLabel(gLabels, "seal " + c, x, y, n); });
+  (function placeRiverLabels() {
     const shapes = [...svg.querySelectorAll(".region path.shape")];
     const inside = (x, y) => { const sp = svg.createSVGPoint(); sp.x = x; sp.y = y; return shapes.some((p) => p.isPointInFill(sp)); };
-    RV.filter((rv) => rv.rank === 1 && riverEls[rv.id]).forEach((rv) => {
-      const line = riverEls[rv.id].querySelector(".line"), len = line.getTotalLength();
-      const pts = [];
-      for (let t = 0; t <= 1; t += 0.02) { const q = line.getPointAtLength(t * len); if (inside(q.x, q.y)) pts.push(q); }
-      if (!pts.length) return;
-      const q = pts[Math.floor(pts.length * 0.5)];
-      const t = document.createElementNS(NS, "text");
-      t.setAttribute("x", q.x.toFixed(1)); t.setAttribute("y", (q.y - 3).toFixed(1)); t.textContent = rv.name;
-      gRLabels.append(t);
+    window.RIVERS.filter((rv) => rv.rank === 1 && riverEls[rv.id]).forEach((rv) => {
+      const line = riverEls[rv.id].querySelector(".line"), len = line.getTotalLength(), hits = [];
+      for (let t = 0; t <= 1; t += 0.02) { const q = line.getPointAtLength(t * len); if (inside(q.x, q.y)) hits.push(q); }
+      if (!hits.length) return;
+      const q = hits[Math.floor(hits.length * 0.5)];
+      addLabel(gRiverLabels, "rl", q.x, q.y - 4, rv.name);
     });
-  }
-  placeRiverLabels();
+  })();
 
-  // Label positions: the inside point farthest from the edge, found on a coarse grid.
-  const FIXED = { jk: [128, 88], la: [196, 52], an: [528, 600], ld: [96, 615], ap: [262, 470], wb: [404, 330], py: null };
-  const labelEls = {};
-  function placeLabels() {
-    R.forEach((r) => {
-      if (!SHORT[r.id]) return;
-      let pt = FIXED[r.id];
-      if (pt === undefined) {
-        const p = els[r.id].querySelector("path.shape");
-        const b = p.getBBox(), step = Math.max(b.width, b.height) / 24;
-        const inside = [], outside = [];
-        for (let x = b.x - step; x <= b.x + b.width + step; x += step)
-          for (let y = b.y - step; y <= b.y + b.height + step; y += step) {
-            const sp = svg.createSVGPoint(); sp.x = x; sp.y = y;
-            (p.isPointInFill(sp) ? inside : outside).push([x, y]);
-          }
-        let best = null, bd = -1;
-        inside.forEach(([x, y]) => {
-          let m = Infinity;
-          for (const [ox, oy] of outside) { const d = (x - ox) ** 2 + (y - oy) ** 2; if (d < m) m = d; }
-          if (m > bd) { bd = m; best = [x, y]; }
-        });
-        pt = best || [b.x + b.width / 2, b.y + b.height / 2];
-      }
-      if (!pt) return;
-      const t = document.createElementNS(NS, "text");
-      t.setAttribute("x", pt[0].toFixed(1)); t.setAttribute("y", pt[1].toFixed(1)); t.textContent = SHORT[r.id];
-      if (["mn", "mz", "tr", "ml", "nl", "sk"].includes(r.id)) t.setAttribute("font-size", "5");
-      gLabels.append(t); labelEls[r.id] = t;
-    });
+  // ---------- Zoom and pan ----------
+  const vb = Object.assign({}, VB0);
+  const wrap = $("#mapwrap"), tip = $("#tip");
+  function applyView() {
+    svg.setAttribute("viewBox", `${vb.x.toFixed(2)} ${vb.y.toFixed(2)} ${vb.w.toFixed(2)} ${vb.h.toFixed(2)}`);
+    const k = VB0.w / vb.w;
+    svg.style.setProperty("--mk", (1 / Math.pow(k, 0.85)).toFixed(3));
+    svg.style.setProperty("--ls", (1 / Math.pow(k, 0.6)).toFixed(3));
+    svg.dataset.z = k >= 3.2 ? "3" : k >= 1.7 ? "2" : "1";
+    svg.classList.toggle("zoomed", k > 1.05);
+    updateScale();
   }
-  placeLabels();
-
-  // Tooltip
-  const tip = $("#tip"), wrap = $("#mapwrap");
-  let mode = "explore";
-  svg.addEventListener("pointermove", (e) => {
-    const pz = e.target.closest(".pass"), rv = !pz && e.target.closest(".river");
-    const g = !pz && !rv && e.target.closest(".region");
-    if ((!g && !pz && !rv) || mode === "practice" || e.pointerType === "touch") { tip.hidden = true; return; }
-    const box = wrap.getBoundingClientRect();
-    tip.textContent = pz ? passById[pz.dataset.pass].name : rv ? riverById[rv.dataset.river].name + " river" : byId[g.dataset.id].name;
-    tip.style.left = e.clientX - box.left + "px"; tip.style.top = e.clientY - box.top + "px";
-    tip.hidden = false;
+  function clampView() {
+    vb.w = Math.min(Math.max(vb.w, VB0.w / 14), VB0.w); vb.h = vb.w * VB0.h / VB0.w;
+    vb.x = Math.min(Math.max(vb.x, VB0.x), VB0.x + VB0.w - vb.w); vb.y = Math.min(Math.max(vb.y, VB0.y), VB0.y + VB0.h - vb.h);
+  }
+  const toSvg = (cx, cy) => { const pt = svg.createSVGPoint(); pt.x = cx; pt.y = cy; return pt.matrixTransform(svg.getScreenCTM().inverse()); };
+  function zoomAt(cx, cy, f) {
+    const p = toSvg(cx, cy), nw = Math.min(Math.max(vb.w / f, VB0.w / 14), VB0.w), s = nw / vb.w;
+    vb.x = p.x - (p.x - vb.x) * s; vb.y = p.y - (p.y - vb.y) * s; vb.w = nw; vb.h = nw * VB0.h / VB0.w;
+    clampView(); applyView();
+  }
+  function zoomCenter(f) { const b = svg.getBoundingClientRect(); zoomAt(b.left + b.width / 2, b.top + b.height / 2, f); }
+  function zoomTo(x, y, k) { vb.w = VB0.w / k; vb.h = VB0.h / k; vb.x = x - vb.w / 2; vb.y = y - vb.h / 2; clampView(); applyView(); }
+  function resetView() { Object.assign(vb, VB0); applyView(); }
+  $("#zin").onclick = () => zoomCenter(1.6); $("#zout").onclick = () => zoomCenter(1 / 1.6); $("#zreset").onclick = resetView;
+  svg.addEventListener("wheel", (e) => { e.preventDefault(); zoomAt(e.clientX, e.clientY, Math.exp(-e.deltaY * 0.0018)); }, { passive: false });
+  const ptrs = new Map(); let dragMoved = false, pinchD = 0, suppressClick = false;
+  svg.addEventListener("pointerdown", (e) => {
+    ptrs.set(e.pointerId, { x: e.clientX, y: e.clientY }); dragMoved = false;
+    if (ptrs.size === 2) { const [a, b] = [...ptrs.values()]; pinchD = Math.hypot(a.x - b.x, a.y - b.y); }
   });
+  svg.addEventListener("pointermove", (e) => {
+    const prev = ptrs.get(e.pointerId);
+    if (prev && ptrs.size === 2) {
+      ptrs.set(e.pointerId, { x: e.clientX, y: e.clientY });
+      const [a, b] = [...ptrs.values()], d = Math.hypot(a.x - b.x, a.y - b.y);
+      if (pinchD) zoomAt((a.x + b.x) / 2, (a.y + b.y) / 2, d / pinchD);
+      pinchD = d; dragMoved = true; return;
+    }
+    if (prev && (VB0.w / vb.w > 1.01 || e.pointerType === "mouse")) {
+      const dx = e.clientX - prev.x, dy = e.clientY - prev.y;
+      if (dragMoved || Math.hypot(dx, dy) >= 4) {
+        if (!dragMoved) { dragMoved = true; svg.classList.add("dragging"); try { svg.setPointerCapture(e.pointerId); } catch (_) {} }
+        const s = 1 / svg.getScreenCTM().a; vb.x -= dx * s; vb.y -= dy * s; clampView(); applyView();
+        ptrs.set(e.pointerId, { x: e.clientX, y: e.clientY }); tip.hidden = true; return;
+      }
+    }
+    hover(e);
+  });
+  const endPtr = (e) => { ptrs.delete(e.pointerId); if (ptrs.size < 2) pinchD = 0; if (dragMoved) suppressClick = true; svg.classList.remove("dragging"); };
+  svg.addEventListener("pointerup", endPtr); svg.addEventListener("pointercancel", endPtr);
+  function updateScale() {
+    const ctm = svg.getScreenCTM(); if (!ctm || !ctm.a) return;
+    const cy = vb.y + vb.h / 2;
+    let lo = 0, hi = 40; for (let i = 0; i < 30; i++) { const mid = (lo + hi) / 2; if (yOfLat(mid) > cy) lo = mid; else hi = mid; }
+    const kmPerPx = ((1 / 20.5562) * 111.32 * Math.cos((lo * Math.PI) / 180)) / ctm.a;
+    let km = 10; for (const n of [10, 20, 50, 100, 200, 250, 500, 1000]) if (n / kmPerPx <= 110) km = n;
+    $("#scalebarline").style.width = (km / kmPerPx).toFixed(0) + "px";
+    $("#scalelabel").textContent = `${km} km at ${Math.round(lo)}° N`;
+  }
+  window.addEventListener("resize", updateScale);
+
+  // ---------- Hover and click ----------
+  let mode = "explore";
+  const featureName = (kind, id) => kind === "capital" ? window.CAPITALS.find((c) => c.id === id).city + (id === "dl" ? " (national capital)" : ", capital of " + byId[id].name) : K[kind].byId[id].name;
+  function hover(e) {
+    if (mode === "practice" || e.pointerType === "touch") { tip.hidden = true; return; }
+    const f = e.target.closest("[data-kind]"), g = !f && e.target.closest(".region");
+    if (!f && !g) { tip.hidden = true; return; }
+    const box = wrap.getBoundingClientRect();
+    tip.textContent = f ? featureName(f.dataset.kind, f.dataset.id) : byId[g.dataset.id].name;
+    tip.style.left = e.clientX - box.left + "px"; tip.style.top = e.clientY - box.top + "px"; tip.hidden = false;
+  }
   svg.addEventListener("pointerleave", () => (tip.hidden = true));
   svg.addEventListener("click", (e) => {
+    if (suppressClick) { suppressClick = false; return; }
     if (mode !== "practice") {
-      const pz = e.target.closest(".pass"); if (pz) { selectPass(pz.dataset.pass); return; }
-      const rv = e.target.closest(".river"); if (rv) { selectRiver(rv.dataset.river); return; }
+      const f = e.target.closest("[data-kind]");
+      if (f) { if (f.dataset.kind === "capital") select(f.dataset.id); else selectFeature(f.dataset.kind, f.dataset.id); return; }
     }
     const g = e.target.closest(".region"); if (!g) return;
     if (mode === "practice") quizAnswer(g.dataset.id); else select(g.dataset.id);
   });
 
-  // ---------- Filters ----------
-  let activeLayer = null;
-  const filters = $("#filters");
+  // ---------- Controls ----------
+  const LAYER_DEFS = [
+    ["capitals", "Capitals", "#3b4a50"], ["rivers", "Rivers", "#2471c8"], ["ranges", "Ranges", "#8a5a35"], ["passes", "Passes", "#9a4f25"],
+    ["grid", "Lat / long", "#c0392b"], ["unesco", "UNESCO sites", "#7b4fb5"], ["parks", "Tiger reserves & parks", "#d9700f"], ["ramsar", "Ramsar wetlands", "#1c7ed6"],
+  ];
+  const on = Object.assign({ capitals: true, rivers: true, ranges: true, passes: false, grid: true, unesco: false, parks: false, ramsar: false }, store.get("atlas-layers2", {}));
+  let base = "political", crop = "rice", activeLayer = null;
+  const controls = $("#controls");
   const groups = [...new Set(L.map((l) => l.group))];
-  filters.innerHTML = groups.map((gname) => `<div class="fgroup"><span class="glabel">${gname}</span>${
-    L.filter((l) => l.group === gname).map((l) => `<button class="chip" id="layer-${l.id}" data-layer="${l.id}" aria-pressed="false" style="--chip:${l.h != null ? `hsl(${l.h} 70% 48%)` : GROUP_COLOR[l.group]}">${esc(l.label)}</button>`).join("")
-  }</div>`).join("");
-  const overlays = Object.assign({ rivers: true, passes: true }, store.get("atlas-overlays", {}));
-  filters.insertAdjacentHTML("afterbegin", `<div class="fgroup"><span class="glabel">On the map</span>
-    <button class="chip" id="ov-rivers" data-overlay="rivers" style="--chip:#1769d1">Rivers</button>
-    <button class="chip" id="ov-passes" data-overlay="passes" style="--chip:#a0522d">Mountain passes</button></div>`);
-  function applyOverlays() {
-    gRivers.hidden = !overlays.rivers; gPasses.hidden = !overlays.passes;
-    $("#ov-rivers").setAttribute("aria-pressed", String(overlays.rivers));
-    $("#ov-passes").setAttribute("aria-pressed", String(overlays.passes));
+  controls.innerHTML = `
+    <div class="crow"><span class="glabel">Base map</span><div class="seg" id="baseSeg">${[["political", "States"], ["soils", "Soils"], ["climate", "Climate"], ["crops", "Crops"]].map(([k, t]) => `<button data-base="${k}" aria-pressed="${k === base}">${t}</button>`).join("")}</div>
+      <select id="hl" aria-label="Highlight states"><option value="">Highlight states…</option>${groups.map((g) => `<optgroup label="${esc(g)}">${L.filter((l) => l.group === g).map((l) => `<option value="${l.id}">${esc(l.group === "Borders" ? "Bordering " + l.label : l.label)}</option>`).join("")}</optgroup>`).join("")}</select></div>
+    <div class="crow"><span class="glabel">Layers</span>${LAYER_DEFS.map(([k, t, c]) => `<button class="chip" data-toggle="${k}" style="--chip:${c}" aria-pressed="${!!on[k]}">${t}</button>`).join("")}</div>`;
+  function applyLayers() {
+    Object.entries(layerG).forEach(([k, g]) => (g.style.display = on[k] ? "" : "none"));
+    gRiverLabels.style.display = on.rivers ? "" : "none";
+    controls.querySelectorAll("[data-toggle]").forEach((b) => b.setAttribute("aria-pressed", String(!!on[b.dataset.toggle])));
   }
-  applyOverlays();
-  filters.addEventListener("click", (e) => {
-    const o = e.target.closest("[data-overlay]");
-    if (o) { overlays[o.dataset.overlay] = !overlays[o.dataset.overlay]; store.set("atlas-overlays", overlays); applyOverlays(); return; }
-    const b = e.target.closest("[data-layer]"); if (!b) return;
-    setLayer(activeLayer === b.dataset.layer ? null : b.dataset.layer);
+  applyLayers();
+  controls.addEventListener("click", (e) => {
+    const t = e.target.closest("[data-toggle]");
+    if (t) { on[t.dataset.toggle] = !on[t.dataset.toggle]; store.set("atlas-layers2", on); applyLayers(); return; }
+    const b = e.target.closest("[data-base]"); if (b) setBase(b.dataset.base);
   });
+  $("#hl").addEventListener("change", (e) => { const v = e.target.value || null; clearFeature(); selected = null; Object.values(els).forEach((g) => g.classList.remove("selected")); setLayer(v); setHash(""); });
+
   function setLayer(id) {
-    activeLayer = id;
-    filters.querySelectorAll("[data-layer]").forEach((c) => c.setAttribute("aria-pressed", String(c.dataset.layer === id)));
+    activeLayer = id; $("#hl").value = id || "";
     const ids = id ? new Set(L.find((l) => l.id === id).ids) : new Set();
     Object.entries(els).forEach(([rid, g]) => g.classList.toggle("lit", ids.has(rid)));
     Object.entries(labelEls).forEach(([rid, t]) => t.classList.toggle("on", ids.has(rid) || rid === selected));
     svg.classList.toggle("filtering", !!id);
-    if (mode === "explore" && !selected) renderOverview();
+    if (mode === "explore" && !selected && !selFeature) renderOverview();
   }
 
-  // ---------- Explore ----------
-  const view = $("#view");
-  let selected = null, query = "";
+  // Theme maps.
+  const themeEls = {};
+  function drawTheme(key) {
+    gTheme.innerHTML = ""; gTheme.classList.remove("focus");
+    const th = window.THEMES[key]; if (!th) return;
+    th.zones.forEach((z) => {
+      const d = z.polys.map((poly) => "M" + poly.map(P).map((p) => p[0].toFixed(1) + "," + p[1].toFixed(1)).join("L") + "Z").join("");
+      themeEls[z.id] = el("path", { d, fill: z.color, "data-zone": z.id }, gTheme);
+    });
+  }
+  function applyCrop() {
+    const c = window.CROPS.find((x) => x.id === crop);
+    Object.entries(els).forEach(([rid, g]) => { g.classList.remove("rank1", "rank2", "rank3"); const i = c.top.indexOf(rid); if (i >= 0) g.classList.add("rank" + (i + 1)); });
+  }
+  function setBase(b) {
+    base = b; svg.dataset.base = b;
+    $("#baseSeg").querySelectorAll("button").forEach((x) => x.setAttribute("aria-pressed", String(x.dataset.base === b)));
+    drawTheme(b);
+    if (b === "crops") applyCrop(); else Object.values(els).forEach((g) => g.classList.remove("rank1", "rank2", "rank3"));
+    renderLegend();
+    if (mode === "explore" && !selected && !selFeature) renderOverview();
+  }
+  function renderLegend() {
+    const box = $("#legendbox");
+    if (base === "political") { box.hidden = true; return; }
+    box.hidden = false;
+    if (base === "crops") {
+      const c = window.CROPS.find((x) => x.id === crop);
+      box.innerHTML = `<b>${esc(c.name)}: leading states</b>${c.top.map((id, i) => `<span><i style="background:${["#2f7d4f", "#63a96d", "#a7d39a"][i]}"></i>${i + 1}. ${esc(byId[id].name)}</span>`).join("")}`;
+    } else {
+      const th = window.THEMES[base];
+      box.innerHTML = `<b>${esc(th.title)}</b>${th.zones.map((z) => `<span><i style="background:${z.color}"></i>${esc(z.name)}</span>`).join("")}`;
+    }
+  }
 
-  let selRiver = null, selPass = null;
+  // ---------- Explore panel ----------
+  const view = $("#view");
+  let selected = null, selFeature = null, query = "";
+  function setHash(h) { try { history.replaceState(null, "", h ? "#" + h : location.pathname + location.search); } catch (e) {} }
+  function featureEl(kind, id) { return kind === "river" ? riverEls[id] : kind === "range" ? rangeEls[id] : kind === "line" ? lineEls[id] : markerEls[kind] && markerEls[kind][id]; }
   function clearFeature() {
-    if (selRiver) riverEls[selRiver]?.classList.remove("on");
-    if (selPass) passEls[selPass]?.classList.remove("on");
-    selRiver = selPass = null; svg.classList.remove("riverfocus");
+    if (selFeature) { const fe = featureEl(selFeature.kind, selFeature.id); if (fe) fe.classList.remove("on"); }
+    selFeature = null; svg.classList.remove("focusing");
   }
   function focusStates(ids) {
-    setLayer(null);
+    activeLayer = null; $("#hl").value = "";
     Object.entries(els).forEach(([rid, g]) => { g.classList.remove("selected"); g.classList.toggle("lit", ids.includes(rid)); });
     Object.entries(labelEls).forEach(([rid, t]) => t.classList.toggle("on", ids.includes(rid)));
     svg.classList.toggle("filtering", ids.length > 0);
     selected = null;
   }
-  function selectRiver(id) {
-    const rv = riverById[id]; if (!rv) return;
-    clearFeature(); focusStates(rv.states);
-    if (!overlays.rivers) { overlays.rivers = true; applyOverlays(); }
-    selRiver = id; riverEls[id]?.classList.add("on"); svg.classList.add("riverfocus");
-    gRiverClip.append(riverEls[id]);
-    renderRiver(rv);
-    try { history.replaceState(null, "", "#river-" + id); } catch (e) {}
+  function selectFeature(kind, id) {
+    const item = K[kind] && K[kind].byId[id]; if (!item) return;
+    clearFeature(); focusStates(item.states || []);
+    const lay = K[kind].layer; if (!on[lay]) { on[lay] = true; applyLayers(); }
+    selFeature = { kind, id };
+    const fe = featureEl(kind, id);
+    if (fe) { fe.classList.add("on"); fe.parentNode.append(fe); }
+    if (kind === "river") svg.classList.add("focusing");
+    renderFeature(kind, item);
+    setHash(kind + "-" + id);
   }
-  function selectPass(id) {
-    const ps = passById[id]; if (!ps) return;
-    clearFeature(); focusStates(ps.states);
-    if (!overlays.passes) { overlays.passes = true; applyOverlays(); }
-    selPass = id; passEls[id].classList.add("on"); gPasses.append(passEls[id]);
-    renderPass(ps);
-    try { history.replaceState(null, "", "#pass-" + id); } catch (e) {}
-  }
-  const stateButtons = (ids) => `<div class="tags">${ids.map((i) => `<button class="tag go" data-go="${i}">${esc(byId[i].name)}</button>`).join("")}</div>`;
-  function wireCard() {
-    view.querySelectorAll("[data-go]").forEach((b) => (b.onclick = () => select(b.dataset.go)));
-    view.querySelectorAll("[data-river]").forEach((b) => (b.onclick = () => selectRiver(b.dataset.river)));
-    view.querySelectorAll("[data-pass]").forEach((b) => (b.onclick = () => selectPass(b.dataset.pass)));
-    const back = $("#back"); if (back) back.onclick = () => select(null);
-  }
-  function renderRiver(rv) {
-    view.innerHTML = `<article class="card">
-      <div class="backrow"><button class="link" id="back">← All states and UTs</button></div>
-      <div class="hero" style="--h:205" data-code="${esc(rv.name)}"><div class="eyebrow">River · ${esc(rv.system)} system</div><h2>${esc(rv.name)}</h2><span class="zone">${rv.states.length} state${rv.states.length > 1 ? "s" : ""} and UTs in India</span></div>
-      <dl class="facts-grid" style="--h:205">
-        <div><dt>Source</dt><dd>${esc(rv.origin)}</dd></div>
-        <div><dt>Ends</dt><dd>${esc(rv.mouth)}</dd></div>
-      </dl>
-      <section class="sec rivers"><h3>Flows through</h3>${stateButtons(rv.states)}</section>
-      <section class="sec facts"><h3>Key facts</h3><ul class="notes">${rv.facts.map((f) => `<li>${esc(f)}</li>`).join("")}</ul></section>
-      ${rv.tributaries.length ? `<section class="sec parks"><h3>Main tributaries</h3><div class="tags">${rv.tributaries.map((t) => { const m = RV.find((x) => t.startsWith(x.name)); return m ? `<button class="tag go" data-river="${m.id}">${esc(t)}</button>` : `<span class="tag">${esc(t)}</span>`; }).join("")}</div></section>` : ""}
-    </article>`;
-    wireCard();
-  }
-  function renderPass(ps) {
-    view.innerHTML = `<article class="card">
-      <div class="backrow"><button class="link" id="back">← All states and UTs</button></div>
-      <div class="hero" style="--h:24" data-code="▲"><div class="eyebrow">${ps.name.includes("Gap") ? "Gap in the Western Ghats" : ps.name.includes("Ghat") ? "Ghat (Western Ghats)" : "Mountain pass"}</div><h2>${esc(ps.name)}</h2><span class="zone">${esc(ps.states.map((i) => byId[i].name).join(" / "))}</span></div>
-      <dl class="facts-grid" style="--h:24">
-        <div><dt>Connects</dt><dd>${esc(ps.connects)}</dd></div>
-        <div><dt>Coordinates</dt><dd>${ps.lat.toFixed(2)}° N, ${ps.lon.toFixed(2)}° E</dd></div>
-      </dl>
-      <section class="sec passes"><h3>In</h3>${stateButtons(ps.states)}</section>
-      <section class="sec facts"><h3>Key facts</h3><ul class="notes">${ps.facts.map((f) => `<li>${esc(f)}</li>`).join("")}</ul></section>
-    </article>`;
-    wireCard();
-  }
-
   function select(id) {
-    if (selRiver || selPass) { clearFeature(); if (!activeLayer) { Object.values(els).forEach((g) => g.classList.remove("lit")); svg.classList.remove("filtering"); } }
+    if (selFeature) { clearFeature(); if (!activeLayer) { Object.values(els).forEach((g) => g.classList.remove("lit")); svg.classList.remove("filtering"); } }
     selected = id;
     Object.entries(els).forEach(([rid, g]) => g.classList.toggle("selected", rid === id));
     Object.entries(labelEls).forEach(([rid, t]) => t.classList.toggle("on", rid === id || (activeLayer && els[rid].classList.contains("lit"))));
     if (id) renderRegion(byId[id]); else renderOverview();
-    try { history.replaceState(null, "", id ? "#" + id : location.pathname + location.search); } catch (e) {}
+    setHash(id);
   }
-
-  const tagList = (arr, cls = "") => arr.length ? `<div class="tags">${arr.map((x) => `<span class="tag ${cls}">${esc(x)}</span>`).join("")}</div>` : `<span style="color:var(--ink-2)">None</span>`;
+  function wire(root) {
+    root = root || view;
+    root.querySelectorAll("[data-go]").forEach((b) => (b.onclick = () => { query = ""; select(b.dataset.go); }));
+    root.querySelectorAll("[data-f]").forEach((b) => (b.onclick = () => { query = ""; const [k, i] = b.dataset.f.split(":"); selectFeature(k, i); }));
+    root.querySelectorAll("[data-zoomto]").forEach((b) => (b.onclick = () => { const [x, y] = b.dataset.zoomto.split(",").map(Number); zoomTo(x, y, 4); }));
+    const back = root.querySelector("#back"); if (back) back.onclick = () => select(null);
+  }
+  const stateButtons = (ids) => `<div class="tags">${ids.map((i) => `<button class="tag" data-go="${i}">${esc(byId[i].name)}</button>`).join("")}</div>`;
+  const fbtn = (kind, item, label) => `<button class="tag" data-f="${kind}:${item.id}">${esc(label || item.name)}</button>`;
+  const list = (arr) => `<ul class="notes">${arr.map((f) => `<li>${esc(f)}</li>`).join("")}</ul>`;
+  const BACK = `<div class="backrow"><button class="link" id="back">← Overview</button></div>`;
+  const zoomBtnAt = (ll, label) => { const p = P(ll); return `<button class="btn ghost" data-zoomto="${p[0].toFixed(1)},${p[1].toFixed(1)}">${esc(label)}</button>`; };
 
   function renderRegion(r) {
-    view.innerHTML = `<article class="card">
-      <div class="backrow"><button class="link" id="back">← All states and UTs</button></div>
-      <div class="hero" style="${zoneStyle(r.id)}" data-code="${esc(SHORT[r.id] || r.name.slice(0, 2).toUpperCase())}"><div class="eyebrow">${r.kind === "UT" ? "Union Territory" : "State"}</div><h2>${esc(r.name)}</h2><span class="zone">${(() => { const z = ZONE_OF[r.id].z; return z.id === "ne" ? z.label : z.id === "islands" ? "Island territory" : z.label + " Zonal Council"; })()}</span></div>
+    const has = (k) => K[k].list.filter((s) => (s.states || []).includes(r.id));
+    const passes = has("pass"), sites = has("site"), parks = has("park"), wets = has("wet"), ranges = has("range"), lines = has("line");
+    const cap = window.CAPITALS.find((c) => c.id === r.id);
+    const crops = window.CROPS.filter((c) => c.top.includes(r.id)).map((c) => `${c.name} (#${c.top.indexOf(r.id) + 1})`);
+    const tags = (arr) => `<div class="tags">${arr.map((x) => `<span class="tag">${esc(x)}</span>`).join("")}</div>`;
+    view.innerHTML = `<article class="card">${BACK}
+      <div class="hero" style="${zoneStyle(r.id)}" data-code="${esc((LABEL[r.id] || r.name).split("|")[0])}"><div class="eyebrow">${r.kind === "UT" ? "Union Territory" : "State"}</div><h2>${esc(r.name)}</h2><span class="zone">${zoneLabel(r.id)}</span></div>
       <dl class="facts-grid" style="${zoneStyle(r.id)}">
         <div><dt>Capital</dt><dd>${esc(r.capital)}</dd></div>
         <div><dt>In current form since</dt><dd>${r.since}</dd></div>
         <div><dt>International border</dt><dd>${r.borders.length ? esc(r.borders.join(", ")) : "None"}</dd></div>
         <div><dt>Coastline</dt><dd>${r.coastal ? "Yes" : "No"}</dd></div>
         <div><dt>Tribal areas</dt><dd>${r.schedule === 5 ? "Fifth Schedule" : r.schedule === 6 ? "Sixth Schedule" : "Not scheduled"}</dd></div>
+        ${lines.length ? `<div><dt>Crossed by</dt><dd>${esc(lines.map((l) => l.name.replace(" (82.5° E)", " (82.5° E)")).join(", "))}</dd></div>` : ""}
+        ${crops.length ? `<div><dt>Leading producer of</dt><dd>${esc(crops.join(", "))}</dd></div>` : ""}
       </dl>
-      <section class="sec facts"><h3>Key facts</h3><ul class="notes">${r.facts.map((f) => `<li>${esc(f)}</li>`).join("")}</ul></section>
-      ${r.rivers.length ? `<section class="sec rivers"><h3>Rivers</h3><div class="tags">${r.rivers.map((t) => { const m = RV.find((x) => t.includes(x.name)); return m ? `<button class="tag go" data-river="${m.id}">${esc(t)}</button>` : `<span class="tag">${esc(t)}</span>`; }).join("")}</div></section>` : ""}
-      ${PS.some((p) => p.states.includes(r.id)) ? `<section class="sec passes"><h3>Passes and gaps</h3><div class="tags">${PS.filter((p) => p.states.includes(r.id)).map((p) => `<button class="tag go" data-pass="${p.id}">${esc(p.name)}</button>`).join("")}</div></section>` : ""}
-      ${r.parks.length ? `<section class="sec parks"><h3>National parks, reserves &amp; wetlands</h3>${tagList(r.parks, "flag")}</section>` : ""}
-      ${r.culture.length ? `<section class="sec culture"><h3>Dance, art &amp; festivals</h3>${tagList(r.culture)}</section>` : ""}
-      ${r.people.length ? `<section class="sec people"><h3>Tribal communities</h3>${tagList(r.people)}</section>` : ""}
-      <div class="backrow"><button class="btn ghost" id="quizme">Practise finding ${esc(r.name)}</button></div>
+      <section class="sec facts"><h3>Key facts</h3>${list(r.facts)}</section>
+      ${r.rivers.length ? `<section class="sec rivers"><h3>Rivers</h3><div class="tags">${r.rivers.map((t) => { const m = K.river.list.find((x) => t.includes(x.name)); return m ? fbtn("river", m, t) : `<span class="tag">${esc(t)}</span>`; }).join("")}</div></section>` : ""}
+      ${ranges.length ? `<section class="sec ranges"><h3>Ranges and hills</h3><div class="tags">${ranges.map((x) => fbtn("range", x)).join("")}</div></section>` : ""}
+      ${passes.length ? `<section class="sec passes"><h3>Passes and gaps</h3><div class="tags">${passes.map((x) => fbtn("pass", x)).join("")}</div></section>` : ""}
+      ${sites.length ? `<section class="sec sites"><h3>UNESCO World Heritage Sites</h3><div class="tags">${sites.map((x) => fbtn("site", x)).join("")}</div></section>` : ""}
+      ${parks.length ? `<section class="sec parks"><h3>Tiger reserves and national parks</h3><div class="tags">${parks.map((x) => fbtn("park", x)).join("")}</div></section>` : r.parks.length ? `<section class="sec parks"><h3>Protected areas</h3>${tags(r.parks)}</section>` : ""}
+      ${wets.length ? `<section class="sec wet"><h3>Ramsar wetlands (selected)</h3><div class="tags">${wets.map((x) => fbtn("wet", x)).join("")}</div></section>` : ""}
+      ${r.culture.length ? `<section class="sec culture"><h3>Dance, art &amp; festivals</h3>${tags(r.culture)}</section>` : ""}
+      ${r.people.length ? `<section class="sec people"><h3>Tribal communities</h3>${tags(r.people)}</section>` : ""}
+      <div class="backrow">${cap ? zoomBtnAt(cap.at, "Zoom to " + cap.city) : ""}<button class="btn ghost" id="quizme">Practise finding ${esc(r.name)}</button></div>
     </article>`;
-    $("#back").onclick = () => select(null);
+    wire();
     $("#quizme").onclick = () => { setTab("practice"); startQuiz("states", r.id); };
-    view.querySelectorAll("[data-river]").forEach((b) => (b.onclick = () => selectRiver(b.dataset.river)));
-    view.querySelectorAll("[data-pass]").forEach((b) => (b.onclick = () => selectPass(b.dataset.pass)));
+  }
+
+  const HUE = { river: 205, pass: 24, range: 28, line: 0, site: 268, park: 30, wet: 195 };
+  function renderFeature(kind, it) {
+    const where = (it.states || []).length ? `<section class="sec ${kind === "river" ? "rivers" : "passes"}"><h3>${kind === "river" ? "Flows through" : kind === "range" || kind === "line" ? "Passes through" : "In"}</h3>${stateButtons(it.states)}</section>` : "";
+    let eyebrow = K[kind].noun, chip = "", grid = "", facts = it.facts || [], extra = "";
+    if (kind === "river") {
+      eyebrow = `River · ${it.system} system`; chip = `${it.states.length} states and UTs in India`;
+      grid = `<div><dt>Source</dt><dd>${esc(it.origin)}</dd></div><div><dt>Ends</dt><dd>${esc(it.mouth)}</dd></div>`;
+      if (it.tributaries.length) extra = `<section class="sec parks"><h3>Main tributaries</h3><div class="tags">${it.tributaries.map((t) => { const m = K.river.list.find((x) => t.startsWith(x.name)); return m ? fbtn("river", m, t) : `<span class="tag">${esc(t)}</span>`; }).join("")}</div></section>`;
+    } else if (kind === "pass") {
+      eyebrow = it.name.includes("Gap") ? "Gap in the Western Ghats" : it.name.includes("Ghat") ? "Ghat (Western Ghats)" : "Mountain pass";
+      chip = it.states.map((i) => byId[i].name).join(" / ");
+      grid = `<div><dt>Connects</dt><dd>${esc(it.connects)}</dd></div><div><dt>Coordinates</dt><dd>${it.lat.toFixed(2)}° N, ${it.lon.toFixed(2)}° E</dd></div>`;
+    } else if (kind === "range") {
+      eyebrow = `Mountain range · ${it.group}`; chip = `${it.states.length} state${it.states.length > 1 ? "s" : ""} and UTs`;
+    } else if (kind === "line") {
+      eyebrow = "Line of " + (it.lat ? "latitude" : "longitude"); chip = it.lat ? "23°26′ N" : "82°30′ E";
+    } else if (kind === "site") {
+      eyebrow = `UNESCO World Heritage Site · ${{ C: "Cultural", N: "Natural", M: "Mixed" }[it.type]}`; chip = `Inscribed ${it.year}`;
+      grid = `<div><dt>State or UT</dt><dd>${esc(names(it.states))}</dd></div><div><dt>Year</dt><dd>${it.year}</dd></div>`;
+      facts = UN_NOTES[it.id] ? [UN_NOTES[it.id]] : [];
+    } else if (kind === "park") {
+      eyebrow = it.kind === "T" ? "Tiger reserve" : "National park"; chip = names(it.states);
+      facts = (RS_NOTES[it.id] ? [RS_NOTES[it.id]] : []).concat(it.kind === "T" ? ["One of India's 58 tiger reserves under Project Tiger (NTCA)."] : []);
+    } else if (kind === "wet") {
+      eyebrow = "Ramsar wetland"; chip = names(it.states);
+      facts = [it.note, `India has ${window.RAMSAR_TOTAL} Ramsar sites (October 2026); this map shows a selection.`];
+    }
+    view.innerHTML = `<article class="card">${BACK}
+      <div class="hero" style="--h:${HUE[kind]}" data-code="${esc(it.name.split(" ")[0])}"><div class="eyebrow">${esc(eyebrow)}</div><h2>${esc(it.name)}</h2>${chip ? `<span class="zone">${esc(chip)}</span>` : ""}</div>
+      ${grid ? `<dl class="facts-grid" style="--h:${HUE[kind]}">${grid}</dl>` : ""}
+      ${where}
+      ${facts.length ? `<section class="sec facts"><h3>Key facts</h3>${list(facts)}</section>` : ""}
+      ${extra}
+      ${it.at ? `<div class="backrow">${zoomBtnAt(it.at, "Zoom to it")}</div>` : ""}
+    </article>`;
+    wire();
   }
 
   function searchIndex(q) {
     q = q.trim().toLowerCase(); if (q.length < 2) return [];
     const out = [];
     R.forEach((r) => {
-      const fields = [["name", [r.name]], ["capital", [r.capital]], ["river", r.rivers], ["park", r.parks], ["culture", r.culture], ["tribe", r.people]];
-      for (const [kind, arr] of fields) {
-        const hit = arr.find((v) => v.toLowerCase().includes(q));
-        if (hit) { out.push({ r, kind, hit }); break; }
-      }
+      const fields = [["", [r.name]], ["capital", [r.capital]], ["river", r.rivers], ["park", r.parks], ["culture", r.culture], ["tribe", r.people]];
+      for (const [kind, arr] of fields) { const hit = arr.find((v) => v.toLowerCase().includes(q)); if (hit) { out.push({ go: r.id, title: r.name, sub: kind ? kind + ": " + hit : "" }); break; } }
     });
-    RV.forEach((rv) => { if ((rv.name + " river").toLowerCase().includes(q)) out.unshift({ river: rv }); });
-    PS.forEach((ps) => { if ((ps.name + " pass").toLowerCase().includes(q)) out.unshift({ pass: ps }); });
-    return out.slice(0, 12);
+    Object.entries(K).forEach(([kind, k]) => k.list.forEach((it) => {
+      if (it.name.toLowerCase().includes(q)) out.unshift({ f: kind + ":" + it.id, title: it.name, sub: k.noun.toLowerCase() + (it.states && it.states.length === 1 ? " · " + byId[it.states[0]].name : "") });
+    }));
+    return out.slice(0, 14);
+  }
+
+  function themePanel() {
+    if (base === "crops") {
+      return `<section><div class="eyebrow">Crop map</div><h2>Leading producer states</h2><p style="margin-top:8px">States shaded by rank (recent years; rankings shift from year to year).</p>
+        <div class="tags" style="margin-top:10px">${window.CROPS.map((c) => `<button class="tag" data-crop="${c.id}" style="${c.id === crop ? "background:var(--ink);color:var(--paper)" : ""}">${esc(c.name)}</button>`).join("")}</div>
+        <p style="margin-top:10px">${esc(window.CROPS.find((c) => c.id === crop).note)}</p></section>`;
+    }
+    const th = window.THEMES[base];
+    return `<section><div class="eyebrow">${base === "soils" ? "Soil map" : "Climate map"}</div><h2>${esc(th.title)}</h2><p style="margin-top:8px">${esc(th.note)} Tap a zone to highlight it.</p>
+      <div class="zlist" style="margin-top:10px">${th.zones.map((z) => `<button data-zone="${z.id}" aria-pressed="false"><i style="background:${z.color}"></i><span><b>${esc(z.name)}</b><small>${esc(z.facts.join(" "))}</small></span></button>`).join("")}</div></section>`;
   }
 
   function renderOverview() {
     const layer = activeLayer && L.find((l) => l.id === activeLayer);
-    const list = (kind) => R.filter((r) => r.kind === kind).filter((r) => !layer || layer.ids.includes(r.id))
-      .sort((a, b) => a.name.localeCompare(b.name))
+    const idx = (kind) => R.filter((r) => r.kind === kind).filter((r) => !layer || layer.ids.includes(r.id)).sort((a, b) => a.name.localeCompare(b.name))
       .map((r) => `<button data-go="${r.id}" style="${zoneStyle(r.id)}"><span>${esc(r.name)}</span><small>${esc(r.capital.split(" (")[0])}</small></button>`).join("");
-    const states = list("State"), uts = list("UT");
+    const fidx = (kind, items, dot, sub) => items.map((it) => `<button data-f="${kind}:${it.id}" style="--dot:${dot(it)}"><span>${esc(it.name)}</span><small>${esc(sub(it))}</small></button>`).join("");
+    const short = (it) => (it.states || []).map((s) => s.toUpperCase()).join("/");
+    const states = idx("State"), uts = idx("UT");
     view.innerHTML = `<div class="card overview">
-      <div class="search">
-        <input id="q" type="search" placeholder="Search a state, capital, river, park, dance or tribe" value="${esc(query)}" autocomplete="off" aria-label="Search">
-        <div id="results"></div>
-      </div>
-      ${layer ? `<div><div class="eyebrow">Filter</div><h2>${esc(layer.group === "Borders" ? "Bordering " + layer.label : layer.group === "Zones" ? (["ne", "islands"].some((k) => layer.id === "zone-" + k) ? layer.label : layer.label + " Zonal Council") : layer.label)}</h2></div>
-        <p>${layer.ids.length} of 36 highlighted on the map. <button class="link" id="clear">Clear filter</button></p>`
-      : `<div><div class="eyebrow">Explore</div><h2>Tap any state or UT on the map</h2></div>
-        <p>Each one opens a fact card with its capital, borders, rivers, protected areas and the facts that come up in Prelims. Use the filters under the map to see which states border a country or fall under the Fifth or Sixth Schedule.</p>
+      <div class="search"><input id="q" type="search" placeholder="Search states, capitals, rivers, ranges, parks, sites…" value="${esc(query)}" autocomplete="off" aria-label="Search"><div id="results"></div></div>
+      ${layer ? `<div><div class="eyebrow">Highlight</div><h2>${esc(layer.group === "Borders" ? "Bordering " + layer.label : layer.label)}</h2></div><p>${layer.ids.length} of 36 highlighted on the map. <button class="link" id="clear">Clear</button></p>`
+      : base !== "political" ? themePanel()
+      : `<div><div class="eyebrow">Explore</div><h2>Tap anything on the map</h2></div>
+        <p>States, rivers, ranges, passes and markers each open a fact card. Scroll or pinch to zoom and drag to pan. Switch the base map to soils, climate or crops, and turn layers on and off under the map.</p>
         <div class="stats">
-          <div class="stat"><b>28</b><span>States</span></div>
-          <div class="stat"><b>8</b><span>Union Territories</span></div>
-          <div class="stat"><b>7</b><span>Land neighbours</span></div>
+          <div class="stat"><b>28</b><span>States</span></div><div class="stat"><b>8</b><span>Union Territories</span></div><div class="stat"><b>7</b><span>Land neighbours</span></div>
+          <div class="stat"><b>45</b><span>UNESCO sites</span></div><div class="stat"><b>58</b><span>Tiger reserves</span></div><div class="stat"><b>${window.RAMSAR_TOTAL}</b><span>Ramsar sites</span></div>
         </div>
-        <section><h3>Map colours: Zonal Councils and the North Eastern Council</h3><div class="legend">${ZONES.map((z) => `<span style="--h:${z.h}"><i></i>${z.label}</span>`).join("")}</div></section>`}
+        <section><h3>State colours: Zonal Councils and the North Eastern Council</h3><div class="legend">${ZONES.map((z) => `<span style="--h:${z.h}"><i></i>${z.label}</span>`).join("")}</div></section>`}
       ${states ? `<section><h3>States</h3><div class="index">${states}</div></section>` : ""}
       ${uts ? `<section><h3>Union Territories</h3><div class="index">${uts}</div></section>` : ""}
-      ${layer ? "" : `<section><h3>Rivers</h3><div class="index">${RV.slice().sort((a, b) => a.name.localeCompare(b.name)).map((rv) => `<button data-river="${rv.id}" style="--h:205"><span>${esc(rv.name)}</span><small>${esc(rv.system.split(",")[0])}</small></button>`).join("")}</div></section>
-      <section><h3>Mountain passes and gaps</h3><div class="index">${PS.map((ps) => `<button data-pass="${ps.id}" style="--h:24"><span>${esc(ps.name)}</span><small>${esc(SHORT[ps.states[0]] || byId[ps.states[0]].name)}</small></button>`).join("")}</div></section>`}
+      ${layer ? "" : `
+      <details class="more"><summary>Rivers (${K.river.list.length})</summary><div class="index">${fidx("river", K.river.list.slice().sort((a, b) => a.name.localeCompare(b.name)), () => "#2471c8", (it) => it.system.split(",")[0])}</div></details>
+      <details class="more"><summary>Mountain ranges and hills (${K.range.list.length})</summary><div class="index">${fidx("range", K.range.list, () => "#8a5a35", (it) => it.group)}</div></details>
+      <details class="more"><summary>Passes and gaps (${K.pass.list.length})</summary><div class="index">${fidx("pass", K.pass.list, () => "#9a4f25", short)}</div></details>
+      <details class="more"><summary>UNESCO World Heritage Sites (${K.site.list.length})</summary><div class="index">${fidx("site", K.site.list.slice().sort((a, b) => b.year - a.year), (it) => ({ C: "#7b4fb5", N: "#2b8a3e", M: "#0f8f8a" }[it.type]), (it) => it.year + " · " + short(it))}</div></details>
+      <details class="more"><summary>Tiger reserves (58) and national parks</summary><div class="index">${fidx("park", K.park.list.slice().sort((a, b) => (a.kind === b.kind ? a.name.localeCompare(b.name) : a.kind === "T" ? -1 : 1)), (it) => it.kind === "T" ? "#d9700f" : "#4c9a2a", short)}</div></details>
+      <details class="more"><summary>Ramsar wetlands (${K.wet.list.length} of ${window.RAMSAR_TOTAL})</summary><div class="index">${fidx("wet", K.wet.list.slice().sort((a, b) => a.name.localeCompare(b.name)), () => "#1c7ed6", short)}</div></details>
+      <details class="more"><summary>Lines of latitude and longitude</summary><div class="index">${fidx("line", K.line.list, () => "#c0392b", (it) => it.states.length + " states")}</div></details>`}
     </div>`;
-    view.querySelectorAll("[data-go]").forEach((b) => (b.onclick = () => select(b.dataset.go)));
+    wire();
     const clear = $("#clear"); if (clear) clear.onclick = () => setLayer(null);
-    view.querySelectorAll(".index [data-river]").forEach((b) => (b.onclick = () => selectRiver(b.dataset.river)));
-    view.querySelectorAll(".index [data-pass]").forEach((b) => (b.onclick = () => selectPass(b.dataset.pass)));
+    view.querySelectorAll("[data-crop]").forEach((b) => (b.onclick = () => { crop = b.dataset.crop; applyCrop(); renderLegend(); renderOverview(); }));
+    view.querySelectorAll("[data-zone]").forEach((b) => (b.onclick = () => {
+      const was = b.getAttribute("aria-pressed") === "true";
+      view.querySelectorAll("[data-zone]").forEach((x) => x.setAttribute("aria-pressed", "false"));
+      Object.values(themeEls).forEach((p) => p.classList.remove("on"));
+      gTheme.classList.toggle("focus", !was);
+      if (!was) { b.setAttribute("aria-pressed", "true"); if (themeEls[b.dataset.zone]) themeEls[b.dataset.zone].classList.add("on"); }
+    }));
     const qi = $("#q"), res = $("#results");
     const draw = () => {
       const hits = searchIndex(query);
-      res.innerHTML = hits.length ? `<div class="results">${hits.map((h) => h.river ? `<button data-river="${h.river.id}"><span>${esc(h.river.name)}</span><small>river</small></button>` : h.pass ? `<button data-pass="${h.pass.id}"><span>${esc(h.pass.name)}</span><small>pass · ${esc(byId[h.pass.states[0]].name)}</small></button>` : `<button data-go="${h.r.id}"><span>${esc(h.r.name)}</span><small>${h.kind === "name" ? "" : esc(h.kind + ": " + h.hit)}</small></button>`).join("")}</div>`
-        : query.trim().length >= 2 ? `<p style="margin:6px 2px;color:var(--ink-2)">No match. Try a capital, a river or a park name.</p>` : "";
-      res.querySelectorAll("[data-go]").forEach((b) => (b.onclick = () => { query = ""; select(b.dataset.go); }));
-      res.querySelectorAll("[data-river]").forEach((b) => (b.onclick = () => { query = ""; selectRiver(b.dataset.river); }));
-      res.querySelectorAll("[data-pass]").forEach((b) => (b.onclick = () => { query = ""; selectPass(b.dataset.pass); }));
+      res.innerHTML = hits.length ? `<div class="results">${hits.map((h) => `<button ${h.go ? `data-go="${h.go}"` : `data-f="${h.f}"`}><span>${esc(h.title)}</span><small>${esc(h.sub)}</small></button>`).join("")}</div>`
+        : query.trim().length >= 2 ? `<p style="margin:6px 2px;color:var(--ink-2)">No match. Try a capital, river, park or site name.</p>` : "";
+      wire(res);
     };
     qi.oninput = () => { query = qi.value; draw(); };
     draw();
   }
 
   // ---------- Practice ----------
-  const MODES = {
-    states: { title: "Find the state", desc: "Locate a state or UT by name.",
-      ask: (r) => `Find <em>${esc(r.name)}</em>`, pool: () => R },
-    capitals: { title: "Capitals", desc: "Which state or UT has this capital?",
-      ask: (r) => `Which state or UT has <em>${esc(r.capital.split(" (")[0])}</em> as its capital?`,
-      pool: () => R.filter((r) => !["Chandigarh"].includes(r.capital) || r.id === "ch") },
-    parks: { title: "Parks & reserves", desc: "Locate a national park or tiger reserve.",
-      ask: (r, q) => `Where is <em>${esc(q.extra)}</em>?`, pool: () => R.filter((r) => r.parks.length),
-      extra: (r) => r.parks[Math.floor(Math.random() * Math.min(3, r.parks.length))] },
-    borders: { title: "Borders", desc: "Find a state or UT that borders a country.",
-      kind: "multi" },
-    rivers: { title: "Rivers", desc: "Tap a state the river flows through.",
-      make: () => shuffle(window.RIVERS).slice(0, 10).map((rv) => ({ prompt: `Tap a state or UT the <em>${esc(rv.name)}</em> flows through`,
-        answers: rv.states, label: `${rv.name}: ${rv.states.map((i) => byId[i].name).join(", ")}` })) },
-    passes: { title: "Mountain passes", desc: "Which state or UT is the pass in?",
-      make: () => shuffle(window.PASSES).slice(0, 10).map((ps) => ({ prompt: `Which state or UT is <em>${esc(ps.name)}</em> in?`,
-        answers: ps.states, label: `${ps.name}: ${ps.states.map((i) => byId[i].name).join(" / ")}` })) },
-  };
   const COUNTRIES = ["Pakistan", "China", "Nepal", "Bhutan", "Bangladesh", "Myanmar"];
+  const inState = (it) => ({ prompt: `Which state or UT is <em>${esc(it.name)}</em> in?`, answers: it.states, label: `${it.name}: ${names(it.states)}` });
+  const MODES = {
+    states: { title: "Find the state", desc: "Locate a state or UT by name.", make: (first) => {
+      let pool = shuffle(R); if (first) pool = [byId[first]].concat(pool.filter((r) => r.id !== first));
+      return pool.slice(0, 10).map((r) => ({ prompt: `Find <em>${esc(r.name)}</em>`, answers: [r.id], label: r.name })); } },
+    capitals: { title: "Capitals", desc: "Which state or UT has this capital?", make: () => shuffle(R.filter((r) => r.capital !== "Chandigarh" || r.id === "ch")).slice(0, 10)
+      .map((r) => ({ prompt: `Which state or UT has <em>${esc(r.capital.split(" (")[0])}</em> as its capital?`, answers: [r.id], label: `${r.capital.split(" (")[0]}: ${r.name}` })) },
+    parks: { title: "Tiger reserves & parks", desc: "Which state is the reserve in?", make: () => shuffle(K.park.list).slice(0, 10).map(inState) },
+    borders: { title: "Borders", desc: "Find a state that borders a country.", make: () => shuffle(COUNTRIES.concat(shuffle(COUNTRIES).slice(0, 4))).slice(0, 10)
+      .map((c) => ({ prompt: `Tap a state or UT that borders <em>${c}</em>`, answers: R.filter((r) => r.borders.includes(c)).map((r) => r.id), label: `Borders ${c}` })) },
+    rivers: { title: "Rivers", desc: "Tap a state the river flows through.", make: () => shuffle(K.river.list).slice(0, 10)
+      .map((rv) => ({ prompt: `Tap a state or UT the <em>${esc(rv.name)}</em> flows through`, answers: rv.states, label: `${rv.name}: ${names(rv.states)}` })) },
+    passes: { title: "Mountain passes", desc: "Which state is the pass in?", make: () => shuffle(K.pass.list).slice(0, 10).map(inState) },
+    unesco: { title: "UNESCO sites", desc: "Which state is the site in?", make: () => shuffle(K.site.list).slice(0, 10).map(inState) },
+    lines: { title: "Ranges & lines", desc: "Tropic, meridian and ranges.", make: () => shuffle(K.line.list.concat(K.line.list, K.range.list.filter((x) => x.states.length > 1))).slice(0, 10)
+      .map((it) => ({ prompt: `Tap a state the <em>${esc(it.name)}</em> ${it.lat || it.lon ? "passes through" : "runs through"}`, answers: it.states, label: `${it.name}: ${names(it.states)}` })) },
+  };
   let quiz = null;
-  const shuffle = (a) => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
-
   function renderPracticeHome() {
     const best = store.get("atlas-best", {});
     view.innerHTML = `<div class="card">
       <div><div class="eyebrow">Practice</div><h2>Ten questions. Answer on the map.</h2></div>
-      <p style="margin:0;color:var(--ink-2);max-width:60ch">Labels are hidden while you play. A wrong tap shows the right answer, and the missed ones are listed at the end so you can revise them.</p>
+      <p style="margin:0;color:var(--ink-2);max-width:60ch">Labels and layers are hidden while you play. A wrong tap shows the right answer, and missed ones are listed at the end for revision.</p>
       <div class="modes">${Object.entries(MODES).map(([k, m]) => `<button class="mode" data-mode="${k}"><b>${m.title}</b><span>${m.desc}</span><span class="scoreline">${best[k] != null ? "Best " + best[k] + "/10" : "Not played yet"}</span></button>`).join("")}</div>
     </div>`;
     view.querySelectorAll("[data-mode]").forEach((b) => (b.onclick = () => startQuiz(b.dataset.mode)));
   }
-
-  function makeQuestions(modeKey, first) {
-    const m = MODES[modeKey];
-    if (m.make) return m.make();
-    if (modeKey === "borders") {
-      return shuffle(COUNTRIES.concat(shuffle(COUNTRIES).slice(0, 4))).slice(0, 10).map((c) => ({
-        prompt: `Tap a state or UT that borders <em>${c}</em>`,
-        answers: R.filter((r) => r.borders.includes(c)).map((r) => r.id), label: `Borders ${c}`,
-      }));
-    }
-    let pool = shuffle(m.pool());
-    if (first) pool = [byId[first]].concat(pool.filter((r) => r.id !== first));
-    return pool.slice(0, 10).map((r) => {
-      const q = { answers: [r.id], label: r.name };
-      if (m.extra) q.extra = m.extra(r);
-      q.prompt = m.ask(r, q);
-      if (q.extra) q.label = `${q.extra}: ${r.name}`;
-      if (modeKey === "capitals") q.label = `${r.capital.split(" (")[0]}: ${r.name}`;
-      return q;
-    });
-  }
-
   function startQuiz(modeKey, first) {
-    clearFeature(); select(null); setLayer(null);
-    quiz = { mode: modeKey, qs: makeQuestions(modeKey, first), i: 0, score: 0, results: [], locked: false };
+    clearFeature(); select(null); setLayer(null); if (base !== "political") setBase("political"); resetView();
+    quiz = { mode: modeKey, qs: MODES[modeKey].make(first), i: 0, score: 0, results: [], locked: false };
     svg.classList.add("quiz"); $("#plate").classList.add("quizzing");
     renderQuestion();
   }
-
   function clearMarks() { Object.values(els).forEach((g) => g.classList.remove("right", "wrong", "reveal")); }
-
   function renderQuestion(feedback = "", cls = "") {
     const q = quiz.qs[quiz.i];
     view.innerHTML = `<div class="qbox">
@@ -747,57 +934,39 @@ ul.notes li::marker { color: var(--sec, var(--accent)); }
       <div class="prompt" aria-live="polite">${q.prompt}</div>
       <div class="feedback ${cls}" aria-live="polite">${feedback}</div>
       <div class="backrow">${quiz.locked ? `<button class="btn" id="next">${quiz.i + 1 < quiz.qs.length ? "Next question" : "See results"}</button>` : `<button class="btn ghost" id="skip">I don't know</button>`}
-      <button class="btn ghost" id="quit">Stop</button></div>
-    </div>`;
+      <button class="btn ghost" id="quit">Stop</button></div></div>`;
     const next = $("#next"); if (next) { next.onclick = advance; next.focus(); }
     const skip = $("#skip"); if (skip) skip.onclick = () => quizAnswer(null);
     $("#quit").onclick = endQuiz;
   }
-
   function quizAnswer(id) {
     if (!quiz || quiz.locked) return;
-    const q = quiz.qs[quiz.i];
-    const ok = id && q.answers.includes(id);
+    const q = quiz.qs[quiz.i], ok = id && q.answers.includes(id);
     quiz.locked = true;
     if (ok) {
       quiz.score++; quiz.results[quiz.i] = "right"; els[id].classList.add("right");
       const others = q.answers.filter((a) => a !== id).map((a) => byId[a].name);
       renderQuestion(`Correct: ${esc(byId[id].name)}.${others.length ? " Also correct: " + esc(others.join(", ")) + "." : ""}`, "right");
     } else {
-      quiz.results[quiz.i] = "wrong";
-      if (id) els[id].classList.add("wrong");
+      quiz.results[quiz.i] = "wrong"; if (id) els[id].classList.add("wrong");
       q.answers.forEach((a) => els[a].classList.add("reveal"));
-      const ans = q.answers.map((a) => byId[a].name).join(", ");
-      renderQuestion(`${id ? "That is " + esc(byId[id].name) + ". " : ""}The answer${q.answers.length > 1 ? "s are" : " is"} shown in green: ${esc(ans)}.`, "wrong");
+      renderQuestion(`${id ? "That is " + esc(byId[id].name) + ". " : ""}The answer${q.answers.length > 1 ? "s are" : " is"} shown in green: ${esc(names(q.answers))}.`, "wrong");
     }
   }
-
-  function advance() {
-    clearMarks(); quiz.locked = false; quiz.i++;
-    if (quiz.i < quiz.qs.length) renderQuestion(); else renderResults();
-  }
-
+  function advance() { clearMarks(); quiz.locked = false; quiz.i++; if (quiz.i < quiz.qs.length) renderQuestion(); else renderResults(); }
   function renderResults() {
-    const best = store.get("atlas-best", {});
-    const isBest = best[quiz.mode] == null || quiz.score > best[quiz.mode];
+    const best = store.get("atlas-best", {}), isBest = best[quiz.mode] == null || quiz.score > best[quiz.mode];
     if (isBest) { best[quiz.mode] = quiz.score; store.set("atlas-best", best); }
-    const missed = quiz.qs.filter((_, k) => quiz.results[k] !== "right");
+    const missed = quiz.qs.filter((_, k) => quiz.results[k] !== "right"), mk = quiz.mode;
     view.innerHTML = `<div class="card">
-      <div><div class="eyebrow">${MODES[quiz.mode].title}</div><h2>${quiz.score} out of ${quiz.qs.length}${isBest && quiz.score ? " · new best" : ""}</h2></div>
-      ${missed.length ? `<section><h3>Revise these</h3><ul class="notes missed">${missed.map((q) => `<li>${esc(q.label)}</li>`).join("")}</ul></section>` : `<p style="margin:0">No misses. Try another round.</p>`}
-      <div class="backrow"><button class="btn" id="again">Play again</button><button class="btn ghost" id="home">Choose another round</button></div>
-    </div>`;
-    const mk = quiz.mode;
-    $("#again").onclick = () => startQuiz(mk);
-    $("#home").onclick = () => { endQuiz(); };
+      <div><div class="eyebrow">${MODES[mk].title}</div><h2>${quiz.score} out of ${quiz.qs.length}${isBest && quiz.score ? " · new best" : ""}</h2></div>
+      ${missed.length ? `<section class="sec facts"><h3>Revise these</h3>${list(missed.map((q) => q.label))}</section>` : `<p style="margin:0">No misses. Try another round.</p>`}
+      <div class="backrow"><button class="btn" id="again">Play again</button><button class="btn ghost" id="home">Choose another round</button></div></div>`;
+    $("#again").onclick = () => startQuiz(mk); $("#home").onclick = endQuiz;
   }
+  function endQuiz() { quiz = null; clearMarks(); svg.classList.remove("quiz"); $("#plate").classList.remove("quizzing"); renderPracticeHome(); }
 
-  function endQuiz() {
-    quiz = null; clearMarks(); svg.classList.remove("quiz"); $("#plate").classList.remove("quizzing");
-    renderPracticeHome();
-  }
-
-  // ---------- Tabs ----------
+  // ---------- Tabs and routing ----------
   function setTab(t) {
     mode = t;
     $("#tab-explore").setAttribute("aria-selected", String(t === "explore"));
@@ -807,15 +976,15 @@ ul.notes li::marker { color: var(--sec, var(--accent)); }
   }
   $("#tab-explore").onclick = () => setTab("explore");
   $("#tab-practice").onclick = () => setTab("practice");
-
-  const initial = (location.hash || "").slice(1);
   function route(h) {
-    if (h.startsWith("river-") && riverById[h.slice(6)]) { if (selRiver !== h.slice(6)) selectRiver(h.slice(6)); return true; }
-    if (h.startsWith("pass-") && passById[h.slice(5)]) { if (selPass !== h.slice(5)) selectPass(h.slice(5)); return true; }
+    const m = h.match(/^(river|pass|range|line|site|park|wet)-(.+)$/);
+    if (m && K[m[1]].byId[m[2]]) { if (!selFeature || selFeature.id !== m[2]) selectFeature(m[1], m[2]); return true; }
     if (byId[h]) { if (h !== selected) select(h); return true; }
     return false;
   }
-  if (!route(initial)) renderOverview();
+  svg.dataset.base = base;
+  applyView();
+  if (!route((location.hash || "").slice(1))) renderOverview();
   window.addEventListener("hashchange", () => { if (mode === "explore") route(location.hash.slice(1)); });
 })();
 </script>

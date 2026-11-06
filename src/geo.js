@@ -107,7 +107,7 @@ window.PASSES = [
   { id: "chang-la", name: "Chang La", lat: 34.05, lon: 77.93, states: ["la"], connects: "Leh and Pangong Tso",
     facts: ["On the road to Pangong Tso."] },
   { id: "zoji-la", name: "Zoji La", lat: 34.28, lon: 75.47, states: ["jk", "la"], connects: "The Kashmir valley and Kargil–Leh",
-    facts: ["On the Srinagar–Leh highway, on the J&K–Ladakh boundary.", "The Zojila tunnel is being built for all-weather access."] },
+    facts: ["On the Srinagar–Leh highway, on the J&K–Ladakh boundary.", "The 13 km Zojila tunnel broke through in June 2026; it is expected to open around 2028."] },
   { id: "pir-panjal", name: "Pir Panjal Pass", lat: 33.63, lon: 74.53, states: ["jk"], connects: "The Kashmir valley and Poonch–Rajouri",
     facts: ["Carries the Mughal Road."] },
   { id: "banihal", name: "Banihal Pass", lat: 33.48, lon: 75.19, states: ["jk"], connects: "Jammu and the Kashmir valley",
