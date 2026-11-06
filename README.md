@@ -17,6 +17,8 @@ An interactive map of India's 28 states and 8 union territories, made for UPSC p
 - **Base maps:** political, soils, climate (Köppen) and crops (leading producer states).
 - **Highlight** states by border country, coastline, Schedule, Zonal Council, Tropic of Cancer or Standard Meridian.
 - **Zoom and pan** with the scroll wheel, pinch or the buttons. Neighbouring countries, sea names, a scale bar and a compass give context.
+- **Daily challenge:** the same ten mixed questions for everyone each day (India time), with a copyable result for sharing.
+- **Search** understands old and alternative names (Cauvery, Orissa, Bombay, Tapti, Port Blair and more).
 - **Practice:** eight ten-question rounds answered on the map: find the state, capitals, tiger reserves and parks, borders, rivers, passes, UNESCO sites, and ranges and lines.
 
 ## Build

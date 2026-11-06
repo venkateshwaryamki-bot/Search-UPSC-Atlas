@@ -266,6 +266,12 @@ details.more[open] summary { margin-bottom: 8px; }
 .mode { text-align: left; border: 0; color: #fff; padding: 12px; border-radius: 10px; cursor: pointer; display: flex; flex-direction: column; gap: 2px; background: linear-gradient(135deg, var(--m1), var(--m2)); transition: transform .15s; }
 .mode:hover { transform: translateY(-2px); }
 .mode b { font-weight: 600; } .mode span { font-size: .8rem; color: rgba(255,255,255,.9); }
+.mode.daily { --m1: #1f2b30; --m2: #4a3f78; padding: 16px; }
+.mode.daily b { font-size: 1.05rem; }
+.sharebox { display: flex; flex-direction: column; gap: 10px; align-items: flex-start; border: 1px solid var(--rule); border-radius: 10px; padding: 12px 14px; }
+.sharebox pre { margin: 0; font-family: var(--font-mono); font-size: .9rem; white-space: pre-wrap; }
+.sharebox p { margin: 0; color: var(--ink-2); font-size: .85rem; }
+.sharebox textarea { width: 100%; min-height: 4.5em; font-family: var(--font-mono); font-size: .85rem; }
 .mode:nth-child(1) { --m1: #b8432a; --m2: #d9822b; } .mode:nth-child(2) { --m1: #2366a8; --m2: #2f9fa0; }
 .mode:nth-child(3) { --m1: #2b7a3e; --m2: #7ab33d; } .mode:nth-child(4) { --m1: #6a4c9c; --m2: #b8457a; }
 .mode:nth-child(5) { --m1: #1c6ed1; --m2: #3fb3d8; } .mode:nth-child(6) { --m1: #7a4318; --m2: #c98a2b; }
@@ -601,7 +607,8 @@ window.REGIONS = [
     facts: ["Became a Union Territory with a legislature on 31 October 2019.",
             "Article 370 was made inoperative in August 2019.",
             "Dachigam NP is the last home of the hangul (Kashmir stag).",
-            "Wular is one of Asia's largest freshwater lakes."] },
+            "Wular is one of Asia's largest freshwater lakes.",
+            "Still a Union Territory as of 2026; restoration of statehood is pending."] },
   { id: "la", name: "Ladakh", kind: "UT", capital: "Leh (also Kargil)", since: 2019,
     rivers: ["Indus", "Shyok", "Zanskar", "Nubra", "Suru"],
     parks: ["Hemis NP", "Changthang Cold Desert WLS", "Tso Moriri (Ramsar)"],
@@ -877,7 +884,7 @@ window.RANGES = [
     facts: ["The southern part of the Western Ghats, south of the Anamalai.", "Known for cardamom and pepper; Periyar Tiger Reserve lies here."] },
   { id: "purvanchal", name: "Purvanchal (Patkai, Naga, Mizo hills)", group: "Himalaya", states: ["ar", "nl", "mn", "mz"],
     line: [[27.35, 96.1], [26.7, 95.4], [25.9, 94.7], [25.0, 94.2], [24.1, 93.6], [23.3, 93.1], [22.3, 92.9]],
-    facts: ["The eastern hills along the Myanmar border: Patkai Bum, Naga hills, Manipur hills and Mizo (Lushai) hills.", "Saramati (about 3,840 m) is the highest peak of Nagaland."] },
+    facts: ["The eastern hills along the Myanmar border: Patkai Bum, Naga hills, Manipur hills and Mizo (Lushai) hills.", "Saramati (3,826 m), on the Myanmar border, is the highest peak of Nagaland."] },
   { id: "meghalaya", name: "Garo, Khasi and Jaintia Hills", group: "Peninsular", states: ["ml"],
     line: [[25.55, 90.1], [25.5, 91.3], [25.4, 92.4]],
     facts: ["The Meghalaya plateau, an extension of the peninsular plateau.", "Separated from the Chota Nagpur plateau by the Garo–Rajmahal gap.", "Mawsynram and Sohra lie on its rain-facing southern edge."] },
@@ -1001,7 +1008,7 @@ window.RESERVE_NOTES = {
   "silent-valley": "Saved from a hydroelectric project after a public campaign in the 1970s–80s.",
   bhitarkanika: "Mangroves with India's largest saltwater crocodile population.", "kaziranga-tr": "Home to most of the world's one-horned rhinos.",
   "sundarbans-tr": "The only mangrove tiger habitat in the world.", periyar: "Built around the Periyar lake (Mullaperiyar dam).",
-  velavadar: "Grassland park for the blackbuck.", "marine-kutch": "India's first marine national park (1980).",
+  velavadar: "Grassland park for the blackbuck.", "marine-kutch": "India's first marine national park (1982); the wider area became a marine sanctuary in 1980.",
   desert: "Habitat of the Great Indian Bustard.", sariska: "Tigers were relocated here after local extinction in 2005.",
   panna: "Tigers were reintroduced after local extinction in 2009; on the Ken river.", namdapha: "Home to four big cats: tiger, leopard, clouded leopard and snow leopard.",
   "valley-flowers": "Alpine meadows; part of a UNESCO World Heritage Site.", campbell: "On Great Nicobar, near the planned port and township project.",
@@ -1147,7 +1154,17 @@ window.CROPS = [
   };
   const P = (ll) => window.PROJECT(ll[0], ll[1]);
   const el = (tag, attrs, parent) => { const e = document.createElementNS(NS, tag); for (const k in attrs || {}) e.setAttribute(k, attrs[k]); if (parent) parent.append(e); return e; };
-  const shuffle = (a) => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+  let rng = Math.random;
+  const shuffle = (a) => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(rng() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+  const seeded = (seed) => () => { seed |= 0; seed = (seed + 0x6D2B79F5) | 0; let t = Math.imul(seed ^ (seed >>> 15), 1 | seed); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
+  // Other spellings people search for. Each entry maps a variant to the name used in the atlas.
+  const ALIASES = { cauvery: "kaveri", ganges: "ganga", tsangpo: "brahmaputra", siang: "brahmaputra", dihang: "brahmaputra", jamuna: "brahmaputra",
+    tista: "teesta", pennar: "penner", tapti: "tapi", karnali: "ghaghara", saryu: "ghaghara", gogra: "ghaghara", satluj: "sutlej", vitasta: "jhelum",
+    orissa: "odisha", pondicherry: "puducherry", uttaranchal: "uttarakhand", bangalore: "bengaluru", bombay: "mumbai", madras: "chennai",
+    calcutta: "kolkata", trivandrum: "thiruvananthapuram", "port blair": "sri vijaya puram", sahyadri: "western ghats", himadri: "great himalaya",
+    "blue mountains": "nilgiri", "kanchenjunga": "khangchendzonga", "hailey": "corbett", gurgaon: "gurugram", "j&k": "jammu and kashmir", "jk": "jammu and kashmir",
+    "a&n": "andaman", "dnh": "dadra", "up": "uttar pradesh", "mp": "madhya pradesh", "ap": "andhra pradesh", "hp": "himachal pradesh", "wb": "west bengal", "tn": "tamil nadu" };
+  const norm = (s) => s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
   const names = (ids) => ids.map((i) => byId[i].name).join(", ");
 
   // ---------- Zones (state colours) ----------
@@ -1633,14 +1650,16 @@ window.CROPS = [
   }
 
   function searchIndex(q) {
-    q = q.trim().toLowerCase(); if (q.length < 2) return [];
+    q = norm(q); if (q.length < 2) return [];
+    if (ALIASES[q]) q = ALIASES[q];
+    else { const k = Object.keys(ALIASES).find((a) => a.length > 3 && a.startsWith(q)); if (k && q.length > 3) q = ALIASES[k]; }
     const out = [];
     R.forEach((r) => {
       const fields = [["", [r.name]], ["capital", [r.capital]], ["river", r.rivers], ["park", r.parks], ["culture", r.culture], ["tribe", r.people]];
-      for (const [kind, arr] of fields) { const hit = arr.find((v) => v.toLowerCase().includes(q)); if (hit) { out.push({ go: r.id, title: r.name, sub: kind ? kind + ": " + hit : "" }); break; } }
+      for (const [kind, arr] of fields) { const hit = arr.find((v) => norm(v).includes(q)); if (hit) { out.push({ go: r.id, title: r.name, sub: kind ? kind + ": " + hit : "" }); break; } }
     });
     Object.entries(K).forEach(([kind, k]) => k.list.forEach((it) => {
-      if (it.name.toLowerCase().includes(q)) out.unshift({ f: kind + ":" + it.id, title: it.name, sub: k.noun.toLowerCase() + (it.states && it.states.length === 1 ? " · " + byId[it.states[0]].name : "") });
+      if (norm(it.name).includes(q)) out.unshift({ f: kind + ":" + it.id, title: it.name, sub: k.noun.toLowerCase() + (it.states && it.states.length === 1 ? " · " + byId[it.states[0]].name : "") });
     }));
     return out.slice(0, 14);
   }
@@ -1725,13 +1744,31 @@ window.CROPS = [
     lines: { title: "Ranges & lines", desc: "Tropic, meridian and ranges.", make: () => shuffle(K.line.list.concat(K.line.list, K.range.list.filter((x) => x.states.length > 1))).slice(0, 10)
       .map((it) => ({ prompt: `Tap a state the <em>${esc(it.name)}</em> ${it.lat || it.lon ? "passes through" : "runs through"}`, answers: it.states, label: `${it.name}: ${names(it.states)}` })) },
   };
+  // Daily challenge: the same ten mixed questions for everyone on a given day (India time).
+  const istDate = () => new Date(Date.now() + 5.5 * 3600e3).toISOString().slice(0, 10);
+  const dayNumber = (d) => Math.round((Date.parse(d) - Date.parse("2026-11-06")) / 86400e3) + 1;
+  MODES.daily = { title: "Daily challenge", desc: "", make: () => {
+    const d = istDate(); rng = seeded(Number(d.replace(/-/g, "")));
+    const pick = (k, n) => MODES[k].make().slice(0, n);
+    const qs = shuffle([].concat(pick("states", 2), pick("capitals", 1), pick("parks", 1), pick("borders", 1), pick("rivers", 1), pick("passes", 1), pick("unesco", 1), pick("lines", 2)));
+    rng = Math.random; return qs; } };
+  function shareText(r) {
+    return `India State Atlas · Daily #${dayNumber(r.date)} (${r.date})\n${r.marks.map((m) => (m === "right" ? "🟩" : "🟥")).join("")}\n${r.score}/10`;
+  }
+  function copyText(text, btn) {
+    const done = () => { btn.textContent = "Copied"; setTimeout(() => (btn.textContent = "Copy result"), 1800); };
+    const fallback = () => { const ta = view.querySelector("#sharetext"); if (ta) { ta.hidden = false; ta.select(); } btn.textContent = "Select and copy the text"; };
+    try { navigator.clipboard.writeText(text).then(done, fallback); } catch (e) { fallback(); }
+  }
   let quiz = null;
   function renderPracticeHome() {
     const best = store.get("atlas-best", {});
+    const today = istDate(), done = store.get("atlas-daily", {})[today];
     view.innerHTML = `<div class="card">
       <div><div class="eyebrow">Practice</div><h2>Ten questions. Answer on the map.</h2></div>
+      <button class="mode daily" data-mode="daily"><b>Daily challenge #${dayNumber(today)}</b><span>The same ten mixed questions for everyone today. Share your score with your group.</span><span class="scoreline">${done ? `Today: ${done.score}/10 · play again for practice` : "Not played today"}</span></button>
       <p style="margin:0;color:var(--ink-2);max-width:60ch">Labels and layers are hidden while you play. A wrong tap shows the right answer, and missed ones are listed at the end for revision.</p>
-      <div class="modes">${Object.entries(MODES).map(([k, m]) => `<button class="mode" data-mode="${k}"><b>${m.title}</b><span>${m.desc}</span><span class="scoreline">${best[k] != null ? "Best " + best[k] + "/10" : "Not played yet"}</span></button>`).join("")}</div>
+      <div class="modes">${Object.entries(MODES).filter(([k]) => k !== "daily").map(([k, m]) => `<button class="mode" data-mode="${k}"><b>${m.title}</b><span>${m.desc}</span><span class="scoreline">${best[k] != null ? "Best " + best[k] + "/10" : "Not played yet"}</span></button>`).join("")}</div>
     </div>`;
     view.querySelectorAll("[data-mode]").forEach((b) => (b.onclick = () => startQuiz(b.dataset.mode)));
   }
@@ -1772,13 +1809,21 @@ window.CROPS = [
   function advance() { clearMarks(); quiz.locked = false; quiz.i++; if (quiz.i < quiz.qs.length) renderQuestion(); else renderResults(); }
   function renderResults() {
     const best = store.get("atlas-best", {}), isBest = best[quiz.mode] == null || quiz.score > best[quiz.mode];
-    if (isBest) { best[quiz.mode] = quiz.score; store.set("atlas-best", best); }
+    if (isBest && quiz.mode !== "daily") { best[quiz.mode] = quiz.score; store.set("atlas-best", best); }
     const missed = quiz.qs.filter((_, k) => quiz.results[k] !== "right"), mk = quiz.mode;
+    let daily = null;
+    if (mk === "daily") {
+      const all = store.get("atlas-daily", {}), d = istDate();
+      daily = all[d] || { date: d, score: quiz.score, marks: quiz.results.slice() };
+      if (!all[d]) { all[d] = daily; store.set("atlas-daily", all); }
+    }
     view.innerHTML = `<div class="card">
-      <div><div class="eyebrow">${MODES[mk].title}</div><h2>${quiz.score} out of ${quiz.qs.length}${isBest && quiz.score ? " · new best" : ""}</h2></div>
+      <div><div class="eyebrow">${mk === "daily" ? "Daily challenge #" + dayNumber(daily.date) : MODES[mk].title}</div><h2>${quiz.score} out of ${quiz.qs.length}${isBest && quiz.score && mk !== "daily" ? " · new best" : ""}</h2></div>
+      ${daily ? `<section class="sharebox"><pre>${esc(shareText(daily))}</pre>${daily.score !== quiz.score ? `<p>Your first try today counts: ${daily.score}/10.</p>` : ""}<textarea id="sharetext" readonly hidden>${esc(shareText(daily))}</textarea><button class="btn" id="copy">Copy result</button></section>` : ""}
       ${missed.length ? `<section class="sec facts"><h3>Revise these</h3>${list(missed.map((q) => q.label))}</section>` : `<p style="margin:0">No misses. Try another round.</p>`}
       <div class="backrow"><button class="btn" id="again">Play again</button><button class="btn ghost" id="home">Choose another round</button></div></div>`;
     $("#again").onclick = () => startQuiz(mk); $("#home").onclick = endQuiz;
+    const cp = $("#copy"); if (cp) cp.onclick = () => copyText(shareText(daily), cp);
   }
   function endQuiz() { quiz = null; clearMarks(); svg.classList.remove("quiz"); $("#plate").classList.remove("quizzing"); renderPracticeHome(); }
 
