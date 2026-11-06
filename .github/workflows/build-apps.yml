@@ -52,7 +52,9 @@ jobs:
           gh release delete test-build --yes --cleanup-tag 2>/dev/null || true
           gh release create test-build SearchUPSCAtlas-test.apk --title "Test build (Android APK)" --notes "$NOTES" --prerelease --target "$GITHUB_SHA"
 
+  # iOS is paused for now (Android first). Run it from the Actions tab with "Run workflow" when needed.
   ios:
+    if: github.event_name == 'workflow_dispatch'
     runs-on: macos-latest
     timeout-minutes: 40
     steps:
