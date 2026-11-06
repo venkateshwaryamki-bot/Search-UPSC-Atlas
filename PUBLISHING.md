@@ -18,12 +18,9 @@ The app is ready to build. This guide covers the parts that need you: accounts, 
 - `store/` has the screenshots, feature graphic, icon and the listing text (`store/listing.md`).
 - `docs/privacy.html` is the privacy policy page.
 
-## Step 0: Put the code on GitHub
+## Step 0: The code on GitHub (done)
 
-Codemagic builds from your GitHub repository, so it has to be pushed first.
-
-1. Reconnect GitHub for Claude at https://claude.ai/connect-github and install the Claude GitHub App on `nithishyamki-source/India`.
-2. Ask Claude to push the `claude/brainstorming-lvkufn` branch, then merge it into `main`.
+The project lives at https://github.com/venkateshwaryamki-bot/Search-UPSC-Atlas on the `main` branch. Codemagic builds from there.
 
 ## Step 1: Create the developer accounts
 
@@ -43,7 +40,7 @@ Both stores need a public privacy policy link.
 
 1. Open `docs/privacy.html` and replace `[your contact email]` with the email you want students to see. Do the same in `store/listing.md`.
 2. On GitHub, go to the repository's **Settings → Pages**. Set **Source** to "Deploy from a branch", **Branch** to `main`, **Folder** to `/docs`, then save.
-3. After a minute the policy is live at `https://nithishyamki-source.github.io/India/privacy.html`.
+3. After a minute the policy is live at `https://venkateshwaryamki-bot.github.io/Search-UPSC-Atlas/privacy.html`.
 
 ## Step 3: Set up Codemagic
 

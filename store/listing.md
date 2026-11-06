@@ -52,7 +52,7 @@ Education
 [your contact email, required by both stores]
 
 ## Privacy policy URL
-https://nithishyamki-source.github.io/India/privacy.html (works once GitHub Pages is turned on, see PUBLISHING.md)
+https://venkateshwaryamki-bot.github.io/Search-UPSC-Atlas/privacy.html (works once GitHub Pages is turned on, see PUBLISHING.md)
 
 ## Content rating
 Google Play: complete the IARC questionnaire. Answer "No" to all content questions (no violence, no user interaction, no data sharing, no purchases). Expected rating: Everyone / 3+.
