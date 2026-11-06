@@ -6,7 +6,10 @@
 <style>
 /* Layout: an atlas plate. The map is the page; a field-notes panel sits beside it (below it on phones). */
 :root {
-  --sea: #dfe9ec;          /* ocean behind the map */
+  --sea: #cfe6f2;          /* ocean behind the map */
+  --sea-2: #eef6f3;
+  --sat: 78%; --lt: 68%;   /* state fills: hsl(zone hue, sat, lt) */
+  --shadow: rgba(30, 60, 80, .28);
   --paper: #f6f7f4;        /* panel ground */
   --ink: #1d2a2f;          /* text */
   --ink-2: #56656b;        /* secondary text */
@@ -24,14 +27,14 @@
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --sea: #0f1a1f; --paper: #152126; --ink: #e5ebe8; --ink-2: #9aaaa9; --rule: #2a3a40;
+    --sea: #0b2233; --sea-2: #0f1a22; --sat: 55%; --lt: 40%; --shadow: rgba(0,0,0,.6); --paper: #152126; --ink: #e5ebe8; --ink-2: #9aaaa9; --rule: #2a3a40;
     --accent: #ef7d5e; --accent-ink: #1a0f0b; --good: #6fcf97; --bad: #ef7d5e;
     --t1: #4a4434; --t2: #3a4836; --t3: #4d3a36; --t4: #3c3b4f; --t5: #52482f;
     --border-line: #9c8d7e; --dim: 0.22; color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
-  --sea: #0f1a1f; --paper: #152126; --ink: #e5ebe8; --ink-2: #9aaaa9; --rule: #2a3a40;
+  --sea: #0b2233; --sea-2: #0f1a22; --sat: 55%; --lt: 40%; --shadow: rgba(0,0,0,.6); --paper: #152126; --ink: #e5ebe8; --ink-2: #9aaaa9; --rule: #2a3a40;
   --accent: #ef7d5e; --accent-ink: #1a0f0b; --good: #6fcf97; --bad: #ef7d5e;
   --t1: #4a4434; --t2: #3a4836; --t3: #4d3a36; --t4: #3c3b4f; --t5: #52482f;
   --border-line: #9c8d7e; --dim: 0.22; color-scheme: dark;
@@ -177,6 +180,70 @@ ul.notes { margin: 0; padding-left: 18px; display: flex; flex-direction: column;
 
 footer { font-size: 0.75rem; color: var(--ink-2); max-width: 62ch; margin-top: auto; padding-top: 16px; border-top: 1px solid var(--rule); }
 footer a { color: inherit; }
+
+/* ---------- Colour layer ---------- */
+.plate { background: radial-gradient(120% 90% at 30% 20%, var(--sea-2), var(--sea)); }
+.region path.shape { fill: hsl(calc(var(--h) + var(--dh, 0)) var(--sat) calc(var(--lt) + var(--dl, 0) * 1%)) !important; stroke: rgba(255,255,255,.85); stroke-width: .6; }
+:root:not([data-theme="light"]) .region path.shape { stroke: rgba(255,255,255,.85); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .region path.shape { stroke: rgba(10,20,25,.9); } }
+:root[data-theme="dark"] .region path.shape { stroke: rgba(10,20,25,.9); }
+#map > g:first-of-type { filter: drop-shadow(0 6px 10px var(--shadow)); }
+.region:hover path.shape { filter: brightness(1.08) saturate(1.25); }
+.region.selected path.shape { stroke: var(--ink) !important; stroke-width: 1.3; filter: saturate(1.4) brightness(1.05); }
+.map.filtering .region:not(.lit):not(.selected) { opacity: .5; filter: grayscale(1); }
+.region.lit path.shape { filter: saturate(1.35); }
+.region path.hit { stroke: hsl(var(--h) 80% 50%); stroke-opacity: .35; }
+.labels text { font-weight: 600; fill-opacity: .78; paint-order: stroke; stroke: rgba(255,255,255,.55); stroke-width: 1.6px; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .labels text { stroke: rgba(0,0,0,.5); } }
+:root[data-theme="dark"] .labels text { stroke: rgba(0,0,0,.5); }
+.labels text.on { fill: var(--ink); fill-opacity: 1; }
+.masthead h1 { background: linear-gradient(90deg, #e4572e, #f2a541 30%, #2fa36b 60%, #2a7fd4 85%, #8e5bd6); -webkit-background-clip: text; background-clip: text; color: transparent; }
+
+.chip { --chip: var(--accent); border-color: color-mix(in srgb, var(--chip) 45%, var(--rule)); color: var(--ink); }
+.chip::before { content: ""; display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--chip); margin-right: 6px; vertical-align: 1px; }
+.chip:hover { border-color: var(--chip); background: color-mix(in srgb, var(--chip) 10%, var(--paper)); }
+.chip[aria-pressed="true"] { background: var(--chip); border-color: var(--chip); color: #fff; }
+.chip[aria-pressed="true"]::before { background: #fff; }
+
+.hero { border-radius: 14px; padding: 18px 18px 16px; color: #fff; position: relative; overflow: hidden;
+  background: linear-gradient(135deg, hsl(var(--h) 70% 42%), hsl(calc(var(--h) + 35) 75% 55%)); box-shadow: 0 10px 24px -12px hsl(var(--h) 70% 35%); }
+.hero::after { content: attr(data-code); position: absolute; right: 10px; bottom: -18px; font-family: var(--font-display); font-size: 3.6rem; opacity: .14; line-height: 1; }
+.hero .eyebrow { color: rgba(255,255,255,.85); }
+.hero h2 { color: #fff; }
+.hero .zone { display: inline-block; margin-top: 8px; font-size: .78rem; background: rgba(255,255,255,.2); padding: 2px 10px; border-radius: 999px; }
+.facts-grid { border: 0; padding: 0; gap: 10px; }
+.facts-grid > div:last-child:nth-child(odd) { grid-column: 1 / -1; }
+.facts-grid > div { background: color-mix(in srgb, hsl(var(--h) 70% 50%) 9%, var(--paper)); border-radius: 10px; padding: 10px 12px; }
+.sec h3 { display: flex; align-items: center; gap: 8px; color: var(--sec); }
+.sec h3::before { content: ""; width: 10px; height: 10px; border-radius: 3px; background: var(--sec); }
+.sec .tag { background: color-mix(in srgb, var(--sec) 15%, var(--paper)); border: 1px solid color-mix(in srgb, var(--sec) 30%, transparent); }
+.sec.facts { --sec: #d9480f; } .sec.rivers { --sec: #1c7ed6; } .sec.parks { --sec: #2b8a3e; }
+.sec.culture { --sec: #c2255c; } .sec.people { --sec: #e8890c; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .sec { filter: brightness(1.35); } }
+:root[data-theme="dark"] .sec { filter: brightness(1.35); }
+ul.notes li::marker { color: var(--sec, var(--accent)); }
+
+.stat { border: 0; border-radius: 12px; padding: 12px; color: #fff; }
+.stat span { color: rgba(255,255,255,.9); }
+.stat:nth-child(1) { background: linear-gradient(135deg, #e4572e, #f2a541); }
+.stat:nth-child(2) { background: linear-gradient(135deg, #2a7fd4, #2fb5a3); }
+.stat:nth-child(3) { background: linear-gradient(135deg, #8e5bd6, #d6457f); }
+.index button::before { content: ""; flex: none; width: 10px; height: 10px; border-radius: 50%; margin-top: 6px; background: hsl(calc(var(--h) + var(--dh, 0)) 70% 55%); }
+.index button { justify-content: flex-start; align-items: flex-start; }
+.index button span { flex: 1; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: .8rem; }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.legend i { width: 12px; height: 12px; border-radius: 3px; background: hsl(var(--h) 70% 55%); }
+
+.mode { border: 0; color: #fff; padding: 14px; border-radius: 12px; background: linear-gradient(135deg, var(--m1), var(--m2)); box-shadow: 0 8px 18px -12px var(--m1); transition: transform .15s; }
+.mode:hover { transform: translateY(-2px); }
+.mode span, .mode .scoreline { color: rgba(255,255,255,.88); }
+.mode:nth-child(1) { --m1: #e4572e; --m2: #f2a541; } .mode:nth-child(2) { --m1: #2a7fd4; --m2: #2fb5a3; }
+.mode:nth-child(3) { --m1: #2b8a3e; --m2: #94c93d; } .mode:nth-child(4) { --m1: #8e5bd6; --m2: #d6457f; }
+.btn { background: linear-gradient(135deg, #e4572e, #d6457f); color: #fff; }
+.progress i { height: 6px; }
+.prompt em { background: linear-gradient(90deg, #e4572e, #8e5bd6); -webkit-background-clip: text; background-clip: text; color: transparent; }
+@media (prefers-reduced-motion: reduce) { .mode { transition: none; } }
 </style>
 
 <div class="app">
@@ -546,9 +613,21 @@ window.LAYERS = (function () {
     set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} },
   };
 
-  // Political-map tints, chosen so neighbours differ.
-  const TINT = { jk:1, la:2, hp:3, pb:2, ch:4, hr:1, dl:3, ut:4, up:2, rj:3, gj:1, mp:4, mh:2, ga:1, ka:3, kl:1, tn:2,
-    py:4, ap:1, tg:4, ct:5, or:2, jh:3, br:1, wb:4, sk:3, as:2, ar:1, nl:3, mn:1, mz:3, tr:1, ml:1, dh:3, an:5, ld:5 };
+  // Colours follow the Zonal Councils: one hue per zone, a different shade per state ([hue shift, lightness shift]).
+  const ZONES = [
+    { id: "north", label: "Northern", h: 8, m: { jk:[-10,2], la:[12,8], hp:[2,-8], pb:[14,-2], hr:[-6,8], rj:[-12,-6], dl:[22,-12], ch:[22,-12] } },
+    { id: "central", label: "Central", h: 268, m: { ut:[-22,6], up:[8,-4], mp:[-12,7], ct:[26,-6] } },
+    { id: "east", label: "Eastern", h: 40, m: { br:[6,8], jh:[12,-8], wb:[-10,5], or:[-18,-6] } },
+    { id: "west", label: "Western", h: 328, m: { gj:[0,5], mh:[-16,-5], ga:[14,7], dh:[20,-8] } },
+    { id: "south", label: "Southern", h: 205, m: { ap:[0,3], tg:[-20,-7], ka:[18,7], kl:[-12,-6], tn:[10,-2], py:[-26,-12] } },
+    { id: "ne", label: "North Eastern Council", h: 135, m: { as:[0,0], ar:[-16,6], nl:[16,-6], mn:[-22,-3], mz:[10,7], tr:[-6,-9], ml:[22,6], sk:[28,2] } },
+    { id: "islands", label: "Island UTs", h: 172, m: { an:[0,0], ld:[8,6] } },
+  ];
+  const ZONE_OF = {};
+  ZONES.forEach((z) => Object.entries(z.m).forEach(([id, [dh, dl]]) => (ZONE_OF[id] = { z, dh, dl })));
+  const zoneStyle = (id) => { const o = ZONE_OF[id]; return `--h:${o.z.h};--dh:${o.dh};--dl:${o.dl}`; };
+  ZONES.forEach((z) => L.push({ id: "zone-" + z.id, group: "Zones", label: z.label, ids: Object.keys(z.m), h: z.h }));
+  const GROUP_COLOR = { Borders: "#e4572e", Geography: "#1c7ed6", Constitution: "#8e5bd6" };
   const SHORT = { jk:"J&K", la:"LADAKH", hp:"HP", pb:"PB", hr:"HR", ut:"UK", up:"UP", rj:"RJ", gj:"GJ", mp:"MP", mh:"MH",
     ka:"KA", kl:"KL", tn:"TN", ap:"AP", tg:"TG", ct:"CG", or:"OD", jh:"JH", br:"BR", wb:"WB", as:"AS", ar:"AR", nl:"NL",
     mn:"MN", mz:"MZ", tr:"TR", ml:"ML", an:"A&N", ld:"LD" };
@@ -576,7 +655,7 @@ window.LAYERS = (function () {
   const els = {};
   R.forEach((r) => {
     const g = document.createElementNS(NS, "g");
-    g.setAttribute("class", `region c${TINT[r.id] || 1}`);
+    g.setAttribute("class", "region"); g.setAttribute("style", zoneStyle(r.id));
     g.dataset.id = r.id;
     if (r.id === "jk") g.setAttribute("clip-path", "url(#clip-jk)");
     if (r.id === "la") g.setAttribute("clip-path", "url(#clip-la)");
@@ -651,7 +730,7 @@ window.LAYERS = (function () {
   const filters = $("#filters");
   const groups = [...new Set(L.map((l) => l.group))];
   filters.innerHTML = groups.map((gname) => `<div class="fgroup"><span class="glabel">${gname}</span>${
-    L.filter((l) => l.group === gname).map((l) => `<button class="chip" id="layer-${l.id}" data-layer="${l.id}" aria-pressed="false">${esc(l.label)}</button>`).join("")
+    L.filter((l) => l.group === gname).map((l) => `<button class="chip" id="layer-${l.id}" data-layer="${l.id}" aria-pressed="false" style="--chip:${l.h != null ? `hsl(${l.h} 70% 48%)` : GROUP_COLOR[l.group]}">${esc(l.label)}</button>`).join("")
   }</div>`).join("");
   filters.addEventListener("click", (e) => {
     const b = e.target.closest("[data-layer]"); if (!b) return;
@@ -684,19 +763,19 @@ window.LAYERS = (function () {
   function renderRegion(r) {
     view.innerHTML = `<article class="card">
       <div class="backrow"><button class="link" id="back">← All states and UTs</button></div>
-      <div><div class="eyebrow">${r.kind === "UT" ? "Union Territory" : "State"}</div><h2>${esc(r.name)}</h2></div>
-      <dl class="facts-grid">
+      <div class="hero" style="${zoneStyle(r.id)}" data-code="${esc(SHORT[r.id] || r.name.slice(0, 2).toUpperCase())}"><div class="eyebrow">${r.kind === "UT" ? "Union Territory" : "State"}</div><h2>${esc(r.name)}</h2><span class="zone">${(() => { const z = ZONE_OF[r.id].z; return z.id === "ne" ? z.label : z.id === "islands" ? "Island territory" : z.label + " Zonal Council"; })()}</span></div>
+      <dl class="facts-grid" style="${zoneStyle(r.id)}">
         <div><dt>Capital</dt><dd>${esc(r.capital)}</dd></div>
         <div><dt>In current form since</dt><dd>${r.since}</dd></div>
         <div><dt>International border</dt><dd>${r.borders.length ? esc(r.borders.join(", ")) : "None"}</dd></div>
         <div><dt>Coastline</dt><dd>${r.coastal ? "Yes" : "No"}</dd></div>
         <div><dt>Tribal areas</dt><dd>${r.schedule === 5 ? "Fifth Schedule" : r.schedule === 6 ? "Sixth Schedule" : "Not scheduled"}</dd></div>
       </dl>
-      <section><h3>Key facts</h3><ul class="notes">${r.facts.map((f) => `<li>${esc(f)}</li>`).join("")}</ul></section>
-      ${r.rivers.length ? `<section><h3>Rivers</h3>${tagList(r.rivers)}</section>` : ""}
-      ${r.parks.length ? `<section><h3>National parks, reserves &amp; wetlands</h3>${tagList(r.parks, "flag")}</section>` : ""}
-      ${r.culture.length ? `<section><h3>Dance, art &amp; festivals</h3>${tagList(r.culture)}</section>` : ""}
-      ${r.people.length ? `<section><h3>Tribal communities</h3>${tagList(r.people)}</section>` : ""}
+      <section class="sec facts"><h3>Key facts</h3><ul class="notes">${r.facts.map((f) => `<li>${esc(f)}</li>`).join("")}</ul></section>
+      ${r.rivers.length ? `<section class="sec rivers"><h3>Rivers</h3>${tagList(r.rivers)}</section>` : ""}
+      ${r.parks.length ? `<section class="sec parks"><h3>National parks, reserves &amp; wetlands</h3>${tagList(r.parks, "flag")}</section>` : ""}
+      ${r.culture.length ? `<section class="sec culture"><h3>Dance, art &amp; festivals</h3>${tagList(r.culture)}</section>` : ""}
+      ${r.people.length ? `<section class="sec people"><h3>Tribal communities</h3>${tagList(r.people)}</section>` : ""}
       <div class="backrow"><button class="btn ghost" id="quizme">Practise finding ${esc(r.name)}</button></div>
     </article>`;
     $("#back").onclick = () => select(null);
@@ -720,14 +799,14 @@ window.LAYERS = (function () {
     const layer = activeLayer && L.find((l) => l.id === activeLayer);
     const list = (kind) => R.filter((r) => r.kind === kind).filter((r) => !layer || layer.ids.includes(r.id))
       .sort((a, b) => a.name.localeCompare(b.name))
-      .map((r) => `<button data-go="${r.id}"><span>${esc(r.name)}</span><small>${esc(r.capital.split(" (")[0])}</small></button>`).join("");
+      .map((r) => `<button data-go="${r.id}" style="${zoneStyle(r.id)}"><span>${esc(r.name)}</span><small>${esc(r.capital.split(" (")[0])}</small></button>`).join("");
     const states = list("State"), uts = list("UT");
     view.innerHTML = `<div class="card overview">
       <div class="search">
         <input id="q" type="search" placeholder="Search a state, capital, river, park, dance or tribe" value="${esc(query)}" autocomplete="off" aria-label="Search">
         <div id="results"></div>
       </div>
-      ${layer ? `<div><div class="eyebrow">Filter</div><h2>${esc(layer.group === "Borders" ? "Bordering " + layer.label : layer.label)}</h2></div>
+      ${layer ? `<div><div class="eyebrow">Filter</div><h2>${esc(layer.group === "Borders" ? "Bordering " + layer.label : layer.group === "Zones" ? (["ne", "islands"].some((k) => layer.id === "zone-" + k) ? layer.label : layer.label + " Zonal Council") : layer.label)}</h2></div>
         <p>${layer.ids.length} of 36 highlighted on the map. <button class="link" id="clear">Clear filter</button></p>`
       : `<div><div class="eyebrow">Explore</div><h2>Tap any state or UT on the map</h2></div>
         <p>Each one opens a fact card with its capital, borders, rivers, protected areas and the facts that come up in Prelims. Use the filters under the map to see which states border a country or fall under the Fifth or Sixth Schedule.</p>
@@ -735,7 +814,8 @@ window.LAYERS = (function () {
           <div class="stat"><b>28</b><span>States</span></div>
           <div class="stat"><b>8</b><span>Union Territories</span></div>
           <div class="stat"><b>7</b><span>Land neighbours</span></div>
-        </div>`}
+        </div>
+        <section><h3>Map colours: Zonal Councils and the North Eastern Council</h3><div class="legend">${ZONES.map((z) => `<span style="--h:${z.h}"><i></i>${z.label}</span>`).join("")}</div></section>`}
       ${states ? `<section><h3>States</h3><div class="index">${states}</div></section>` : ""}
       ${uts ? `<section><h3>Union Territories</h3><div class="index">${uts}</div></section>` : ""}
     </div>`;
