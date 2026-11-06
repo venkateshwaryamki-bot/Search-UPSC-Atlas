@@ -3,6 +3,16 @@
   "appName": "Search UPSC Atlas",
   "webDir": "www",
   "backgroundColor": "#111111",
-  "android": { "allowMixedContent": false },
-  "ios": { "contentInset": "never" }
+  "android": {
+    "allowMixedContent": false
+  },
+  "ios": {
+    "contentInset": "never"
+  },
+  "plugins": {
+    "LocalNotifications": {
+      "smallIcon": "ic_stat_notify",
+      "iconColor": "#FAE37A"
+    }
+  }
 }

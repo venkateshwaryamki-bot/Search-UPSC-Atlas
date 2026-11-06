@@ -6,12 +6,12 @@ const APP = "file://" + process.cwd() + "/www/index.html";
 const Y = "#FAE37A", K = "#111111";
 
 const SCENES = [
-  { id: "1-map", caption: "Every state, river and range of India", hash: "", layers: {} },
-  { id: "2-state", caption: "Tap any state for exam-ready facts", hash: "#kl", scrollPanel: true },
-  { id: "3-layers", caption: "Rivers, passes, UNESCO sites, tiger reserves", hash: "#river-ganga", layers: { unesco: true, parks: true } },
-  { id: "4-themes", caption: "Soil, climate and crop maps", base: "soils" },
-  { id: "5-daily", caption: "A daily challenge to share with your group", daily: true, scrollPanel: true },
-  { id: "6-river", caption: "Every river traced from source to sea", hash: "#river-brahmaputra" },
+  { id: "1-map", caption: "Every state, river and range of India" },
+  { id: "2-state", caption: "Tap any state for exam-ready facts", hash: "#kl" },
+  { id: "3-quiz", caption: "Quizzes you answer right on the map", quiz: true },
+  { id: "4-daily", caption: "Daily challenge, streaks and score cards", daily: true },
+  { id: "5-layers", caption: "Rivers, UNESCO sites, tiger reserves", hash: "#river-ganga", layers: { unesco: true, parks: true } },
+  { id: "6-themes", caption: "Soil, climate and crop maps", base: "soils" },
 ];
 const DEVICES = {
   "android-phone": { w: 360, h: 640, scale: 3, dir: "store/android/phone" },      // 1080 x 1920
@@ -22,21 +22,28 @@ const DEVICES = {
 async function shoot(browser, dev, scene) {
   // The app is rendered below a caption band, at the same total size the store expects.
   const band = Math.round(dev.h * 0.16), appH = dev.h - band;
-  const ctx = await browser.newContext({ viewport: { width: dev.w, height: appH }, deviceScaleFactor: dev.scale, colorScheme: "light" });
-  await ctx.addInitScript((layers) => { try { localStorage.setItem("atlas-layers2", JSON.stringify(Object.assign({ capitals: true, rivers: true, ranges: true, passes: false, grid: true }, layers))); } catch (e) {} }, scene.layers || {});
+  const ctx = await browser.newContext({ viewport: { width: dev.w, height: appH }, deviceScaleFactor: dev.scale, colorScheme: "light", hasTouch: true });
+  await ctx.addInitScript((layers) => {
+    try {
+      localStorage.setItem("atlas-welcomed", "true");
+      localStorage.setItem("atlas-layers2", JSON.stringify(Object.assign({ capitals: true, rivers: true, ranges: false, passes: false, grid: false }, layers)));
+      // Sample history so the Daily screen shows a streak.
+      const t = new Date(Date.now() + 5.5 * 3600e3), all = {};
+      [[1, 8], [2, 9], [3, 7], [4, 10], [5, 6], [7, 8], [8, 9]].forEach(([o, sc]) => { const d = new Date(t - o * 864e5).toISOString().slice(0, 10); all[d] = { date: d, score: sc, marks: Array.from({ length: 10 }, (_, i) => (i < sc ? "right" : "wrong")) }; });
+      localStorage.setItem("atlas-daily", JSON.stringify(all));
+    } catch (e) {}
+  }, scene.layers || {});
   const p = await ctx.newPage();
   await p.goto(APP + (scene.hash || ""));
+  await p.waitForTimeout(1100);
+  if (scene.base) { await p.click(`[data-qbase="${scene.base}"]`); await p.waitForTimeout(300); }
+  if (scene.daily) { await p.click(dev.w > 1100 ? "#tab-daily" : "[data-nav=daily]"); }
+  if (scene.quiz) {
+    await p.click(dev.w > 1100 ? "#tab-practice" : "[data-nav=practice]"); await p.click("[data-mode=states]"); await p.waitForTimeout(700);
+    // Answer the first question correctly so the feedback shows.
+    await p.evaluate(() => { const em = document.querySelector(".qprompt em, .prompt em"); const r = em && window.REGIONS.find((x) => x.name === em.textContent); if (r) document.querySelector(`.region[data-id=${r.id}]`).dispatchEvent(new MouseEvent("click", { bubbles: true })); });
+  }
   await p.waitForTimeout(900);
-  if (scene.base) await p.click(`[data-base="${scene.base}"]`);
-  if (scene.daily) { await p.click("#tab-practice"); await p.click("[data-mode=daily]"); await p.locator(".region").first().waitFor(); await p.evaluate(() => { const b = document.querySelector("#skip"); }); }
-  // Stacked layout (phones, iPad portrait): show part of the map and the top of the panel.
-  await p.evaluate(({ panel, daily }) => {
-    const pan = document.querySelector(".panel"), stacked = pan.offsetTop > 200;
-    if (!stacked) return window.scrollTo(0, 0);
-    if (panel) window.scrollTo(0, pan.offsetTop - 8);
-    else window.scrollTo(0, 0);
-  }, { panel: !!scene.scrollPanel, daily: !!scene.daily });
-  await p.waitForTimeout(400);
   const shot = await p.screenshot({ type: "png" });
   await ctx.close();
   const page = await browser.newPage({ viewport: { width: dev.w, height: dev.h }, deviceScaleFactor: dev.scale });

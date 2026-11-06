@@ -29,11 +29,15 @@ EXPLORE
 • Ramsar wetlands, the Tropic of Cancer and the 82.5° E Standard Meridian
 • Soil, climate (Köppen) and crop maps
 • Highlight states by border country, coastline, Schedule or Zonal Council
-• Zoom and pan, with neighbouring countries, seas and a scale bar
+• A full-screen map that flies to whatever you tap, with pinch and double-tap zoom
 • Search that understands old names such as Cauvery, Orissa and Bombay
 
 PRACTISE
-• A daily challenge: the same ten questions for everyone each day, with a result you can share with your group
+• A daily challenge: the same ten questions for everyone each day, with streaks, a monthly calendar and a score card image to share with your group
+• Quizzes played right on the map, with instant feedback, combo streaks and the map flying to the right answer
+• Weak areas: questions you miss come back until you get them right
+• Save any state, river, park or site to your revision list
+• An optional morning reminder when the new challenge is ready
 • Eight practice rounds: find the state, capitals, tiger reserves and parks, borders, rivers, passes, UNESCO sites, and ranges and lines
 • Wrong answers show the right one on the map, and you get a list of what to revise
 

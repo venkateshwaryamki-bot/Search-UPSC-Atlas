@@ -437,6 +437,49 @@ svg[viewBox="0 0 24 24"] { width: 22px; height: 22px; fill: none; stroke: curren
 .sharecard .row .btn { flex: 1; }
 .sharecard p { margin: 0; font-size: .8rem; color: var(--ink-2); text-align: center; }
 
+/* Saved, bookmarks, card silhouettes */
+.hero .bm { position: absolute; top: 12px; right: 12px; width: 40px; height: 40px; border-radius: 50%; border: 0; background: rgba(255,255,255,.18); color: #fff; display: grid; place-items: center; cursor: pointer; z-index: 2; }
+.hero .bm[aria-pressed="true"] { background: var(--brand); color: #111; }
+.hero .bm[aria-pressed="true"] svg { fill: currentColor; }
+.hero .sil { position: absolute; right: 14px; bottom: 10px; width: 96px; height: 96px; opacity: .3; pointer-events: none; }
+.hero .sil path { fill: #fff; stroke: none; }
+.hero.has-sil::after { display: none; }
+.hero h2, .hero .eyebrow, .hero .zone { position: relative; z-index: 1; max-width: calc(100% - 60px); }
+.stepper { display: flex; gap: 10px; }
+.stepper button { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; text-align: left; border: 1px solid var(--rule); background: var(--paper); border-radius: 14px; padding: 10px 12px; cursor: pointer; }
+.stepper button:last-child { text-align: right; }
+.stepper small { font-family: var(--font-mono); font-size: .64rem; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-2); }
+.stepper b { font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.empty { text-align: center; padding: 22px 12px; border: 1.5px dashed var(--rule); border-radius: 18px; color: var(--ink-2); display: flex; flex-direction: column; gap: 8px; align-items: center; }
+.empty .big { width: 56px; height: 56px; border-radius: 18px; background: color-mix(in srgb, var(--brand) 55%, var(--paper)); color: #111; display: grid; place-items: center; }
+.slist { display: flex; flex-direction: column; }
+.slist button { display: flex; align-items: center; gap: 12px; text-align: left; border: 0; border-bottom: 1px solid var(--rule); background: none; padding: 11px 2px; cursor: pointer; }
+.slist button i { width: 10px; height: 10px; border-radius: 50%; background: var(--dot); flex: none; }
+.slist button span { flex: 1; min-width: 0; }
+.slist button small { color: var(--ink-2); font-size: .78rem; display: block; }
+.slist button em { font-style: normal; font-family: var(--font-mono); font-size: .72rem; color: var(--bad); }
+.weakbox { background: color-mix(in srgb, var(--bad) 7%, var(--paper)); border: 1px solid color-mix(in srgb, var(--bad) 25%, transparent); border-radius: 18px; padding: 14px; display: flex; flex-direction: column; gap: 10px; }
+.mode.weak { --m1: #8a1c2b; --m2: #d0453a; }
+/* Reminder row */
+.remind { display: flex; align-items: center; gap: 12px; border: 1px solid var(--rule); border-radius: 16px; padding: 12px 14px; cursor: pointer; }
+.remind span.t { flex: 1; font-weight: 600; }
+.remind span.t small { display: block; font-weight: 400; color: var(--ink-2); font-size: .8rem; }
+.remind[aria-checked="true"] .switch { background: var(--ink); }
+.remind[aria-checked="true"] .switch::after { transform: translateX(18px); background: var(--brand); }
+/* Welcome */
+.onboard { position: fixed; inset: 0; z-index: 80; background: #111; color: #f4f1e6; display: flex; flex-direction: column; padding: calc(var(--inset-t) + 20px) 24px calc(var(--inset-b) + 24px); }
+.onboard[hidden] { display: none !important; }
+.onboard .skip { align-self: flex-end; background: none; border: 0; color: #b9b4a4; font-weight: 600; font-size: .95rem; cursor: pointer; padding: 6px; }
+.onboard .slides { flex: 1; display: flex; overflow: hidden; }
+.onboard .slide { flex: 0 0 100%; display: flex; flex-direction: column; justify-content: center; gap: 18px; transition: transform .4s cubic-bezier(.2,.8,.2,1); max-width: 560px; margin: 0 auto; }
+.onboard .art { width: 168px; height: 168px; border-radius: 44px; background: rgba(250,227,122,.12); display: grid; place-items: center; font-size: 4.6rem; }
+.onboard h2 { color: #fff; font-size: 2.1rem; }
+.onboard p { margin: 0; color: #cfcab9; font-size: 1.05rem; line-height: 1.55; }
+.onboard .dots { display: flex; gap: 8px; justify-content: center; margin-bottom: 18px; }
+.onboard .dots i { width: 8px; height: 8px; border-radius: 4px; background: #555; transition: width .3s, background .3s; }
+.onboard .dots i.on { width: 26px; background: var(--brand); }
+.onboard .bigbtn { flex: none; width: 100%; max-width: 560px; margin: 0 auto; box-shadow: none; }
+
 /* Quiz mode */
 .qover, .confetti { display: none; }
 .confetti { position: fixed; inset: 0; z-index: 60; pointer-events: none; width: 100%; height: 100%; }
@@ -522,6 +565,7 @@ footer a { color: inherit; }
       <button class="tab" role="tab" id="tab-explore" aria-selected="true">Explore</button>
       <button class="tab" role="tab" id="tab-practice" aria-selected="false">Practice</button>
       <button class="tab" role="tab" id="tab-daily" aria-selected="false">Daily</button>
+      <button class="tab" role="tab" id="tab-saved" aria-selected="false">Saved</button>
     </div>
     <div class="sheet-head" id="sheethead" aria-hidden="true"></div>
     <div class="sheet-body" id="sheetbody">
@@ -536,7 +580,9 @@ footer a { color: inherit; }
     <button data-nav="explore" aria-current="page"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2-6-2Z"/><path d="M9 4v14M15 6v14"/></svg></span>Map</button>
     <button data-nav="practice"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1.2" fill="currentColor"/></svg></span>Practice</button>
     <button data-nav="daily"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8c1.1 3.6 5.4 5.6 5.4 10.6a5.4 5.4 0 0 1-10.8 0c0-2.4 1.3-3.9 2.6-5 .2 1.7 1 2.8 2.2 3.3-.6-3.2-.3-6.3.6-8.9Z"/></svg></span>Daily</button>
+    <button data-nav="saved"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3.5h10a1 1 0 0 1 1 1V21l-6-4-6 4V4.5a1 1 0 0 1 1-1Z"/></svg></span>Saved</button>
   </nav>
+  <div class="onboard" id="onboard" hidden role="dialog" aria-modal="true" aria-label="Welcome"></div>
   <div class="scrim" id="scrim" hidden></div>
   <div class="lsheet" id="lsheet" role="dialog" aria-modal="true" aria-label="Map layers" hidden>
     <div class="lsheet-head"><b>Map layers</b><button class="roundbtn small" id="lclose" aria-label="Close"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
@@ -1892,7 +1938,7 @@ window.CROPS = [
     const crops = window.CROPS.filter((c) => c.top.includes(r.id)).map((c) => `${c.name} (#${c.top.indexOf(r.id) + 1})`);
     const tags = (arr) => `<div class="tags">${arr.map((x) => `<span class="tag">${esc(x)}</span>`).join("")}</div>`;
     view.innerHTML = `<article class="card">${BACK}
-      <div class="hero" style="${zoneStyle(r.id)}" data-code="${esc((LABEL[r.id] || r.name).split("|")[0])}"><div class="eyebrow">${r.kind === "UT" ? "Union Territory" : "State"}</div><h2>${esc(r.name)}</h2><span class="zone">${zoneLabel(r.id)}</span></div>
+      <div class="hero has-sil" style="${zoneStyle(r.id)}">${bmButton("r:" + r.id)}${silhouette(r.id)}<div class="eyebrow">${r.kind === "UT" ? "Union Territory" : "State"}</div><h2>${esc(r.name)}</h2><span class="zone">${zoneLabel(r.id)}</span></div>
       <dl class="facts-grid" style="${zoneStyle(r.id)}">
         <div><dt>Capital</dt><dd>${esc(r.capital)}</dd></div>
         <div><dt>In current form since</dt><dd>${r.since}</dd></div>
@@ -1912,10 +1958,47 @@ window.CROPS = [
       ${r.culture.length ? `<section class="sec culture"><h3>Dance, art &amp; festivals</h3>${tags(r.culture)}</section>` : ""}
       ${r.people.length ? `<section class="sec people"><h3>Tribal communities</h3>${tags(r.people)}</section>` : ""}
       <div class="backrow">${cap ? zoomBtnAt(cap.at, "Zoom to " + cap.city) : ""}<button class="btn ghost" id="quizme">Practise finding ${esc(r.name)}</button></div>
+      <div class="stepper">${neighbourIds(r.id).map((nid, i) => `<button data-go="${nid}"><small>${i ? "Next →" : "← Previous"}</small><b>${esc(byId[nid].name)}</b></button>`).join("")}</div>
     </article>`;
-    wire();
+    wire(); wireBookmarks(view);
     $("#quizme").onclick = () => { setTab("practice"); startQuiz("states", r.id); };
   }
+
+  // ---------- Saved items and weak areas ----------
+  const BM_SVG = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3.5h10a1 1 0 0 1 1 1V21l-6-4-6 4V4.5a1 1 0 0 1 1-1Z"/></svg>';
+  const savedList = () => store.get("atlas-saved", []);
+  const isSaved = (key) => savedList().includes(key);
+  function toggleSaved(key) {
+    let l = savedList(); const was = l.includes(key);
+    l = was ? l.filter((k) => k !== key) : [key].concat(l); store.set("atlas-saved", l.slice(0, 200));
+    haptic(was ? "light" : "success"); return !was;
+  }
+  const bmButton = (key) => `<button class="bm" data-bm="${key}" aria-pressed="${isSaved(key)}" aria-label="${isSaved(key) ? "Remove from saved" : "Save"}">${BM_SVG}</button>`;
+  function wireBookmarks(root) {
+    root.querySelectorAll("[data-bm]").forEach((b) => (b.onclick = (e) => {
+      e.stopPropagation(); const on2 = toggleSaved(b.dataset.bm);
+      b.setAttribute("aria-pressed", String(on2)); b.setAttribute("aria-label", on2 ? "Remove from saved" : "Save");
+    }));
+  }
+  // A small silhouette of a state for its card.
+  function silhouette(id) {
+    const b = boxOfRegion(id), pad = Math.max(b.w, b.h) * 0.06;
+    const clip = id === "jk" ? ' clip-path="url(#clip-jk)"' : id === "la" ? ' clip-path="url(#clip-la)"' : "";
+    return `<svg class="sil" viewBox="${(b.x - pad).toFixed(1)} ${(b.y - pad).toFixed(1)} ${(b.w + 2 * pad).toFixed(1)} ${(b.h + 2 * pad).toFixed(1)}" aria-hidden="true"><g${clip}>${(pathsFor[id] || [M.paths[id]]).map((d) => `<path d="${d}"/>`).join("")}</g></svg>`;
+  }
+  // Order for stepping through states: by zone, the way the map is coloured.
+  const ORDER = ZONES.flatMap((z) => Object.keys(z.m));
+  function neighbourIds(id) { const i = ORDER.indexOf(id); return [ORDER[(i - 1 + ORDER.length) % ORDER.length], ORDER[(i + 1) % ORDER.length]]; }
+
+  // Weak areas: questions you got wrong come back until you answer them right.
+  function recordAnswer(q, right) {
+    if (!q || !q.key) return;
+    const w = store.get("atlas-weak", {});
+    if (right) { if (w[q.key]) { w[q.key].misses--; if (w[q.key].misses <= 0) delete w[q.key]; } }
+    else w[q.key] = { q: { prompt: q.prompt, answers: q.answers, label: q.label, key: q.key }, misses: Math.min(3, ((w[q.key] && w[q.key].misses) || 0) + 1), last: Date.now() };
+    store.set("atlas-weak", w);
+  }
+  const weakList = () => Object.values(store.get("atlas-weak", {})).sort((a, b) => b.misses - a.misses || b.last - a.last);
 
   const HUE = { river: 205, pass: 24, range: 28, line: 0, site: 268, park: 30, wet: 195 };
   function renderFeature(kind, it) {
@@ -1945,14 +2028,14 @@ window.CROPS = [
       facts = [it.note, `India has ${window.RAMSAR_TOTAL} Ramsar sites (October 2026); this map shows a selection.`];
     }
     view.innerHTML = `<article class="card">${BACK}
-      <div class="hero" style="--h:${HUE[kind]}" data-code="${esc(it.name.split(" ")[0])}"><div class="eyebrow">${esc(eyebrow)}</div><h2>${esc(it.name)}</h2>${chip ? `<span class="zone">${esc(chip)}</span>` : ""}</div>
+      <div class="hero" style="--h:${HUE[kind]}" data-code="${esc(it.name.split(" ")[0])}">${bmButton("f:" + kind + ":" + it.id)}<div class="eyebrow">${esc(eyebrow)}</div><h2>${esc(it.name)}</h2>${chip ? `<span class="zone">${esc(chip)}</span>` : ""}</div>
       ${grid ? `<dl class="facts-grid" style="--h:${HUE[kind]}">${grid}</dl>` : ""}
       ${where}
       ${facts.length ? `<section class="sec facts"><h3>Key facts</h3>${list(facts)}</section>` : ""}
       ${extra}
       ${it.at ? `<div class="backrow">${zoomBtnAt(it.at, "Zoom to it")}</div>` : ""}
     </article>`;
-    wire();
+    wire(); wireBookmarks(view);
   }
 
   function searchIndex(q) {
@@ -2039,23 +2122,24 @@ window.CROPS = [
 
   // ---------- Practice ----------
   const COUNTRIES = ["Pakistan", "China", "Nepal", "Bhutan", "Bangladesh", "Myanmar"];
-  const inState = (it) => ({ prompt: `Which state or UT is <em>${esc(it.name)}</em> in?`, answers: it.states, label: `${it.name}: ${names(it.states)}` });
+  const inState = (it) => ({ key: "in:" + it.id, prompt: `Which state or UT is <em>${esc(it.name)}</em> in?`, answers: it.states, label: `${it.name}: ${names(it.states)}` });
   const MODES = {
     states: { title: "Find the state", desc: "Locate a state or UT by name.", make: (first) => {
       let pool = shuffle(R); if (first) pool = [byId[first]].concat(pool.filter((r) => r.id !== first));
-      return pool.slice(0, 10).map((r) => ({ prompt: `Find <em>${esc(r.name)}</em>`, answers: [r.id], label: r.name })); } },
+      return pool.slice(0, 10).map((r) => ({ key: "state:" + r.id, prompt: `Find <em>${esc(r.name)}</em>`, answers: [r.id], label: r.name })); } },
     capitals: { title: "Capitals", desc: "Which state or UT has this capital?", make: () => shuffle(R.filter((r) => r.capital !== "Chandigarh" || r.id === "ch")).slice(0, 10)
-      .map((r) => ({ prompt: `Which state or UT has <em>${esc(r.capital.split(" (")[0])}</em> as its capital?`, answers: [r.id], label: `${r.capital.split(" (")[0]}: ${r.name}` })) },
+      .map((r) => ({ key: "cap:" + r.id, prompt: `Which state or UT has <em>${esc(r.capital.split(" (")[0])}</em> as its capital?`, answers: [r.id], label: `${r.capital.split(" (")[0]}: ${r.name}` })) },
     parks: { title: "Tiger reserves & parks", desc: "Which state is the reserve in?", make: () => shuffle(K.park.list).slice(0, 10).map(inState) },
     borders: { title: "Borders", desc: "Find a state that borders a country.", make: () => shuffle(COUNTRIES.concat(shuffle(COUNTRIES).slice(0, 4))).slice(0, 10)
-      .map((c) => ({ prompt: `Tap a state or UT that borders <em>${c}</em>`, answers: R.filter((r) => r.borders.includes(c)).map((r) => r.id), label: `Borders ${c}` })) },
+      .map((c) => ({ key: "border:" + c, prompt: `Tap a state or UT that borders <em>${c}</em>`, answers: R.filter((r) => r.borders.includes(c)).map((r) => r.id), label: `Borders ${c}` })) },
     rivers: { title: "Rivers", desc: "Tap a state the river flows through.", make: () => shuffle(K.river.list).slice(0, 10)
-      .map((rv) => ({ prompt: `Tap a state or UT the <em>${esc(rv.name)}</em> flows through`, answers: rv.states, label: `${rv.name}: ${names(rv.states)}` })) },
+      .map((rv) => ({ key: "river:" + rv.id, prompt: `Tap a state or UT the <em>${esc(rv.name)}</em> flows through`, answers: rv.states, label: `${rv.name}: ${names(rv.states)}` })) },
     passes: { title: "Mountain passes", desc: "Which state is the pass in?", make: () => shuffle(K.pass.list).slice(0, 10).map(inState) },
     unesco: { title: "UNESCO sites", desc: "Which state is the site in?", make: () => shuffle(K.site.list).slice(0, 10).map(inState) },
     lines: { title: "Ranges & lines", desc: "Tropic, meridian and ranges.", make: () => shuffle(K.line.list.concat(K.line.list, K.range.list.filter((x) => x.states.length > 1))).slice(0, 10)
-      .map((it) => ({ prompt: `Tap a state the <em>${esc(it.name)}</em> ${it.lat || it.lon ? "passes through" : "runs through"}`, answers: it.states, label: `${it.name}: ${names(it.states)}` })) },
+      .map((it) => ({ key: "line:" + it.id, prompt: `Tap a state the <em>${esc(it.name)}</em> ${it.lat || it.lon ? "passes through" : "runs through"}`, answers: it.states, label: `${it.name}: ${names(it.states)}` })) },
   };
+  MODES.weak = { title: "Weak areas", desc: "Questions you missed before.", make: () => shuffle(weakList().slice(0, 25)).slice(0, 10).map((w) => w.q) };
   // Daily challenge: the same ten mixed questions for everyone on a given day (India time).
   const istDate = () => new Date(Date.now() + 5.5 * 3600e3).toISOString().slice(0, 10);
   const dayNumber = (d) => Math.round((Date.parse(d) - Date.parse("2026-11-06")) / 86400e3) + 1;
@@ -2144,7 +2228,8 @@ window.CROPS = [
       <div><div class="eyebrow">Practice</div><h2>Ten questions. Answer on the map.</h2></div>
       <button class="mode daily" data-mode="daily"><b>Daily challenge #${dayNumber(today)}</b><span>The same ten mixed questions for everyone today. Share your score with your group.</span><span class="scoreline">${done ? `Today: ${done.score}/10 · play again for practice` : "Not played today"}</span></button>
       <p style="margin:0;color:var(--ink-2);max-width:60ch">Labels and layers are hidden while you play. A wrong tap shows the right answer, and missed ones are listed at the end for revision.</p>
-      <div class="modes">${Object.entries(MODES).filter(([k]) => k !== "daily").map(([k, m]) => `<button class="mode" data-mode="${k}"><b>${m.title}</b><span>${m.desc}</span><span class="scoreline">${best[k] != null ? "Best " + best[k] + "/10" : "Not played yet"}</span></button>`).join("")}</div>
+      ${weakList().length ? `<button class="mode weak" data-mode="weak"><b>Practise your weak areas</b><span>${weakList().length} question${weakList().length > 1 ? "s" : ""} you missed before. Get each right to clear it.</span></button>` : ""}
+      <div class="modes">${Object.entries(MODES).filter(([k]) => k !== "daily" && k !== "weak").map(([k, m]) => `<button class="mode" data-mode="${k}"><b>${m.title}</b><span>${m.desc}</span><span class="scoreline">${best[k] != null ? "Best " + best[k] + "/10" : "Not played yet"}</span></button>`).join("")}</div>
     </div>`;
     view.querySelectorAll("[data-mode]").forEach((b) => (b.onclick = () => startQuiz(b.dataset.mode)));
   }
@@ -2165,7 +2250,7 @@ window.CROPS = [
       const last = quiz.i + 1 >= quiz.qs.length;
       qcard.className = "qcard " + cls;
       qcard.innerHTML = `<div class="progress">${quiz.qs.map((_, k) => `<i class="${quiz.results[k] || (k === quiz.i ? "now" : "")}"></i>`).join("")}</div>
-        <div class="qhead" style="margin-top:10px"><span class="qn">${quiz.mode === "daily" ? "Daily #" + dayNumber(istDate()) + " · " : ""}${quiz.i + 1} of ${quiz.qs.length}</span>${quiz.streak >= 3 ? `<span class="combo">🔥 ${quiz.streak} in a row</span>` : ""}<span class="pill">${quiz.score} pts</span><button class="roundbtn small" id="qquit" aria-label="Stop quiz"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
+        <div class="qhead" style="margin-top:10px"><span class="qn">${quiz.mode === "daily" ? "Daily #" + dayNumber(istDate()) + " · " : ""}${quiz.i + 1} of ${quiz.qs.length}</span>${quiz.streak >= 3 ? `<span class="combo">🔥 ${quiz.streak} in a row</span>` : ""}<span class="pill">${quiz.score} ${quiz.score === 1 ? "pt" : "pts"}</span><button class="roundbtn small" id="qquit" aria-label="Stop quiz"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
         <div class="qprompt">${q.prompt}</div>${feedback ? `<div class="qfb ${cls}">${feedback}</div>` : ""}`;
       qbar.innerHTML = quiz.locked ? `<button class="bigbtn primary" id="next">${last ? "See results" : "Next question →"}</button>` : `<button class="bigbtn quiet" id="skip">I don't know</button>`;
       const next = $("#next"); if (next) next.onclick = () => { haptic("light"); advance(); };
@@ -2189,11 +2274,11 @@ window.CROPS = [
     const q = quiz.qs[quiz.i], ok = id && q.answers.includes(id);
     quiz.locked = true;
     if (ok) {
-      quiz.score++; quiz.streak++; quiz.results[quiz.i] = "right"; els[id].classList.add("right"); haptic("success");
+      quiz.score++; quiz.streak++; quiz.results[quiz.i] = "right"; els[id].classList.add("right"); haptic("success"); recordAnswer(q, true);
       const others = q.answers.filter((a) => a !== id).map((a) => byId[a].name);
       renderQuestion(`Correct: ${esc(byId[id].name)}.${others.length ? " Also correct: " + esc(others.join(", ")) + "." : ""}`, "right");
     } else {
-      quiz.streak = 0; quiz.results[quiz.i] = "wrong"; if (id) els[id].classList.add("wrong"); haptic("error");
+      quiz.streak = 0; quiz.results[quiz.i] = "wrong"; if (id) els[id].classList.add("wrong"); haptic("error"); recordAnswer(q, false);
       q.answers.forEach((a) => els[a].classList.add("reveal"));
       const ids = q.answers.concat(id ? [id] : []);   // show the right answer (and the wrong tap) on the map
       flyToBox(unionBox(ids.map((a) => { const b = boxOfRegion(a); return { x: b.x, y: b.y, width: b.w, height: b.h }; })), 3.5, "hidden");
@@ -2250,7 +2335,7 @@ window.CROPS = [
   }
   function endQuiz() {
     quiz = null; clearMarks(); quizUIoff(); home(true);
-    if (mode === "daily") renderDailyHome(); else renderPracticeHome();
+    if (mode === "daily") renderDailyHome(); else if (mode === "saved") renderSaved(); else renderPracticeHome();
     toTop(); if (isMobile()) setSheet("full");
   }
 
@@ -2409,6 +2494,7 @@ window.CROPS = [
         ${done ? `<div class="done"><span style="font-weight:700">Today ${done.score}/10</span><div class="marks">${done.marks.map((m) => `<i class="${m}"></i>`).join("")}</div></div>` : ""}
         <button class="bigbtn primary" id="dstart">${done ? "Play again for practice" : "Start today's challenge"}</button>
       </div>
+      ${reminderRow()}
       ${done ? shareBlock({ title: "Daily challenge #" + dayNumber(today), sub: new Date(Date.parse(today)).toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" }), score: done.score, total: 10, marks: done.marks, verdict: VERDICT(done.score)[0], streak: st.streak }, shareText(done)) : ""}
       <section><h3>${esc(month)}</h3><div class="cal">${["M", "T", "W", "T", "F", "S", "S"].map((d) => `<span class="dow">${d}</span>`).join("")}${cells.join("")}</div>
         <div class="calkey" style="margin-top:8px">Score <i style="background:color-mix(in srgb, #FAE37A 37%, #f2a541)"></i>low <i style="background:#FAE37A"></i>high</div></section>
@@ -2419,21 +2505,107 @@ window.CROPS = [
       </div></section>
     </div>`;
     $("#dstart").onclick = () => { haptic("medium"); startQuiz("daily"); };
+    wireReminder();
   }
+
+  // ---------- Saved tab ----------
+  function renderSaved() {
+    const keys = savedList(), weak = weakList();
+    const item = (key) => {
+      const [t, a, b] = key.split(":");
+      if (t === "r" && byId[a]) return `<button data-go="${a}" style="--dot:hsl(${ZONE_OF[a].z.h} 60% 52%)"><i></i><span>${esc(byId[a].name)}<small>${byId[a].kind === "UT" ? "Union Territory" : "State"} · ${esc(byId[a].capital.split(" (")[0])}</small></span></button>`;
+      if (t === "f" && K[a] && K[a].byId[b]) { const it = K[a].byId[b]; return `<button data-f="${a}:${b}" style="--dot:hsl(${HUE[a]} 60% 50%)"><i></i><span>${esc(it.name)}<small>${esc(K[a].noun)}${it.states && it.states.length ? " · " + esc(names(it.states)) : ""}</small></span></button>`; }
+      return "";
+    };
+    view.innerHTML = `<div class="card">
+      <div><div class="eyebrow">Saved</div><h2>Your revision list</h2></div>
+      ${weak.length ? `<section class="weakbox"><h3 style="color:var(--bad)">Weak areas · ${weak.length}</h3>
+        <div class="slist">${weak.slice(0, 6).map((w) => `<button data-weakq="${esc(w.q.key)}"><i style="--dot:var(--bad)"></i><span>${esc(w.q.label)}</span><em>missed ×${w.misses}</em></button>`).join("")}</div>
+        <button class="btn" id="weakgo">Practise weak areas</button></section>` : ""}
+      ${keys.length ? `<section><h3>Saved · ${keys.length}</h3><div class="slist">${keys.map(item).join("")}</div></section>`
+      : `<div class="empty"><div class="big">${BM_SVG}</div><b style="color:var(--ink)">Nothing saved yet</b><span>Tap the bookmark on any state, river, park or site card to keep it here for revision.</span></div>`}
+    </div>`;
+    wire();
+    const wg = $("#weakgo"); if (wg) wg.onclick = () => { haptic("medium"); startQuiz("weak"); };
+    view.querySelectorAll("[data-weakq]").forEach((b) => (b.onclick = () => { const w = store.get("atlas-weak", {})[b.dataset.weakq]; if (w && w.q.answers[0]) select(w.q.answers[0]); }));
+  }
+
+  // ---------- Daily reminder (Android) ----------
+  const LN = () => Plugin("LocalNotifications");
+  async function setReminder(onOff) {
+    const ln = LN(); if (!ln) return false;
+    try {
+      await ln.cancel({ notifications: [{ id: 801 }] });
+      if (!onOff) { store.set("atlas-remind", false); return true; }
+      const perm = await ln.requestPermissions(); if (perm.display !== "granted") return false;
+      await ln.schedule({ notifications: [{ id: 801, title: "Your daily challenge is ready 🔥", body: "Ten new map questions. Keep your streak going!", schedule: { on: { hour: 8, minute: 0 }, allowWhileIdle: false }, extra: { open: "daily" } }] });
+      store.set("atlas-remind", true); return true;
+    } catch (e) { return false; }
+  }
+  (function reminderTap() {
+    const ln = LN(); if (ln && ln.addListener) ln.addListener("localNotificationActionPerformed", () => setTab("daily"));
+  })();
+  function reminderRow() {
+    if (!LN()) return "";
+    return `<div class="remind" role="switch" tabindex="0" id="remind" aria-checked="${!!store.get("atlas-remind", false)}"><span class="t">Daily reminder<small>A nudge at 8:00 AM when the new challenge is ready</small></span><span class="switch"></span></div>`;
+  }
+  function wireReminder() {
+    const r = $("#remind"); if (!r) return;
+    const flip = async () => { haptic("light"); const want = r.getAttribute("aria-checked") !== "true"; const ok = await setReminder(want); r.setAttribute("aria-checked", String(ok ? want : false)); };
+    r.onclick = flip; r.onkeydown = (e) => { if (e.key === " " || e.key === "Enter") { e.preventDefault(); flip(); } };
+  }
+
+  // ---------- Welcome (first launch) ----------
+  function showWelcome() {
+    const ob = $("#onboard"), S = [
+      ["🗺️", "Explore India like never before", "Tap any state, river, range or marker for exam-ready facts. Pinch to zoom and drag to explore."],
+      ["🎯", "Practise right on the map", "Quizzes you answer by tapping the map, with instant feedback, combos and a revision list of what you missed."],
+      ["🔥", "Keep your streak alive", "A new daily challenge every midnight. Share your score card with your study group."],
+    ];
+    let i = 0;
+    ob.innerHTML = `<button class="skip" id="obskip">Skip</button><div class="slides">${S.map(([a, h, t]) => `<div class="slide"><div class="art">${a}</div><h2>${h}</h2><p>${t}</p></div>`).join("")}</div>
+      <div class="dots">${S.map((_, k) => `<i class="${k ? "" : "on"}"></i>`).join("")}</div>${LN() ? `<div class="remind" role="switch" tabindex="0" id="obremind" aria-checked="false" style="border-color:#333;margin:0 auto 14px;max-width:560px;width:100%;display:none"><span class="t" style="color:#fff">Remind me daily<small style="color:#b9b4a4">8:00 AM, when the challenge is ready</small></span><span class="switch"></span></div>` : ""}<button class="bigbtn primary" id="obnext">Next</button>`;
+    ob.hidden = false;
+    const done = () => { store.set("atlas-welcomed", true); ob.hidden = true; haptic("medium"); };
+    const go = () => {
+      ob.querySelectorAll(".slide").forEach((el) => (el.style.transform = `translateX(${-100 * i}%)`));
+      ob.querySelectorAll(".dots i").forEach((d, k) => d.classList.toggle("on", k === i));
+      $("#obnext").textContent = i === S.length - 1 ? "Get started" : "Next";
+      const rr = $("#obremind"); if (rr) rr.style.display = i === S.length - 1 ? "flex" : "none";
+    };
+    $("#obnext").onclick = () => { haptic("light"); if (i < S.length - 1) { i++; go(); } else done(); };
+    $("#obskip").onclick = done;
+    const rr = $("#obremind"); if (rr) rr.onclick = async () => { const want = rr.getAttribute("aria-checked") !== "true"; const ok = await setReminder(want); rr.setAttribute("aria-checked", String(ok ? want : false)); };
+    let x0 = null; const sl = ob.querySelector(".slides");
+    sl.addEventListener("touchstart", (e) => (x0 = e.touches[0].clientX), { passive: true });
+    sl.addEventListener("touchend", (e) => { if (x0 == null) return; const dx = e.changedTouches[0].clientX - x0; x0 = null; if (dx < -50 && i < S.length - 1) { i++; go(); } else if (dx > 50 && i > 0) { i--; go(); } });
+  }
+
+  // Swipe left or right on a state card to move to the next state.
+  (function cardSwipe() {
+    let x0 = null, y0 = 0;
+    view.addEventListener("touchstart", (e) => { if (!selected || e.touches.length > 1 || e.target.closest(".quick, .tags")) { x0 = null; return; } x0 = e.touches[0].clientX; y0 = e.touches[0].clientY; }, { passive: true });
+    view.addEventListener("touchend", (e) => {
+      if (x0 == null || !selected) return;
+      const dx = e.changedTouches[0].clientX - x0, dy = e.changedTouches[0].clientY - y0; x0 = null;
+      if (Math.abs(dx) > 70 && Math.abs(dy) < 45) { haptic("light"); select(neighbourIds(selected)[dx < 0 ? 1 : 0]); }
+    });
+  })();
 
   // ---------- Tabs, navigation and routing ----------
   function setTab(t, silent) {
     if (quiz && t !== mode) { quiz = null; clearMarks(); quizUIoff(); }
     mode = t; searching = false;
-    ["explore", "practice", "daily"].forEach((k) => { const b = $("#tab-" + k); if (b) b.setAttribute("aria-selected", String(t === k)); });
+    ["explore", "practice", "daily", "saved"].forEach((k) => { const b = $("#tab-" + k); if (b) b.setAttribute("aria-selected", String(t === k)); });
     $("#bnav").querySelectorAll("[data-nav]").forEach((b) => (b.dataset.nav === t ? b.setAttribute("aria-current", "page") : b.removeAttribute("aria-current")));
     if (silent) return;
     if (t === "explore") { select(selected); if (!selected && isMobile()) setSheet("peek"); }
-    else { clearFeature(); select(null); setLayer(null); if (t === "practice") renderPracticeHome(); else renderDailyHome(); toTop(); setSheet("full"); }
+    else { clearFeature(); select(null); setLayer(null); if (t === "practice") renderPracticeHome(); else if (t === "saved") renderSaved(); else renderDailyHome(); toTop(); setSheet("full"); }
   }
   $("#tab-explore").onclick = () => setTab("explore");
   $("#tab-practice").onclick = () => setTab("practice");
   $("#tab-daily").onclick = () => setTab("daily");
+  $("#tab-saved").onclick = () => setTab("saved");
   $("#bnav").querySelectorAll("[data-nav]").forEach((b) => (b.onclick = () => {
     haptic("light");
     if (b.dataset.nav === mode && mode === "explore") { if (selected || selFeature || searching) { searching = false; select(null); } setSheet("peek"); home(true); return; }
@@ -2474,6 +2646,7 @@ window.CROPS = [
   svg.dataset.base = base;
   measure(); computeBase(); setSheet("peek"); home(false);
   if (!route((location.hash || "").slice(1))) renderOverview();
+  if (!store.get("atlas-welcomed", false)) showWelcome();
   window.addEventListener("hashchange", () => { if (mode === "explore") route(location.hash.slice(1)); });
 })();
 </script>
