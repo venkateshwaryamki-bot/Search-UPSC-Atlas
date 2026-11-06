@@ -1,0 +1,558 @@
+<title>India State Atlas</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Young+Serif&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: an atlas plate. The map is the page; a field-notes panel sits beside it (below it on phones). */
+:root {
+  --sea: #dfe9ec;          /* ocean behind the map */
+  --paper: #f6f7f4;        /* panel ground */
+  --ink: #1d2a2f;          /* text */
+  --ink-2: #56656b;        /* secondary text */
+  --rule: #c9d3d4;         /* hairlines */
+  --accent: #b2452c;       /* survey red: selection and highlights */
+  --accent-ink: #ffffff;
+  --good: #2f7d4f;
+  --bad: #b2452c;
+  --t1: #e8dcbc; --t2: #cddcc0; --t3: #ecd1c6; --t4: #d6d4e6; --t5: #f0dcae;
+  --border-line: #7b6a5a;
+  --dim: 0.28;
+  --font-display: "Young Serif", Georgia, "Times New Roman", serif;
+  --font-body: "Instrument Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --sea: #0f1a1f; --paper: #152126; --ink: #e5ebe8; --ink-2: #9aaaa9; --rule: #2a3a40;
+    --accent: #ef7d5e; --accent-ink: #1a0f0b; --good: #6fcf97; --bad: #ef7d5e;
+    --t1: #4a4434; --t2: #3a4836; --t3: #4d3a36; --t4: #3c3b4f; --t5: #52482f;
+    --border-line: #9c8d7e; --dim: 0.22; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --sea: #0f1a1f; --paper: #152126; --ink: #e5ebe8; --ink-2: #9aaaa9; --rule: #2a3a40;
+  --accent: #ef7d5e; --accent-ink: #1a0f0b; --good: #6fcf97; --bad: #ef7d5e;
+  --t1: #4a4434; --t2: #3a4836; --t3: #4d3a36; --t4: #3c3b4f; --t5: #52482f;
+  --border-line: #9c8d7e; --dim: 0.22; color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body {
+  background: var(--paper); color: var(--ink);
+  font-family: var(--font-body); font-size: 15px; line-height: 1.5;
+  margin: 0;
+}
+button, input { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.app { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(320px, 1fr); min-height: 100%; }
+@media (max-width: 860px) { .app { grid-template-columns: minmax(0, 1fr); } }
+
+/* ---------- Map plate ---------- */
+.plate {
+  background: var(--sea); position: relative;
+  padding-block: 18px 14px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  display: flex; flex-direction: column; gap: 12px; min-width: 0;
+}
+@media (min-width: 861px) { .plate { position: sticky; top: 0; height: 100vh; height: 100dvh; } }
+.masthead { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.masthead h1 { font-family: var(--font-display); font-weight: 400; font-size: 1.6rem; line-height: 1.1; margin: 0; letter-spacing: -0.01em; }
+.masthead .sub { font-family: var(--font-mono); font-size: 0.72rem; color: var(--ink-2); letter-spacing: 0.06em; text-transform: uppercase; }
+
+.mapwrap { flex: 1; min-height: 0; position: relative; display: flex; align-items: center; justify-content: center; }
+svg.map { width: 100%; height: 100%; max-height: 100%; max-width: 100%; display: block; touch-action: manipulation; }
+@media (max-width: 860px) { svg.map { height: auto; max-height: 78vh; } }
+
+.region path.shape { stroke: var(--border-line); stroke-width: 0.45; stroke-linejoin: round; transition: fill .15s, opacity .2s; cursor: pointer; }
+.region.c1 path.shape { fill: var(--t1); } .region.c2 path.shape { fill: var(--t2); }
+.region.c3 path.shape { fill: var(--t3); } .region.c4 path.shape { fill: var(--t4); }
+.region.c5 path.shape { fill: var(--t5); }
+.region:hover path.shape { fill: color-mix(in srgb, var(--accent) 22%, var(--paper)); }
+.region path.hit { fill: none; stroke: var(--accent); stroke-opacity: 0.18; stroke-width: 7; stroke-linejoin: round; pointer-events: stroke; cursor: pointer; }
+.region.selected path.shape, .region.lit path.shape { fill: var(--accent); }
+.region.selected path.shape { stroke: var(--ink); stroke-width: 0.8; }
+.region.selected path.hit, .region.lit path.hit { stroke-opacity: 0.55; }
+.map.filtering .region:not(.lit):not(.selected) { opacity: var(--dim); }
+.region.right path.shape { fill: var(--good) !important; }
+.region.wrong path.shape { fill: var(--bad) !important; }
+.region.reveal path.shape { fill: var(--good) !important; animation: pulse 0.9s ease-in-out 3; }
+.region.right path.hit, .region.reveal path.hit { stroke: var(--good); stroke-opacity: .6; }
+@keyframes pulse { 50% { opacity: 0.35; } }
+@media (prefers-reduced-motion: reduce) { .region.reveal path.shape { animation: none; } }
+
+.labels text { font-family: var(--font-mono); font-size: 7px; fill: var(--ink); fill-opacity: 0.7; pointer-events: none; text-anchor: middle; dominant-baseline: middle; letter-spacing: 0.04em; }
+.labels text.on { fill: var(--accent-ink); fill-opacity: 1; }
+.map.quiz .labels { display: none; }
+.uline { fill: none; stroke: var(--border-line); stroke-width: 0.45; stroke-dasharray: 1.6 1.2; pointer-events: none; }
+
+.tip {
+  position: absolute; pointer-events: none; background: var(--ink); color: var(--paper);
+  font-size: 0.8rem; padding: 3px 8px; border-radius: 3px; white-space: nowrap; transform: translate(-50%, -140%);
+}
+.compass { position: absolute; left: 4px; bottom: 4px; font-family: var(--font-mono); font-size: 0.66rem; color: var(--ink-2); line-height: 1.35; pointer-events: none; }
+@media (max-width: 860px) { .compass { display: none; } }
+
+/* Filters */
+.filters { display: flex; flex-direction: column; gap: 6px; }
+.fgroup { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.fgroup .glabel { font-family: var(--font-mono); font-size: 0.66rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--ink-2); min-width: 86px; }
+.chip {
+  border: 1px solid var(--rule); background: var(--paper); border-radius: 999px; padding: 2px 10px; font-size: 0.8rem; cursor: pointer;
+}
+.chip:hover { border-color: var(--accent); }
+.chip[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.map.quiz ~ .filters, .plate.quizzing .filters { display: none; }
+
+/* ---------- Notes panel ---------- */
+.panel {
+  padding-block: 18px 40px;
+  padding-left: max(20px, env(safe-area-inset-left, 0px));
+  padding-right: max(20px, env(safe-area-inset-right, 0px));
+  border-left: 1px solid var(--rule); min-width: 0; display: flex; flex-direction: column; gap: 18px;
+}
+@media (max-width: 860px) { .panel { border-left: 0; border-top: 1px solid var(--rule); padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); } }
+
+.tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--rule); }
+.tab { background: none; border: 0; padding: 8px 12px; cursor: pointer; font-weight: 500; color: var(--ink-2); border-bottom: 2px solid transparent; margin-bottom: -1px; }
+.tab[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--accent); }
+
+.search { position: relative; }
+.search input { width: 100%; padding: 9px 12px; border: 1px solid var(--rule); border-radius: 6px; background: var(--paper); }
+.results { display: flex; flex-direction: column; margin-top: 6px; border: 1px solid var(--rule); border-radius: 6px; overflow: hidden; }
+.results button { text-align: left; background: none; border: 0; border-bottom: 1px solid var(--rule); padding: 7px 12px; cursor: pointer; display: flex; justify-content: space-between; gap: 12px; }
+.results button:last-child { border-bottom: 0; }
+.results button:hover { background: color-mix(in srgb, var(--accent) 8%, var(--paper)); }
+.results small { color: var(--ink-2); text-align: right; }
+
+.eyebrow { font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); }
+h2 { font-family: var(--font-display); font-weight: 400; font-size: 2rem; line-height: 1.1; margin: 4px 0 0; text-wrap: balance; }
+h3 { font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-2); margin: 0 0 6px; font-weight: 500; }
+
+.card { display: flex; flex-direction: column; gap: 16px; }
+.facts-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px 20px; padding: 12px 0; border-block: 1px solid var(--rule); }
+.facts-grid div { min-width: 0; }
+.facts-grid dt { font-family: var(--font-mono); font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--ink-2); }
+.facts-grid dd { margin: 2px 0 0; font-weight: 500; }
+.tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.tag { font-size: 0.82rem; padding: 2px 9px; border-radius: 4px; background: color-mix(in srgb, var(--ink) 7%, var(--paper)); }
+.tag.flag { background: color-mix(in srgb, var(--accent) 14%, var(--paper)); }
+ul.notes { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 6px; max-width: 62ch; }
+.backrow { display: flex; gap: 8px; flex-wrap: wrap; }
+.link { background: none; border: 0; padding: 0; color: var(--accent); cursor: pointer; font-weight: 500; }
+.link:hover { text-decoration: underline; }
+
+.overview p { margin: 0; max-width: 60ch; color: var(--ink-2); }
+.stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.stat { border-top: 2px solid var(--ink); padding-top: 6px; }
+.stat b { display: block; font-family: var(--font-display); font-size: 1.8rem; font-weight: 400; line-height: 1.1; font-variant-numeric: tabular-nums; }
+.stat span { font-size: 0.8rem; color: var(--ink-2); }
+.index { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2px 16px; }
+.index button { text-align: left; background: none; border: 0; padding: 3px 0; cursor: pointer; font-size: 0.9rem; display: flex; justify-content: space-between; gap: 8px; border-bottom: 1px dotted var(--rule); }
+.index button:hover { color: var(--accent); }
+.index button small { font-family: var(--font-mono); font-size: 0.68rem; color: var(--ink-2); }
+@media (max-width: 420px) { .index { grid-template-columns: minmax(0, 1fr); } }
+
+/* Practice */
+.modes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.mode { text-align: left; border: 1px solid var(--rule); background: var(--paper); border-radius: 8px; padding: 12px; cursor: pointer; display: flex; flex-direction: column; gap: 2px; }
+.mode:hover { border-color: var(--accent); }
+.mode b { font-weight: 600; }
+.mode span { font-size: 0.82rem; color: var(--ink-2); }
+.btn { background: var(--accent); color: var(--accent-ink); border: 0; border-radius: 6px; padding: 9px 16px; font-weight: 600; cursor: pointer; }
+.btn.ghost { background: none; color: var(--ink); border: 1px solid var(--rule); }
+.qbox { display: flex; flex-direction: column; gap: 14px; }
+.progress { display: flex; gap: 4px; }
+.progress i { flex: 1; height: 4px; border-radius: 2px; background: var(--rule); }
+.progress i.right { background: var(--good); } .progress i.wrong { background: var(--bad); } .progress i.now { background: var(--ink); }
+.prompt { font-family: var(--font-display); font-size: 1.55rem; line-height: 1.2; text-wrap: balance; }
+.prompt em { font-style: normal; color: var(--accent); }
+.feedback { min-height: 3em; }
+.feedback.right { color: var(--good); } .feedback.wrong { color: var(--bad); }
+.scoreline { font-family: var(--font-mono); font-size: 0.8rem; color: var(--ink-2); font-variant-numeric: tabular-nums; }
+.missed li { margin-bottom: 4px; }
+
+footer { font-size: 0.75rem; color: var(--ink-2); max-width: 62ch; margin-top: auto; padding-top: 16px; border-top: 1px solid var(--rule); }
+footer a { color: inherit; }
+</style>
+
+<div class="app">
+  <section class="plate" id="plate">
+    <div class="masthead">
+      <h1>India State Atlas</h1>
+      <span class="sub">28 States · 8 Union Territories</span>
+    </div>
+    <div class="mapwrap" id="mapwrap">
+      <svg class="map" id="map" role="img" aria-label="Map of India's states and union territories"></svg>
+      <div class="tip" id="tip" hidden></div>
+      <div class="compass">N ↑<br>Not to scale</div>
+    </div>
+    <div class="filters" id="filters"></div>
+  </section>
+
+  <section class="panel">
+    <div class="tabs" role="tablist">
+      <button class="tab" role="tab" id="tab-explore" aria-selected="true">Explore</button>
+      <button class="tab" role="tab" id="tab-practice" aria-selected="false">Practice</button>
+    </div>
+    <div id="view"></div>
+    <footer>
+      Map outline from <a href="https://github.com/VictorCazanave/svg-maps" target="_blank" rel="noopener">@svg-maps/india</a> (CC BY 4.0), modified: Ladakh is drawn separately from Jammu and Kashmir, and Dadra and Nagar Haveli is merged with Daman and Diu. The Ladakh–J&amp;K line is approximate. Boundaries are for study, not survey.
+    </footer>
+  </section>
+</div>
+
+<script>/*REGIONS_JS*/</script>
+<script>window.MAP = /*MAP_JSON*/;</script>
+<script>
+(function () {
+  "use strict";
+  const NS = "http://www.w3.org/2000/svg";
+  const R = window.REGIONS, L = window.LAYERS, M = window.MAP;
+  const byId = Object.fromEntries(R.map((r) => [r.id, r]));
+  const $ = (s, el = document) => el.querySelector(s);
+  const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  const store = {
+    get(k, d) { try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+    set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} },
+  };
+
+  // Political-map tints, chosen so neighbours differ.
+  const TINT = { jk:1, la:2, hp:3, pb:2, ch:4, hr:1, dl:3, ut:4, up:2, rj:3, gj:1, mp:4, mh:2, ga:1, ka:3, kl:1, tn:2,
+    py:4, ap:1, tg:4, ct:5, or:2, jh:3, br:1, wb:4, sk:3, as:2, ar:1, nl:3, mn:1, mz:3, tr:1, ml:1, dh:3, an:5, ld:5 };
+  const SHORT = { jk:"J&K", la:"LADAKH", hp:"HP", pb:"PB", hr:"HR", ut:"UK", up:"UP", rj:"RJ", gj:"GJ", mp:"MP", mh:"MH",
+    ka:"KA", kl:"KL", tn:"TN", ap:"AP", tg:"TG", ct:"CG", or:"OD", jh:"JH", br:"BR", wb:"WB", as:"AS", ar:"AR", nl:"NL",
+    mn:"MN", mz:"MZ", tr:"TR", ml:"ML", an:"A&N", ld:"LD" };
+  const TINY = new Set(["ch", "dl", "dh", "py", "ld", "an", "ga", "sk", "tr"]);
+
+  // Ladakh: the northern and eastern part of the old J&K outline. The dividing line runs
+  // roughly along the Great Himalaya from the PoK/Gilgit-Baltistan line, past Zoji La, to the HP border.
+  const SPLIT = [[80,48],[118,49],[135,56],[150,61],[155,71],[164,81],[164,91],[173,98],[178,102]];
+  const LA_POLY = SPLIT.concat([[178,140],[300,140],[300,-10],[80,-10]]);
+  const pts = (a) => a.map((p) => p.join(",")).join(" ");
+
+  // ---------- Build map ----------
+  const svg = $("#map");
+  svg.setAttribute("viewBox", M.viewBox);
+  svg.innerHTML = `<defs>
+      <clipPath id="clip-la"><polygon points="${pts(LA_POLY)}"/></clipPath>
+      <clipPath id="clip-jk"><path clip-rule="evenodd" d="M-50,-50H700V750H-50Z M${pts(LA_POLY).replace(/ /g, " L")}Z"/></clipPath>
+      <clipPath id="clip-old"><path d="${M.paths.jk}"/></clipPath>
+    </defs>`;
+  const gRegions = document.createElementNS(NS, "g");
+  const gLabels = document.createElementNS(NS, "g"); gLabels.setAttribute("class", "labels");
+  svg.append(gRegions);
+
+  const pathsFor = { la: [M.paths.jk], jk: [M.paths.jk], dh: [M.paths.dn, M.paths.dd] };
+  const els = {};
+  R.forEach((r) => {
+    const g = document.createElementNS(NS, "g");
+    g.setAttribute("class", `region c${TINT[r.id] || 1}`);
+    g.dataset.id = r.id;
+    if (r.id === "jk") g.setAttribute("clip-path", "url(#clip-jk)");
+    if (r.id === "la") g.setAttribute("clip-path", "url(#clip-la)");
+    (pathsFor[r.id] || [M.paths[r.id]]).forEach((d) => {
+      const p = document.createElementNS(NS, "path");
+      p.setAttribute("d", d); p.setAttribute("class", "shape");
+      g.append(p);
+      if (TINY.has(r.id) && !["ga", "sk", "tr"].includes(r.id)) {
+        const h = p.cloneNode(); h.setAttribute("class", "hit"); g.insertBefore(h, p);
+      }
+    });
+    const t = document.createElementNS(NS, "title"); t.textContent = r.name; g.append(t);
+    gRegions.append(g); els[r.id] = g;
+  });
+  const uline = document.createElementNS(NS, "polyline");
+  uline.setAttribute("points", pts(SPLIT)); uline.setAttribute("class", "uline"); uline.setAttribute("clip-path", "url(#clip-old)");
+  gRegions.append(uline);
+  svg.append(gLabels);
+
+  // Label positions: the inside point farthest from the edge, found on a coarse grid.
+  const FIXED = { jk: [128, 88], la: [196, 52], an: [528, 600], ld: [96, 615], ap: [262, 470], wb: [404, 330], py: null };
+  const labelEls = {};
+  function placeLabels() {
+    R.forEach((r) => {
+      if (!SHORT[r.id]) return;
+      let pt = FIXED[r.id];
+      if (pt === undefined) {
+        const p = els[r.id].querySelector("path.shape");
+        const b = p.getBBox(), step = Math.max(b.width, b.height) / 24;
+        const inside = [], outside = [];
+        for (let x = b.x - step; x <= b.x + b.width + step; x += step)
+          for (let y = b.y - step; y <= b.y + b.height + step; y += step) {
+            const sp = svg.createSVGPoint(); sp.x = x; sp.y = y;
+            (p.isPointInFill(sp) ? inside : outside).push([x, y]);
+          }
+        let best = null, bd = -1;
+        inside.forEach(([x, y]) => {
+          let m = Infinity;
+          for (const [ox, oy] of outside) { const d = (x - ox) ** 2 + (y - oy) ** 2; if (d < m) m = d; }
+          if (m > bd) { bd = m; best = [x, y]; }
+        });
+        pt = best || [b.x + b.width / 2, b.y + b.height / 2];
+      }
+      if (!pt) return;
+      const t = document.createElementNS(NS, "text");
+      t.setAttribute("x", pt[0].toFixed(1)); t.setAttribute("y", pt[1].toFixed(1)); t.textContent = SHORT[r.id];
+      if (["mn", "mz", "tr", "ml", "nl", "sk"].includes(r.id)) t.setAttribute("font-size", "5");
+      gLabels.append(t); labelEls[r.id] = t;
+    });
+  }
+  placeLabels();
+
+  // Tooltip
+  const tip = $("#tip"), wrap = $("#mapwrap");
+  let mode = "explore";
+  svg.addEventListener("pointermove", (e) => {
+    const g = e.target.closest(".region");
+    if (!g || mode === "practice" || e.pointerType === "touch") { tip.hidden = true; return; }
+    const box = wrap.getBoundingClientRect();
+    tip.textContent = byId[g.dataset.id].name;
+    tip.style.left = e.clientX - box.left + "px"; tip.style.top = e.clientY - box.top + "px";
+    tip.hidden = false;
+  });
+  svg.addEventListener("pointerleave", () => (tip.hidden = true));
+  svg.addEventListener("click", (e) => {
+    const g = e.target.closest(".region"); if (!g) return;
+    if (mode === "practice") quizAnswer(g.dataset.id); else select(g.dataset.id);
+  });
+
+  // ---------- Filters ----------
+  let activeLayer = null;
+  const filters = $("#filters");
+  const groups = [...new Set(L.map((l) => l.group))];
+  filters.innerHTML = groups.map((gname) => `<div class="fgroup"><span class="glabel">${gname}</span>${
+    L.filter((l) => l.group === gname).map((l) => `<button class="chip" id="layer-${l.id}" data-layer="${l.id}" aria-pressed="false">${esc(l.label)}</button>`).join("")
+  }</div>`).join("");
+  filters.addEventListener("click", (e) => {
+    const b = e.target.closest("[data-layer]"); if (!b) return;
+    setLayer(activeLayer === b.dataset.layer ? null : b.dataset.layer);
+  });
+  function setLayer(id) {
+    activeLayer = id;
+    filters.querySelectorAll(".chip").forEach((c) => c.setAttribute("aria-pressed", String(c.dataset.layer === id)));
+    const ids = id ? new Set(L.find((l) => l.id === id).ids) : new Set();
+    Object.entries(els).forEach(([rid, g]) => g.classList.toggle("lit", ids.has(rid)));
+    Object.entries(labelEls).forEach(([rid, t]) => t.classList.toggle("on", ids.has(rid) || rid === selected));
+    svg.classList.toggle("filtering", !!id);
+    if (mode === "explore" && !selected) renderOverview();
+  }
+
+  // ---------- Explore ----------
+  const view = $("#view");
+  let selected = null, query = "";
+
+  function select(id) {
+    selected = id;
+    Object.entries(els).forEach(([rid, g]) => g.classList.toggle("selected", rid === id));
+    Object.entries(labelEls).forEach(([rid, t]) => t.classList.toggle("on", rid === id || (activeLayer && els[rid].classList.contains("lit"))));
+    if (id) renderRegion(byId[id]); else renderOverview();
+    try { history.replaceState(null, "", id ? "#" + id : location.pathname + location.search); } catch (e) {}
+  }
+
+  const tagList = (arr, cls = "") => arr.length ? `<div class="tags">${arr.map((x) => `<span class="tag ${cls}">${esc(x)}</span>`).join("")}</div>` : `<span style="color:var(--ink-2)">None</span>`;
+
+  function renderRegion(r) {
+    view.innerHTML = `<article class="card">
+      <div class="backrow"><button class="link" id="back">← All states and UTs</button></div>
+      <div><div class="eyebrow">${r.kind === "UT" ? "Union Territory" : "State"}</div><h2>${esc(r.name)}</h2></div>
+      <dl class="facts-grid">
+        <div><dt>Capital</dt><dd>${esc(r.capital)}</dd></div>
+        <div><dt>In current form since</dt><dd>${r.since}</dd></div>
+        <div><dt>International border</dt><dd>${r.borders.length ? esc(r.borders.join(", ")) : "None"}</dd></div>
+        <div><dt>Coastline</dt><dd>${r.coastal ? "Yes" : "No"}</dd></div>
+        <div><dt>Tribal areas</dt><dd>${r.schedule === 5 ? "Fifth Schedule" : r.schedule === 6 ? "Sixth Schedule" : "Not scheduled"}</dd></div>
+      </dl>
+      <section><h3>Key facts</h3><ul class="notes">${r.facts.map((f) => `<li>${esc(f)}</li>`).join("")}</ul></section>
+      ${r.rivers.length ? `<section><h3>Rivers</h3>${tagList(r.rivers)}</section>` : ""}
+      ${r.parks.length ? `<section><h3>National parks, reserves &amp; wetlands</h3>${tagList(r.parks, "flag")}</section>` : ""}
+      ${r.culture.length ? `<section><h3>Dance, art &amp; festivals</h3>${tagList(r.culture)}</section>` : ""}
+      ${r.people.length ? `<section><h3>Tribal communities</h3>${tagList(r.people)}</section>` : ""}
+      <div class="backrow"><button class="btn ghost" id="quizme">Practise finding ${esc(r.name)}</button></div>
+    </article>`;
+    $("#back").onclick = () => select(null);
+    $("#quizme").onclick = () => { setTab("practice"); startQuiz("states", r.id); };
+  }
+
+  function searchIndex(q) {
+    q = q.trim().toLowerCase(); if (q.length < 2) return [];
+    const out = [];
+    R.forEach((r) => {
+      const fields = [["name", [r.name]], ["capital", [r.capital]], ["river", r.rivers], ["park", r.parks], ["culture", r.culture], ["tribe", r.people]];
+      for (const [kind, arr] of fields) {
+        const hit = arr.find((v) => v.toLowerCase().includes(q));
+        if (hit) { out.push({ r, kind, hit }); break; }
+      }
+    });
+    return out.slice(0, 12);
+  }
+
+  function renderOverview() {
+    const layer = activeLayer && L.find((l) => l.id === activeLayer);
+    const list = (kind) => R.filter((r) => r.kind === kind).filter((r) => !layer || layer.ids.includes(r.id))
+      .sort((a, b) => a.name.localeCompare(b.name))
+      .map((r) => `<button data-go="${r.id}"><span>${esc(r.name)}</span><small>${esc(r.capital.split(" (")[0])}</small></button>`).join("");
+    const states = list("State"), uts = list("UT");
+    view.innerHTML = `<div class="card overview">
+      <div class="search">
+        <input id="q" type="search" placeholder="Search a state, capital, river, park, dance or tribe" value="${esc(query)}" autocomplete="off" aria-label="Search">
+        <div id="results"></div>
+      </div>
+      ${layer ? `<div><div class="eyebrow">Filter</div><h2>${esc(layer.group === "Borders" ? "Bordering " + layer.label : layer.label)}</h2></div>
+        <p>${layer.ids.length} of 36 highlighted on the map. <button class="link" id="clear">Clear filter</button></p>`
+      : `<div><div class="eyebrow">Explore</div><h2>Tap any state or UT on the map</h2></div>
+        <p>Each one opens a fact card with its capital, borders, rivers, protected areas and the facts that come up in Prelims. Use the filters under the map to see which states border a country or fall under the Fifth or Sixth Schedule.</p>
+        <div class="stats">
+          <div class="stat"><b>28</b><span>States</span></div>
+          <div class="stat"><b>8</b><span>Union Territories</span></div>
+          <div class="stat"><b>7</b><span>Land neighbours</span></div>
+        </div>`}
+      ${states ? `<section><h3>States</h3><div class="index">${states}</div></section>` : ""}
+      ${uts ? `<section><h3>Union Territories</h3><div class="index">${uts}</div></section>` : ""}
+    </div>`;
+    view.querySelectorAll("[data-go]").forEach((b) => (b.onclick = () => select(b.dataset.go)));
+    const clear = $("#clear"); if (clear) clear.onclick = () => setLayer(null);
+    const qi = $("#q"), res = $("#results");
+    const draw = () => {
+      const hits = searchIndex(query);
+      res.innerHTML = hits.length ? `<div class="results">${hits.map((h) => `<button data-go="${h.r.id}"><span>${esc(h.r.name)}</span><small>${h.kind === "name" ? "" : esc(h.kind + ": " + h.hit)}</small></button>`).join("")}</div>`
+        : query.trim().length >= 2 ? `<p style="margin:6px 2px;color:var(--ink-2)">No match. Try a capital, a river or a park name.</p>` : "";
+      res.querySelectorAll("[data-go]").forEach((b) => (b.onclick = () => { query = ""; select(b.dataset.go); }));
+    };
+    qi.oninput = () => { query = qi.value; draw(); };
+    draw();
+  }
+
+  // ---------- Practice ----------
+  const MODES = {
+    states: { title: "Find the state", desc: "Locate a state or UT by name.",
+      ask: (r) => `Find <em>${esc(r.name)}</em>`, pool: () => R },
+    capitals: { title: "Capitals", desc: "Which state or UT has this capital?",
+      ask: (r) => `Which state or UT has <em>${esc(r.capital.split(" (")[0])}</em> as its capital?`,
+      pool: () => R.filter((r) => !["Chandigarh"].includes(r.capital) || r.id === "ch") },
+    parks: { title: "Parks & reserves", desc: "Locate a national park or tiger reserve.",
+      ask: (r, q) => `Where is <em>${esc(q.extra)}</em>?`, pool: () => R.filter((r) => r.parks.length),
+      extra: (r) => r.parks[Math.floor(Math.random() * Math.min(3, r.parks.length))] },
+    borders: { title: "Borders", desc: "Find a state or UT that borders a country.",
+      kind: "multi" },
+  };
+  const COUNTRIES = ["Pakistan", "China", "Nepal", "Bhutan", "Bangladesh", "Myanmar"];
+  let quiz = null;
+  const shuffle = (a) => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+
+  function renderPracticeHome() {
+    const best = store.get("atlas-best", {});
+    view.innerHTML = `<div class="card">
+      <div><div class="eyebrow">Practice</div><h2>Ten questions. Answer on the map.</h2></div>
+      <p style="margin:0;color:var(--ink-2);max-width:60ch">Labels are hidden while you play. A wrong tap shows the right answer, and the missed ones are listed at the end so you can revise them.</p>
+      <div class="modes">${Object.entries(MODES).map(([k, m]) => `<button class="mode" data-mode="${k}"><b>${m.title}</b><span>${m.desc}</span><span class="scoreline">${best[k] != null ? "Best " + best[k] + "/10" : "Not played yet"}</span></button>`).join("")}</div>
+    </div>`;
+    view.querySelectorAll("[data-mode]").forEach((b) => (b.onclick = () => startQuiz(b.dataset.mode)));
+  }
+
+  function makeQuestions(modeKey, first) {
+    const m = MODES[modeKey];
+    if (modeKey === "borders") {
+      return shuffle(COUNTRIES.concat(shuffle(COUNTRIES).slice(0, 4))).slice(0, 10).map((c) => ({
+        prompt: `Tap a state or UT that borders <em>${c}</em>`,
+        answers: R.filter((r) => r.borders.includes(c)).map((r) => r.id), label: `Borders ${c}`,
+      }));
+    }
+    let pool = shuffle(m.pool());
+    if (first) pool = [byId[first]].concat(pool.filter((r) => r.id !== first));
+    return pool.slice(0, 10).map((r) => {
+      const q = { answers: [r.id], label: r.name };
+      if (m.extra) q.extra = m.extra(r);
+      q.prompt = m.ask(r, q);
+      if (q.extra) q.label = `${q.extra}: ${r.name}`;
+      if (modeKey === "capitals") q.label = `${r.capital.split(" (")[0]}: ${r.name}`;
+      return q;
+    });
+  }
+
+  function startQuiz(modeKey, first) {
+    select(null); setLayer(null);
+    quiz = { mode: modeKey, qs: makeQuestions(modeKey, first), i: 0, score: 0, results: [], locked: false };
+    svg.classList.add("quiz"); $("#plate").classList.add("quizzing");
+    renderQuestion();
+  }
+
+  function clearMarks() { Object.values(els).forEach((g) => g.classList.remove("right", "wrong", "reveal")); }
+
+  function renderQuestion(feedback = "", cls = "") {
+    const q = quiz.qs[quiz.i];
+    view.innerHTML = `<div class="qbox">
+      <div class="progress">${quiz.qs.map((_, k) => `<i class="${quiz.results[k] || (k === quiz.i ? "now" : "")}"></i>`).join("")}</div>
+      <div class="scoreline">Question ${quiz.i + 1} of ${quiz.qs.length} · Score ${quiz.score}</div>
+      <div class="prompt" aria-live="polite">${q.prompt}</div>
+      <div class="feedback ${cls}" aria-live="polite">${feedback}</div>
+      <div class="backrow">${quiz.locked ? `<button class="btn" id="next">${quiz.i + 1 < quiz.qs.length ? "Next question" : "See results"}</button>` : `<button class="btn ghost" id="skip">I don't know</button>`}
+      <button class="btn ghost" id="quit">Stop</button></div>
+    </div>`;
+    const next = $("#next"); if (next) { next.onclick = advance; next.focus(); }
+    const skip = $("#skip"); if (skip) skip.onclick = () => quizAnswer(null);
+    $("#quit").onclick = endQuiz;
+  }
+
+  function quizAnswer(id) {
+    if (!quiz || quiz.locked) return;
+    const q = quiz.qs[quiz.i];
+    const ok = id && q.answers.includes(id);
+    quiz.locked = true;
+    if (ok) {
+      quiz.score++; quiz.results[quiz.i] = "right"; els[id].classList.add("right");
+      const others = q.answers.filter((a) => a !== id).map((a) => byId[a].name);
+      renderQuestion(`Correct: ${esc(byId[id].name)}.${others.length ? " Also correct: " + esc(others.join(", ")) + "." : ""}`, "right");
+    } else {
+      quiz.results[quiz.i] = "wrong";
+      if (id) els[id].classList.add("wrong");
+      q.answers.forEach((a) => els[a].classList.add("reveal"));
+      const ans = q.answers.map((a) => byId[a].name).join(", ");
+      renderQuestion(`${id ? "That is " + esc(byId[id].name) + ". " : ""}The answer${q.answers.length > 1 ? "s are" : " is"} shown in green: ${esc(ans)}.`, "wrong");
+    }
+  }
+
+  function advance() {
+    clearMarks(); quiz.locked = false; quiz.i++;
+    if (quiz.i < quiz.qs.length) renderQuestion(); else renderResults();
+  }
+
+  function renderResults() {
+    const best = store.get("atlas-best", {});
+    const isBest = best[quiz.mode] == null || quiz.score > best[quiz.mode];
+    if (isBest) { best[quiz.mode] = quiz.score; store.set("atlas-best", best); }
+    const missed = quiz.qs.filter((_, k) => quiz.results[k] !== "right");
+    view.innerHTML = `<div class="card">
+      <div><div class="eyebrow">${MODES[quiz.mode].title}</div><h2>${quiz.score} out of ${quiz.qs.length}${isBest && quiz.score ? " · new best" : ""}</h2></div>
+      ${missed.length ? `<section><h3>Revise these</h3><ul class="notes missed">${missed.map((q) => `<li>${esc(q.label)}</li>`).join("")}</ul></section>` : `<p style="margin:0">No misses. Try another round.</p>`}
+      <div class="backrow"><button class="btn" id="again">Play again</button><button class="btn ghost" id="home">Choose another round</button></div>
+    </div>`;
+    const mk = quiz.mode;
+    $("#again").onclick = () => startQuiz(mk);
+    $("#home").onclick = () => { endQuiz(); };
+  }
+
+  function endQuiz() {
+    quiz = null; clearMarks(); svg.classList.remove("quiz"); $("#plate").classList.remove("quizzing");
+    renderPracticeHome();
+  }
+
+  // ---------- Tabs ----------
+  function setTab(t) {
+    mode = t;
+    $("#tab-explore").setAttribute("aria-selected", String(t === "explore"));
+    $("#tab-practice").setAttribute("aria-selected", String(t === "practice"));
+    if (t === "explore") { if (quiz) { quiz = null; clearMarks(); svg.classList.remove("quiz"); $("#plate").classList.remove("quizzing"); } select(selected); }
+    else { select(null); setLayer(null); renderPracticeHome(); }
+  }
+  $("#tab-explore").onclick = () => setTab("explore");
+  $("#tab-practice").onclick = () => setTab("practice");
+
+  const initial = (location.hash || "").slice(1);
+  if (byId[initial]) select(initial); else renderOverview();
+  window.addEventListener("hashchange", () => { const h = location.hash.slice(1); if (mode === "explore" && byId[h] && h !== selected) select(h); });
+})();
+</script>
