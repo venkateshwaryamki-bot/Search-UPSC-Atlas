@@ -4,3 +4,5 @@ android/app/build/
 ios/App/build/
 *.jks
 *.keystore
+search-upsc-atlas-source.zip
+search-upsc-atlas.bundle
