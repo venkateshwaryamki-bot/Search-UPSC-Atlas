@@ -65,7 +65,7 @@ In Codemagic, go to **Team settings → Code signing identities → Android keys
 
 ### 4b. Build the first app bundle
 
-In Codemagic, start the **Android release (Google Play)** workflow. For this first run, open `codemagic.yaml` and delete the whole `publishing:` section of `android-release`, because Google requires the very first upload to be done by hand. When the build finishes, download the `.aab` file from the build's **Artifacts**.
+In Codemagic, start the **Android release (Google Play)** workflow. Google requires the very first upload to be done by hand, so automatic uploading is switched off in `codemagic.yaml` for now. When the build finishes, download the `.aab` file from the build's **Artifacts**.
 
 ### 4c. Create the app in Play Console
 
@@ -84,7 +84,7 @@ In Codemagic, start the **Android release (Google Play)** workflow. For this fir
 
 ### 4d. Later updates (optional automation)
 
-To let Codemagic upload new versions itself, create a Google Cloud service account with Play Console access. Follow Codemagic's guide at https://docs.codemagic.io/yaml-publishing/google-play/. Save its JSON as the variable `GCLOUD_SERVICE_ACCOUNT_CREDENTIALS` in a Codemagic group named `google_play`, and put the `publishing:` section back.
+To let Codemagic upload new versions itself, create a Google Cloud service account with Play Console access. Follow Codemagic's guide at https://docs.codemagic.io/yaml-publishing/google-play/. Save its JSON as the variable `GCLOUD_SERVICE_ACCOUNT_CREDENTIALS` in a Codemagic group named `google_play`, then uncomment the `groups:` and `publishing:` lines in the `android-release` part of `codemagic.yaml` (or ask Claude to).
 
 ## Step 5: iOS
 

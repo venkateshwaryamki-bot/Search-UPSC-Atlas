@@ -10,8 +10,10 @@ workflows:
       java: 21
       android_signing:
         - searchupsc_upload_key        # SETUP: upload your keystore under Team settings > Code signing identities
-      groups:
-        - google_play                  # SETUP: variable GCLOUD_SERVICE_ACCOUNT_CREDENTIALS (Play Console service account JSON)
+      # After the first manual upload, uncomment this group and the publishing block below
+      # to let Codemagic upload new versions to Google Play automatically.
+      # groups:
+      #   - google_play                # variable GCLOUD_SERVICE_ACCOUNT_CREDENTIALS (Play Console service account JSON)
     scripts:
       - name: Install and build the web app
         script: |
@@ -25,11 +27,11 @@ workflows:
           ./gradlew bundleRelease
     artifacts:
       - android/app/build/outputs/bundle/release/*.aab
-    publishing:
-      google_play:
-        credentials: $GCLOUD_SERVICE_ACCOUNT_CREDENTIALS
-        track: internal                # Start on internal testing; promote to production in Play Console.
-        submit_as_draft: true
+    # publishing:
+    #   google_play:
+    #     credentials: $GCLOUD_SERVICE_ACCOUNT_CREDENTIALS
+    #     track: internal              # Start on internal testing; promote to production in Play Console.
+    #     submit_as_draft: true
 
   ios-release:
     name: iOS release (App Store)
