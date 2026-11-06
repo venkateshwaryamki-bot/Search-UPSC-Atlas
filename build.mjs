@@ -6,8 +6,12 @@ import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
 const app = readFileSync("src/app.html", "utf8");
 const regions = readFileSync("src/regions.js", "utf8");
 const map = readFileSync("vendor/india-paths.json", "utf8");
+const geo = readFileSync("src/geo.js", "utf8");
+const rivers = readFileSync("vendor/india-rivers.json", "utf8");
 const body = app
   .replace("/*REGIONS_JS*/", () => regions)
+  .replace("/*GEO_JS*/", () => geo)
+  .replace("/*RIVERS_JSON*/", () => rivers)
   .replace("/*MAP_JSON*/", () => map);
 
 mkdirSync("dist", { recursive: true });

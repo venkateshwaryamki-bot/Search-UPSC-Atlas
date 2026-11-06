@@ -244,6 +244,36 @@ ul.notes li::marker { color: var(--sec, var(--accent)); }
 .progress i { height: 6px; }
 .prompt em { background: linear-gradient(90deg, #e4572e, #8e5bd6); -webkit-background-clip: text; background-clip: text; color: transparent; }
 @media (prefers-reduced-motion: reduce) { .mode { transition: none; } }
+
+/* ---------- Rivers and passes ---------- */
+:root { --river: #1769d1; --river-case: rgba(255,255,255,.75); --pass: #7a3e12; --pass-edge: #fff; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --river: #6cc0ff; --river-case: rgba(5,15,25,.7); --pass: #ffc27a; --pass-edge: #1a1208; } }
+:root[data-theme="dark"] { --river: #6cc0ff; --river-case: rgba(5,15,25,.7); --pass: #ffc27a; --pass-edge: #1a1208; }
+.map.quiz .overlay { display: none; }
+.overlay[hidden] { display: none; }
+.river { cursor: pointer; }
+.river path { fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.river .case { stroke: var(--river-case); stroke-width: 2.2; }
+.river .line { stroke: var(--river); stroke-width: 1.1; }
+.river.r1 .case { stroke-width: 2.8; } .river.r1 .line { stroke-width: 1.6; }
+.river .hitline { stroke: transparent; stroke-width: 5; pointer-events: stroke; }
+.river:hover .line { stroke-width: 2.4; }
+.river.on .line { stroke-width: 3; filter: drop-shadow(0 0 2px var(--river)); }
+.river.on .case { stroke-width: 4.6; }
+.map.riverfocus .river:not(.on) { opacity: .35; }
+.rlabels text { font-family: var(--font-body); font-style: italic; font-weight: 600; font-size: 6.5px; fill: var(--river); paint-order: stroke; stroke: var(--river-case); stroke-width: 2px; pointer-events: none; text-anchor: middle; }
+.pass { cursor: pointer; }
+.pass .tri { fill: var(--pass); stroke: var(--pass-edge); stroke-width: .8; stroke-linejoin: round; transition: transform .15s; }
+.pass .phit { fill: transparent; }
+.pass:hover .tri { transform: scale(1.4); }
+.pass.on .tri { transform: scale(1.8); fill: var(--accent); }
+.pass text { font-size: 6.5px; font-weight: 600; fill: var(--ink); paint-order: stroke; stroke: var(--paper); stroke-width: 2px; pointer-events: none; }
+.pass:not(.on) text { display: none; }
+@media (prefers-reduced-motion: reduce) { .pass .tri { transition: none; } }
+.tag.go { cursor: pointer; font: inherit; font-size: .82rem; color: inherit; }
+.tag.go:hover { outline: 1px solid var(--sec, var(--accent)); }
+.sec.passes { --sec: #a0522d; }
+.mode:nth-child(5) { --m1: #1769d1; --m2: #3fc1e0; } .mode:nth-child(6) { --m1: #8a4b1c; --m2: #d9962b; }
 </style>
 
 <div class="app">
@@ -267,12 +297,14 @@ ul.notes li::marker { color: var(--sec, var(--accent)); }
     </div>
     <div id="view"></div>
     <footer>
-      Map outline from <a href="https://github.com/VictorCazanave/svg-maps" target="_blank" rel="noopener">@svg-maps/india</a> (CC BY 4.0), modified: Ladakh is drawn separately from Jammu and Kashmir, and Dadra and Nagar Haveli is merged with Daman and Diu. The Ladakh–J&amp;K line is approximate. Boundaries are for study, not survey.
+      Map outline from <a href="https://github.com/VictorCazanave/svg-maps" target="_blank" rel="noopener">@svg-maps/india</a> (CC BY 4.0), modified: Ladakh is drawn separately from Jammu and Kashmir, and Dadra and Nagar Haveli is merged with Daman and Diu. The Ladakh–J&amp;K line is approximate. Rivers from <a href="https://www.naturalearthdata.com/" target="_blank" rel="noopener">Natural Earth</a> (public domain); pass locations are approximate. Boundaries are for study, not survey.
     </footer>
   </section>
 </div>
 
 <script>/*REGIONS_JS*/</script>
+<script>/*GEO_JS*/</script>
+<script>window.RIVER_PATHS = /*RIVERS_JSON*/;</script>
 <script>window.MAP = /*MAP_JSON*/;</script>
 <script>
 (function () {
@@ -347,7 +379,51 @@ ul.notes li::marker { color: var(--sec, var(--accent)); }
   const uline = document.createElementNS(NS, "polyline");
   uline.setAttribute("points", pts(SPLIT)); uline.setAttribute("class", "uline"); uline.setAttribute("clip-path", "url(#clip-old)");
   gRegions.append(uline);
-  svg.append(gLabels);
+  // ---------- Rivers and passes ----------
+  const RV = window.RIVERS, PS = window.PASSES;
+  const riverById = Object.fromEntries(RV.map((r) => [r.id, r]));
+  const passById = Object.fromEntries(PS.map((p) => [p.id, p]));
+  const clipIndia = document.createElementNS(NS, "clipPath"); clipIndia.id = "clip-india";
+  Object.values(M.paths).forEach((d) => { const p = document.createElementNS(NS, "path"); p.setAttribute("d", d); clipIndia.append(p); });
+  svg.querySelector("defs").append(clipIndia);
+  const gRivers = document.createElementNS(NS, "g"); gRivers.setAttribute("class", "overlay rivers-layer");
+  const gRiverClip = document.createElementNS(NS, "g"); gRiverClip.setAttribute("clip-path", "url(#clip-india)");
+  const gRLabels = document.createElementNS(NS, "g"); gRLabels.setAttribute("class", "rlabels");
+  gRivers.append(gRiverClip, gRLabels);
+  const riverEls = {};
+  RV.forEach((rv) => {
+    const d = window.RIVER_PATHS[rv.id]; if (!d) return;
+    const g = document.createElementNS(NS, "g"); g.setAttribute("class", `river r${rv.rank}`); g.dataset.river = rv.id;
+    ["case", "line", "hitline"].forEach((c) => { const p = document.createElementNS(NS, "path"); p.setAttribute("d", d); p.setAttribute("class", c); g.append(p); });
+    gRiverClip.append(g); riverEls[rv.id] = g;
+  });
+  const gPasses = document.createElementNS(NS, "g"); gPasses.setAttribute("class", "overlay passes-layer");
+  const passEls = {};
+  PS.forEach((ps) => {
+    const [x, y] = window.PROJECT(ps.lat, ps.lon);
+    const g = document.createElementNS(NS, "g"); g.setAttribute("class", "pass"); g.dataset.pass = ps.id;
+    g.setAttribute("transform", `translate(${x.toFixed(1)},${y.toFixed(1)})`);
+    g.innerHTML = `<circle class="phit" r="6"></circle><path class="tri" d="M0,-4.4L3.9,2.6H-3.9Z"></path><text x="5" y="2">${esc(ps.name)}</text>`;
+    gPasses.append(g); passEls[ps.id] = g;
+  });
+  svg.append(gRivers, gLabels, gPasses);
+
+  // Name the main rivers at a point well inside India.
+  function placeRiverLabels() {
+    const shapes = [...svg.querySelectorAll(".region path.shape")];
+    const inside = (x, y) => { const sp = svg.createSVGPoint(); sp.x = x; sp.y = y; return shapes.some((p) => p.isPointInFill(sp)); };
+    RV.filter((rv) => rv.rank === 1 && riverEls[rv.id]).forEach((rv) => {
+      const line = riverEls[rv.id].querySelector(".line"), len = line.getTotalLength();
+      const pts = [];
+      for (let t = 0; t <= 1; t += 0.02) { const q = line.getPointAtLength(t * len); if (inside(q.x, q.y)) pts.push(q); }
+      if (!pts.length) return;
+      const q = pts[Math.floor(pts.length * 0.5)];
+      const t = document.createElementNS(NS, "text");
+      t.setAttribute("x", q.x.toFixed(1)); t.setAttribute("y", (q.y - 3).toFixed(1)); t.textContent = rv.name;
+      gRLabels.append(t);
+    });
+  }
+  placeRiverLabels();
 
   // Label positions: the inside point farthest from the edge, found on a coarse grid.
   const FIXED = { jk: [128, 88], la: [196, 52], an: [528, 600], ld: [96, 615], ap: [262, 470], wb: [404, 330], py: null };
@@ -386,15 +462,20 @@ ul.notes li::marker { color: var(--sec, var(--accent)); }
   const tip = $("#tip"), wrap = $("#mapwrap");
   let mode = "explore";
   svg.addEventListener("pointermove", (e) => {
-    const g = e.target.closest(".region");
-    if (!g || mode === "practice" || e.pointerType === "touch") { tip.hidden = true; return; }
+    const pz = e.target.closest(".pass"), rv = !pz && e.target.closest(".river");
+    const g = !pz && !rv && e.target.closest(".region");
+    if ((!g && !pz && !rv) || mode === "practice" || e.pointerType === "touch") { tip.hidden = true; return; }
     const box = wrap.getBoundingClientRect();
-    tip.textContent = byId[g.dataset.id].name;
+    tip.textContent = pz ? passById[pz.dataset.pass].name : rv ? riverById[rv.dataset.river].name + " river" : byId[g.dataset.id].name;
     tip.style.left = e.clientX - box.left + "px"; tip.style.top = e.clientY - box.top + "px";
     tip.hidden = false;
   });
   svg.addEventListener("pointerleave", () => (tip.hidden = true));
   svg.addEventListener("click", (e) => {
+    if (mode !== "practice") {
+      const pz = e.target.closest(".pass"); if (pz) { selectPass(pz.dataset.pass); return; }
+      const rv = e.target.closest(".river"); if (rv) { selectRiver(rv.dataset.river); return; }
+    }
     const g = e.target.closest(".region"); if (!g) return;
     if (mode === "practice") quizAnswer(g.dataset.id); else select(g.dataset.id);
   });
@@ -406,13 +487,25 @@ ul.notes li::marker { color: var(--sec, var(--accent)); }
   filters.innerHTML = groups.map((gname) => `<div class="fgroup"><span class="glabel">${gname}</span>${
     L.filter((l) => l.group === gname).map((l) => `<button class="chip" id="layer-${l.id}" data-layer="${l.id}" aria-pressed="false" style="--chip:${l.h != null ? `hsl(${l.h} 70% 48%)` : GROUP_COLOR[l.group]}">${esc(l.label)}</button>`).join("")
   }</div>`).join("");
+  const overlays = Object.assign({ rivers: true, passes: true }, store.get("atlas-overlays", {}));
+  filters.insertAdjacentHTML("afterbegin", `<div class="fgroup"><span class="glabel">On the map</span>
+    <button class="chip" id="ov-rivers" data-overlay="rivers" style="--chip:#1769d1">Rivers</button>
+    <button class="chip" id="ov-passes" data-overlay="passes" style="--chip:#a0522d">Mountain passes</button></div>`);
+  function applyOverlays() {
+    gRivers.hidden = !overlays.rivers; gPasses.hidden = !overlays.passes;
+    $("#ov-rivers").setAttribute("aria-pressed", String(overlays.rivers));
+    $("#ov-passes").setAttribute("aria-pressed", String(overlays.passes));
+  }
+  applyOverlays();
   filters.addEventListener("click", (e) => {
+    const o = e.target.closest("[data-overlay]");
+    if (o) { overlays[o.dataset.overlay] = !overlays[o.dataset.overlay]; store.set("atlas-overlays", overlays); applyOverlays(); return; }
     const b = e.target.closest("[data-layer]"); if (!b) return;
     setLayer(activeLayer === b.dataset.layer ? null : b.dataset.layer);
   });
   function setLayer(id) {
     activeLayer = id;
-    filters.querySelectorAll(".chip").forEach((c) => c.setAttribute("aria-pressed", String(c.dataset.layer === id)));
+    filters.querySelectorAll("[data-layer]").forEach((c) => c.setAttribute("aria-pressed", String(c.dataset.layer === id)));
     const ids = id ? new Set(L.find((l) => l.id === id).ids) : new Set();
     Object.entries(els).forEach(([rid, g]) => g.classList.toggle("lit", ids.has(rid)));
     Object.entries(labelEls).forEach(([rid, t]) => t.classList.toggle("on", ids.has(rid) || rid === selected));
@@ -424,7 +517,73 @@ ul.notes li::marker { color: var(--sec, var(--accent)); }
   const view = $("#view");
   let selected = null, query = "";
 
+  let selRiver = null, selPass = null;
+  function clearFeature() {
+    if (selRiver) riverEls[selRiver]?.classList.remove("on");
+    if (selPass) passEls[selPass]?.classList.remove("on");
+    selRiver = selPass = null; svg.classList.remove("riverfocus");
+  }
+  function focusStates(ids) {
+    setLayer(null);
+    Object.entries(els).forEach(([rid, g]) => { g.classList.remove("selected"); g.classList.toggle("lit", ids.includes(rid)); });
+    Object.entries(labelEls).forEach(([rid, t]) => t.classList.toggle("on", ids.includes(rid)));
+    svg.classList.toggle("filtering", ids.length > 0);
+    selected = null;
+  }
+  function selectRiver(id) {
+    const rv = riverById[id]; if (!rv) return;
+    clearFeature(); focusStates(rv.states);
+    if (!overlays.rivers) { overlays.rivers = true; applyOverlays(); }
+    selRiver = id; riverEls[id]?.classList.add("on"); svg.classList.add("riverfocus");
+    gRiverClip.append(riverEls[id]);
+    renderRiver(rv);
+    try { history.replaceState(null, "", "#river-" + id); } catch (e) {}
+  }
+  function selectPass(id) {
+    const ps = passById[id]; if (!ps) return;
+    clearFeature(); focusStates(ps.states);
+    if (!overlays.passes) { overlays.passes = true; applyOverlays(); }
+    selPass = id; passEls[id].classList.add("on"); gPasses.append(passEls[id]);
+    renderPass(ps);
+    try { history.replaceState(null, "", "#pass-" + id); } catch (e) {}
+  }
+  const stateButtons = (ids) => `<div class="tags">${ids.map((i) => `<button class="tag go" data-go="${i}">${esc(byId[i].name)}</button>`).join("")}</div>`;
+  function wireCard() {
+    view.querySelectorAll("[data-go]").forEach((b) => (b.onclick = () => select(b.dataset.go)));
+    view.querySelectorAll("[data-river]").forEach((b) => (b.onclick = () => selectRiver(b.dataset.river)));
+    view.querySelectorAll("[data-pass]").forEach((b) => (b.onclick = () => selectPass(b.dataset.pass)));
+    const back = $("#back"); if (back) back.onclick = () => select(null);
+  }
+  function renderRiver(rv) {
+    view.innerHTML = `<article class="card">
+      <div class="backrow"><button class="link" id="back">← All states and UTs</button></div>
+      <div class="hero" style="--h:205" data-code="${esc(rv.name)}"><div class="eyebrow">River · ${esc(rv.system)} system</div><h2>${esc(rv.name)}</h2><span class="zone">${rv.states.length} state${rv.states.length > 1 ? "s" : ""} and UTs in India</span></div>
+      <dl class="facts-grid" style="--h:205">
+        <div><dt>Source</dt><dd>${esc(rv.origin)}</dd></div>
+        <div><dt>Ends</dt><dd>${esc(rv.mouth)}</dd></div>
+      </dl>
+      <section class="sec rivers"><h3>Flows through</h3>${stateButtons(rv.states)}</section>
+      <section class="sec facts"><h3>Key facts</h3><ul class="notes">${rv.facts.map((f) => `<li>${esc(f)}</li>`).join("")}</ul></section>
+      ${rv.tributaries.length ? `<section class="sec parks"><h3>Main tributaries</h3><div class="tags">${rv.tributaries.map((t) => { const m = RV.find((x) => t.startsWith(x.name)); return m ? `<button class="tag go" data-river="${m.id}">${esc(t)}</button>` : `<span class="tag">${esc(t)}</span>`; }).join("")}</div></section>` : ""}
+    </article>`;
+    wireCard();
+  }
+  function renderPass(ps) {
+    view.innerHTML = `<article class="card">
+      <div class="backrow"><button class="link" id="back">← All states and UTs</button></div>
+      <div class="hero" style="--h:24" data-code="▲"><div class="eyebrow">${ps.name.includes("Gap") ? "Gap in the Western Ghats" : ps.name.includes("Ghat") ? "Ghat (Western Ghats)" : "Mountain pass"}</div><h2>${esc(ps.name)}</h2><span class="zone">${esc(ps.states.map((i) => byId[i].name).join(" / "))}</span></div>
+      <dl class="facts-grid" style="--h:24">
+        <div><dt>Connects</dt><dd>${esc(ps.connects)}</dd></div>
+        <div><dt>Coordinates</dt><dd>${ps.lat.toFixed(2)}° N, ${ps.lon.toFixed(2)}° E</dd></div>
+      </dl>
+      <section class="sec passes"><h3>In</h3>${stateButtons(ps.states)}</section>
+      <section class="sec facts"><h3>Key facts</h3><ul class="notes">${ps.facts.map((f) => `<li>${esc(f)}</li>`).join("")}</ul></section>
+    </article>`;
+    wireCard();
+  }
+
   function select(id) {
+    if (selRiver || selPass) { clearFeature(); if (!activeLayer) { Object.values(els).forEach((g) => g.classList.remove("lit")); svg.classList.remove("filtering"); } }
     selected = id;
     Object.entries(els).forEach(([rid, g]) => g.classList.toggle("selected", rid === id));
     Object.entries(labelEls).forEach(([rid, t]) => t.classList.toggle("on", rid === id || (activeLayer && els[rid].classList.contains("lit"))));
@@ -446,7 +605,8 @@ ul.notes li::marker { color: var(--sec, var(--accent)); }
         <div><dt>Tribal areas</dt><dd>${r.schedule === 5 ? "Fifth Schedule" : r.schedule === 6 ? "Sixth Schedule" : "Not scheduled"}</dd></div>
       </dl>
       <section class="sec facts"><h3>Key facts</h3><ul class="notes">${r.facts.map((f) => `<li>${esc(f)}</li>`).join("")}</ul></section>
-      ${r.rivers.length ? `<section class="sec rivers"><h3>Rivers</h3>${tagList(r.rivers)}</section>` : ""}
+      ${r.rivers.length ? `<section class="sec rivers"><h3>Rivers</h3><div class="tags">${r.rivers.map((t) => { const m = RV.find((x) => t.includes(x.name)); return m ? `<button class="tag go" data-river="${m.id}">${esc(t)}</button>` : `<span class="tag">${esc(t)}</span>`; }).join("")}</div></section>` : ""}
+      ${PS.some((p) => p.states.includes(r.id)) ? `<section class="sec passes"><h3>Passes and gaps</h3><div class="tags">${PS.filter((p) => p.states.includes(r.id)).map((p) => `<button class="tag go" data-pass="${p.id}">${esc(p.name)}</button>`).join("")}</div></section>` : ""}
       ${r.parks.length ? `<section class="sec parks"><h3>National parks, reserves &amp; wetlands</h3>${tagList(r.parks, "flag")}</section>` : ""}
       ${r.culture.length ? `<section class="sec culture"><h3>Dance, art &amp; festivals</h3>${tagList(r.culture)}</section>` : ""}
       ${r.people.length ? `<section class="sec people"><h3>Tribal communities</h3>${tagList(r.people)}</section>` : ""}
@@ -454,6 +614,8 @@ ul.notes li::marker { color: var(--sec, var(--accent)); }
     </article>`;
     $("#back").onclick = () => select(null);
     $("#quizme").onclick = () => { setTab("practice"); startQuiz("states", r.id); };
+    view.querySelectorAll("[data-river]").forEach((b) => (b.onclick = () => selectRiver(b.dataset.river)));
+    view.querySelectorAll("[data-pass]").forEach((b) => (b.onclick = () => selectPass(b.dataset.pass)));
   }
 
   function searchIndex(q) {
@@ -466,6 +628,8 @@ ul.notes li::marker { color: var(--sec, var(--accent)); }
         if (hit) { out.push({ r, kind, hit }); break; }
       }
     });
+    RV.forEach((rv) => { if ((rv.name + " river").toLowerCase().includes(q)) out.unshift({ river: rv }); });
+    PS.forEach((ps) => { if ((ps.name + " pass").toLowerCase().includes(q)) out.unshift({ pass: ps }); });
     return out.slice(0, 12);
   }
 
@@ -492,15 +656,21 @@ ul.notes li::marker { color: var(--sec, var(--accent)); }
         <section><h3>Map colours: Zonal Councils and the North Eastern Council</h3><div class="legend">${ZONES.map((z) => `<span style="--h:${z.h}"><i></i>${z.label}</span>`).join("")}</div></section>`}
       ${states ? `<section><h3>States</h3><div class="index">${states}</div></section>` : ""}
       ${uts ? `<section><h3>Union Territories</h3><div class="index">${uts}</div></section>` : ""}
+      ${layer ? "" : `<section><h3>Rivers</h3><div class="index">${RV.slice().sort((a, b) => a.name.localeCompare(b.name)).map((rv) => `<button data-river="${rv.id}" style="--h:205"><span>${esc(rv.name)}</span><small>${esc(rv.system.split(",")[0])}</small></button>`).join("")}</div></section>
+      <section><h3>Mountain passes and gaps</h3><div class="index">${PS.map((ps) => `<button data-pass="${ps.id}" style="--h:24"><span>${esc(ps.name)}</span><small>${esc(SHORT[ps.states[0]] || byId[ps.states[0]].name)}</small></button>`).join("")}</div></section>`}
     </div>`;
     view.querySelectorAll("[data-go]").forEach((b) => (b.onclick = () => select(b.dataset.go)));
     const clear = $("#clear"); if (clear) clear.onclick = () => setLayer(null);
+    view.querySelectorAll(".index [data-river]").forEach((b) => (b.onclick = () => selectRiver(b.dataset.river)));
+    view.querySelectorAll(".index [data-pass]").forEach((b) => (b.onclick = () => selectPass(b.dataset.pass)));
     const qi = $("#q"), res = $("#results");
     const draw = () => {
       const hits = searchIndex(query);
-      res.innerHTML = hits.length ? `<div class="results">${hits.map((h) => `<button data-go="${h.r.id}"><span>${esc(h.r.name)}</span><small>${h.kind === "name" ? "" : esc(h.kind + ": " + h.hit)}</small></button>`).join("")}</div>`
+      res.innerHTML = hits.length ? `<div class="results">${hits.map((h) => h.river ? `<button data-river="${h.river.id}"><span>${esc(h.river.name)}</span><small>river</small></button>` : h.pass ? `<button data-pass="${h.pass.id}"><span>${esc(h.pass.name)}</span><small>pass · ${esc(byId[h.pass.states[0]].name)}</small></button>` : `<button data-go="${h.r.id}"><span>${esc(h.r.name)}</span><small>${h.kind === "name" ? "" : esc(h.kind + ": " + h.hit)}</small></button>`).join("")}</div>`
         : query.trim().length >= 2 ? `<p style="margin:6px 2px;color:var(--ink-2)">No match. Try a capital, a river or a park name.</p>` : "";
       res.querySelectorAll("[data-go]").forEach((b) => (b.onclick = () => { query = ""; select(b.dataset.go); }));
+      res.querySelectorAll("[data-river]").forEach((b) => (b.onclick = () => { query = ""; selectRiver(b.dataset.river); }));
+      res.querySelectorAll("[data-pass]").forEach((b) => (b.onclick = () => { query = ""; selectPass(b.dataset.pass); }));
     };
     qi.oninput = () => { query = qi.value; draw(); };
     draw();
@@ -518,6 +688,12 @@ ul.notes li::marker { color: var(--sec, var(--accent)); }
       extra: (r) => r.parks[Math.floor(Math.random() * Math.min(3, r.parks.length))] },
     borders: { title: "Borders", desc: "Find a state or UT that borders a country.",
       kind: "multi" },
+    rivers: { title: "Rivers", desc: "Tap a state the river flows through.",
+      make: () => shuffle(window.RIVERS).slice(0, 10).map((rv) => ({ prompt: `Tap a state or UT the <em>${esc(rv.name)}</em> flows through`,
+        answers: rv.states, label: `${rv.name}: ${rv.states.map((i) => byId[i].name).join(", ")}` })) },
+    passes: { title: "Mountain passes", desc: "Which state or UT is the pass in?",
+      make: () => shuffle(window.PASSES).slice(0, 10).map((ps) => ({ prompt: `Which state or UT is <em>${esc(ps.name)}</em> in?`,
+        answers: ps.states, label: `${ps.name}: ${ps.states.map((i) => byId[i].name).join(" / ")}` })) },
   };
   const COUNTRIES = ["Pakistan", "China", "Nepal", "Bhutan", "Bangladesh", "Myanmar"];
   let quiz = null;
@@ -535,6 +711,7 @@ ul.notes li::marker { color: var(--sec, var(--accent)); }
 
   function makeQuestions(modeKey, first) {
     const m = MODES[modeKey];
+    if (m.make) return m.make();
     if (modeKey === "borders") {
       return shuffle(COUNTRIES.concat(shuffle(COUNTRIES).slice(0, 4))).slice(0, 10).map((c) => ({
         prompt: `Tap a state or UT that borders <em>${c}</em>`,
@@ -554,7 +731,7 @@ ul.notes li::marker { color: var(--sec, var(--accent)); }
   }
 
   function startQuiz(modeKey, first) {
-    select(null); setLayer(null);
+    clearFeature(); select(null); setLayer(null);
     quiz = { mode: modeKey, qs: makeQuestions(modeKey, first), i: 0, score: 0, results: [], locked: false };
     svg.classList.add("quiz"); $("#plate").classList.add("quizzing");
     renderQuestion();
@@ -626,13 +803,19 @@ ul.notes li::marker { color: var(--sec, var(--accent)); }
     $("#tab-explore").setAttribute("aria-selected", String(t === "explore"));
     $("#tab-practice").setAttribute("aria-selected", String(t === "practice"));
     if (t === "explore") { if (quiz) { quiz = null; clearMarks(); svg.classList.remove("quiz"); $("#plate").classList.remove("quizzing"); } select(selected); }
-    else { select(null); setLayer(null); renderPracticeHome(); }
+    else { clearFeature(); select(null); setLayer(null); renderPracticeHome(); }
   }
   $("#tab-explore").onclick = () => setTab("explore");
   $("#tab-practice").onclick = () => setTab("practice");
 
   const initial = (location.hash || "").slice(1);
-  if (byId[initial]) select(initial); else renderOverview();
-  window.addEventListener("hashchange", () => { const h = location.hash.slice(1); if (mode === "explore" && byId[h] && h !== selected) select(h); });
+  function route(h) {
+    if (h.startsWith("river-") && riverById[h.slice(6)]) { if (selRiver !== h.slice(6)) selectRiver(h.slice(6)); return true; }
+    if (h.startsWith("pass-") && passById[h.slice(5)]) { if (selPass !== h.slice(5)) selectPass(h.slice(5)); return true; }
+    if (byId[h]) { if (h !== selected) select(h); return true; }
+    return false;
+  }
+  if (!route(initial)) renderOverview();
+  window.addEventListener("hashchange", () => { if (mode === "explore") route(location.hash.slice(1)); });
 })();
 </script>
