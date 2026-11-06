@@ -11,6 +11,8 @@ on:
 jobs:
   android:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write   # to publish the test APK as a GitHub Release
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
@@ -40,6 +42,15 @@ jobs:
         with:
           name: android-unsigned-aab
           path: android/app/build/outputs/bundle/release/*.aab
+      - name: Publish the test APK as a GitHub Release
+        if: github.ref == 'refs/heads/main'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          cp android/app/build/outputs/apk/debug/app-debug.apk SearchUPSCAtlas-test.apk
+          NOTES="Test build from commit ${GITHUB_SHA::7}. Install it directly on an Android phone (allow installs from unknown sources). This is not the signed Play Store version."
+          gh release delete test-build --yes --cleanup-tag 2>/dev/null || true
+          gh release create test-build SearchUPSCAtlas-test.apk --title "Test build (Android APK)" --notes "$NOTES" --prerelease --target "$GITHUB_SHA"
 
   ios:
     runs-on: macos-latest
