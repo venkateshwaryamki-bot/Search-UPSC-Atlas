@@ -396,6 +396,39 @@ svg[viewBox="0 0 24 24"] { width: 22px; height: 22px; fill: none; stroke: curren
   .lsheet-head { display: flex; align-items: center; justify-content: space-between; }
   .lsheet-head b { font-family: var(--font-display); font-weight: 400; font-size: 1.35rem; }
 }
+/* Daily tab */
+.dhero { background: #111; color: #f4f1e6; border-radius: 20px; padding: 20px 18px 18px; display: flex; flex-direction: column; gap: 14px; position: relative; overflow: hidden; }
+.dhero::after { content: ""; position: absolute; right: -30px; top: -30px; width: 170px; height: 170px; border-radius: 50%; background: radial-gradient(circle, rgba(250,227,122,.22), transparent 70%); }
+.dhero .eyebrow { color: var(--brand); }
+.streak { display: flex; align-items: center; gap: 14px; }
+.flame { width: 64px; height: 64px; border-radius: 20px; background: rgba(250,227,122,.14); display: grid; place-items: center; font-size: 2.1rem; flex: none; }
+.flame.cold { filter: grayscale(1); opacity: .6; }
+.streak b { font-family: var(--font-display); font-weight: 400; font-size: 2.6rem; line-height: 1; color: var(--brand); display: block; }
+.streak span { font-size: .9rem; color: #cfcab9; }
+.dstats { display: flex; gap: 8px; }
+.dstats div { flex: 1; background: rgba(255,255,255,.07); border-radius: 12px; padding: 8px 10px; }
+.dstats b { display: block; font-size: 1.15rem; font-variant-numeric: tabular-nums; color: #fff; }
+.dstats span { font-size: .66rem; color: #b9b4a4; text-transform: uppercase; letter-spacing: .05em; white-space: nowrap; }
+.dhero .bigbtn { height: 52px; flex: none; width: 100%; box-shadow: none; }
+.dhero .done { display: flex; align-items: center; gap: 10px; background: rgba(255,255,255,.07); border-radius: 14px; padding: 10px 12px; }
+.dhero .done .marks i { width: 14px; height: 14px; border-radius: 4px; }
+.cal { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; }
+.cal .dow { font-family: var(--font-mono); font-size: .62rem; text-align: center; color: var(--ink-2); }
+.cal .c { aspect-ratio: 1; border-radius: 8px; background: color-mix(in srgb, var(--ink) 6%, var(--paper)); display: grid; place-items: center; font-size: .72rem; color: var(--ink-2); font-variant-numeric: tabular-nums; }
+.cal .c.p { color: #111; font-weight: 700; }
+.cal .c.today { box-shadow: 0 0 0 2px var(--ink); }
+.cal .c.out { opacity: .35; }
+.calkey { display: flex; align-items: center; gap: 6px; font-size: .74rem; color: var(--ink-2); justify-content: flex-end; }
+.calkey i { width: 12px; height: 12px; border-radius: 3px; }
+.howto { display: grid; gap: 10px; }
+.howto div { display: flex; gap: 12px; align-items: flex-start; }
+.howto b.n { width: 26px; height: 26px; border-radius: 50%; background: var(--brand); color: #111; display: grid; place-items: center; font-size: .8rem; flex: none; }
+.sharecard { display: flex; flex-direction: column; gap: 12px; align-items: center; }
+.sharecard img { width: min(100%, 300px); border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,.25); }
+.sharecard .row { display: flex; gap: 10px; width: 100%; max-width: 420px; }
+.sharecard .row .btn { flex: 1; }
+.sharecard p { margin: 0; font-size: .8rem; color: var(--ink-2); text-align: center; }
+
 /* Quiz mode */
 .qover, .confetti { display: none; }
 .confetti { position: fixed; inset: 0; z-index: 60; pointer-events: none; width: 100%; height: 100%; }
@@ -2034,6 +2067,67 @@ window.CROPS = [
     const fallback = () => { const ta = view.querySelector("#sharetext"); if (ta) { ta.hidden = false; ta.select(); } btn.textContent = "Select and copy the text"; };
     try { navigator.clipboard.writeText(text).then(done, fallback); } catch (e) { fallback(); }
   }
+  // ---------- Daily stats ----------
+  const addDays = (d, n) => new Date(Date.parse(d) + n * 86400e3).toISOString().slice(0, 10);
+  function dailyStats() {
+    const all = store.get("atlas-daily", {}), today = istDate();
+    let streak = 0, d = all[today] ? today : addDays(today, -1);
+    while (all[d]) { streak++; d = addDays(d, -1); }
+    const days = Object.keys(all).sort(); let best = 0, run = 0, prev = null;
+    days.forEach((x) => { run = prev && addDays(prev, 1) === x ? run + 1 : 1; best = Math.max(best, run); prev = x; });
+    const scores = days.map((x) => all[x].score);
+    return { all, today, streak, best, played: days.length, avg: scores.length ? scores.reduce((a, b) => a + b, 0) / scores.length : 0 };
+  }
+
+  // ---------- Share card (an image for Telegram, WhatsApp and Instagram) ----------
+  function makeShareCard(o) {
+    const cv = document.createElement("canvas"), Wc = 1080, Hc = 1350; cv.width = Wc; cv.height = Hc;
+    const c = cv.getContext("2d"), Y = "#FAE37A";
+    c.fillStyle = "#111"; c.fillRect(0, 0, Wc, Hc);
+    const g = c.createRadialGradient(880, 300, 20, 880, 300, 620); g.addColorStop(0, "rgba(250,227,122,.18)"); g.addColorStop(1, "rgba(250,227,122,0)");
+    c.fillStyle = g; c.fillRect(0, 0, Wc, Hc);
+    // India silhouette
+    c.save(); c.translate(500, 250); c.scale(1.2, 1.2); c.fillStyle = "rgba(250,227,122,.13)";
+    Object.values(M.paths).forEach((d) => { try { c.fill(new Path2D(d)); } catch (e) {} }); c.restore();
+    const serif = '"Young Serif", Georgia, serif', sans = '"Instrument Sans", Arial, sans-serif', mono = '"JetBrains Mono", monospace';
+    c.fillStyle = Y; c.font = `600 34px ${mono}`; c.fillText("SEARCH UPSC ATLAS", 80, 130);
+    c.fillStyle = "#f4f1e6"; c.font = `68px ${serif}`; c.fillText(o.title, 80, 250);
+    c.fillStyle = "#b9b4a4"; c.font = `500 36px ${sans}`; c.fillText(o.sub, 80, 310);
+    c.fillStyle = Y; c.font = `300px ${serif}`; c.fillText(String(o.score), 70, 660);
+    const wN = c.measureText(String(o.score)).width; c.fillStyle = "#8f8a7c"; c.font = `90px ${serif}`; c.fillText("/" + o.total, 90 + wN, 660);
+    o.marks.forEach((m, i) => { c.fillStyle = m === "right" ? "#2f9e6b" : "#d0453a"; const x = 80 + i * 92; c.beginPath(); c.roundRect ? c.roundRect(x, 730, 76, 76, 16) : c.rect(x, 730, 76, 76); c.fill(); });
+    c.fillStyle = "#f4f1e6"; c.font = `600 46px ${sans}`; c.fillText(o.verdict, 80, 900);
+    if (o.streak) { c.fillStyle = Y; c.font = `600 40px ${sans}`; c.fillText(`🔥 ${o.streak}-day streak`, 80, 970); }
+    c.fillStyle = Y; c.fillRect(80, 1140, 920, 3);
+    c.fillStyle = "#f4f1e6"; c.font = `600 40px ${sans}`; c.fillText("Can you beat this?", 80, 1220);
+    c.fillStyle = "#b9b4a4"; c.font = `500 32px ${sans}`; c.fillText("Play free on the Search UPSC Atlas app", 80, 1272);
+    return cv;
+  }
+  const Plugin = (n) => { const C = window.Capacitor; return C && C.isNativePlatform && C.isNativePlatform() && C.Plugins && C.Plugins[n]; };
+  async function shareImage(cv, text, btn) {
+    const url = cv.toDataURL("image/png"), FS = Plugin("Filesystem"), SH = Plugin("Share");
+    try {
+      if (FS && SH) {
+        const f = await FS.writeFile({ path: "search-upsc-score.png", data: url.split(",")[1], directory: "CACHE" });
+        await SH.share({ title: "My Search UPSC Atlas score", text, files: [f.uri] }); return;
+      }
+      const blob = await new Promise((r) => cv.toBlob(r, "image/png"));
+      const file = new File([blob], "search-upsc-score.png", { type: "image/png" });
+      if (navigator.canShare && navigator.canShare({ files: [file] })) { await navigator.share({ files: [file], text }); return; }
+    } catch (e) { if (e && e.name === "AbortError") return; }
+    if (btn) { btn.textContent = "Long-press the image to save"; }
+  }
+  function shareBlock(o, text) {
+    const cv = makeShareCard(o), id = "sc" + Math.random().toString(36).slice(2, 7);
+    setTimeout(() => {
+      const img = $("#" + id + "img"); if (img) img.src = cv.toDataURL("image/png");
+      const b1 = $("#" + id + "img2"), b2 = $("#" + id + "txt");
+      if (b1) b1.onclick = () => { haptic("light"); shareImage(cv, text, b1); };
+      if (b2) b2.onclick = () => { haptic("light"); copyText(text, b2); };
+    }, 0);
+    return `<section class="sharecard"><img id="${id}img" alt="Score card: ${o.score} out of ${o.total}"><div class="row"><button class="btn" id="${id}img2">Share image</button><button class="btn ghost" id="${id}txt">${nativeShare() ? "Share text" : "Copy text"}</button></div><textarea id="sharetext" readonly hidden>${esc(text)}</textarea></section>`;
+  }
+
   let quiz = null;
   function renderPracticeHome() {
     const best = store.get("atlas-best", {});
@@ -2137,13 +2231,14 @@ window.CROPS = [
         <h2>${vh}</h2><p style="margin:0;color:var(--ink-2)">${vs}</p>
         <div class="marks">${quiz.results.map((m) => `<i class="${m}"></i>`).join("")}</div>
       </div>
-      ${daily ? `<section class="sharebox"><pre>${esc(shareText(daily))}</pre>${daily.score !== quiz.score ? `<p>Your first try today counts: ${daily.score}/10.</p>` : ""}<textarea id="sharetext" readonly hidden>${esc(shareText(daily))}</textarea><button class="btn" id="copy">${nativeShare() ? "Share result" : "Copy result"}</button></section>` : ""}
+      ${daily ? (daily.score !== quiz.score ? `<p style="margin:0;text-align:center;color:var(--ink-2)">Your first try today counts: ${daily.score}/10.</p>` : "") +
+        shareBlock({ title: "Daily challenge #" + dayNumber(daily.date), sub: new Date(Date.parse(daily.date)).toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" }), score: daily.score, total: 10, marks: daily.marks, verdict: VERDICT(daily.score)[0], streak: dailyStats().streak }, shareText(daily))
+      : shareBlock({ title: MODES[mk].title, sub: "Practice round", score: quiz.score, total: quiz.qs.length, marks: quiz.results, verdict: vh, streak: 0 }, `Search UPSC Atlas · ${MODES[mk].title}\n${quiz.results.map((m) => (m === "right" ? "🟩" : "🟥")).join("")}\n${quiz.score}/${quiz.qs.length}`)}
       ${missed.length ? `<section class="sec facts"><h3>Revise these</h3>${list(missed.map((q) => q.label))}</section>` : `<p style="margin:0">No misses. Try another round.</p>`}
       <div class="backrow"><button class="btn" id="again">Play again</button><button class="btn ghost" id="home">Choose another round</button></div></div>`;
     $("#again").onclick = () => startQuiz(mk); $("#home").onclick = endQuiz;
     requestAnimationFrame(() => requestAnimationFrame(() => { const fg = $("#ringfg"); if (fg) fg.style.strokeDashoffset = (C * (1 - frac)).toFixed(1); }));
     haptic(frac >= .8 ? "success" : "medium"); if (frac >= .8) setTimeout(confetti, 350);
-    const cp = $("#copy"); if (cp) cp.onclick = () => copyText(shareText(daily), cp);
   }
   function endQuiz() {
     quiz = null; clearMarks(); quizUIoff(); home(true);
@@ -2287,15 +2382,35 @@ window.CROPS = [
 
   // ---------- Daily tab ----------
   function renderDailyHome() {
-    const today = istDate(), all = store.get("atlas-daily", {}), done = all[today];
+    const st = dailyStats(), today = st.today, done = st.all[today];
+    // Calendar: the current month, Monday first.
+    const [yy, mm] = today.split("-").map(Number), first = new Date(Date.UTC(yy, mm - 1, 1)), lead = (first.getUTCDay() + 6) % 7;
+    const daysIn = new Date(Date.UTC(yy, mm, 0)).getUTCDate(), cells = [];
+    for (let i = 0; i < lead; i++) cells.push(`<span class="c out"></span>`);
+    for (let d = 1; d <= daysIn; d++) {
+      const key = `${yy}-${String(mm).padStart(2, "0")}-${String(d).padStart(2, "0")}`, r = st.all[key];
+      const bg = r ? `background:color-mix(in srgb, #FAE37A ${30 + r.score * 7}%, #f2a541)` : "";
+      cells.push(`<span class="c ${r ? "p" : ""} ${key === today ? "today" : ""} ${key > today ? "out" : ""}" style="${bg}" title="${key}${r ? ": " + r.score + "/10" : ""}">${r ? r.score : d}</span>`);
+    }
+    const month = first.toLocaleDateString("en-IN", { month: "long", year: "numeric", timeZone: "UTC" });
     view.innerHTML = `<div class="card">
-      <div><div class="eyebrow">Daily challenge #${dayNumber(today)}</div><h2>${done ? `Today: ${done.score} out of 10` : "Ten questions, same for everyone"}</h2></div>
-      <p style="margin:0;color:var(--ink-2)">A fresh mix of states, capitals, rivers, passes, parks and UNESCO sites every day at midnight (India time). Your first attempt is the one you share.</p>
-      ${done ? `<section class="sharebox"><pre>${esc(shareText(done))}</pre><button class="btn" id="dshare">${nativeShare() ? "Share result" : "Copy result"}</button></section>` : ""}
-      <div class="backrow"><button class="btn" id="dstart">${done ? "Play again for practice" : "Start today's challenge"}</button></div>
+      <div class="dhero">
+        <div class="eyebrow">Daily challenge #${dayNumber(today)}</div>
+        <div class="streak"><div class="flame ${st.streak ? "" : "cold"}">🔥</div><div><b>${st.streak}</b><span>${st.streak === 1 ? "day streak" : "day streak"}${!done && st.streak ? " · play today to keep it" : ""}</span></div></div>
+        <div class="dstats"><div><b>${st.best}</b><span>Best streak</span></div><div><b>${st.played}</b><span>Played</span></div><div><b>${st.played ? st.avg.toFixed(1) : "–"}</b><span>Average</span></div></div>
+        ${done ? `<div class="done"><span style="font-weight:700">Today ${done.score}/10</span><div class="marks">${done.marks.map((m) => `<i class="${m}"></i>`).join("")}</div></div>` : ""}
+        <button class="bigbtn primary" id="dstart">${done ? "Play again for practice" : "Start today's challenge"}</button>
+      </div>
+      ${done ? shareBlock({ title: "Daily challenge #" + dayNumber(today), sub: new Date(Date.parse(today)).toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" }), score: done.score, total: 10, marks: done.marks, verdict: VERDICT(done.score)[0], streak: st.streak }, shareText(done)) : ""}
+      <section><h3>${esc(month)}</h3><div class="cal">${["M", "T", "W", "T", "F", "S", "S"].map((d) => `<span class="dow">${d}</span>`).join("")}${cells.join("")}</div>
+        <div class="calkey" style="margin-top:8px">Score <i style="background:color-mix(in srgb, #FAE37A 37%, #f2a541)"></i>low <i style="background:#FAE37A"></i>high</div></section>
+      <section><h3>How it works</h3><div class="howto">
+        <div><b class="n">1</b><span>Ten mixed questions: states, capitals, rivers, passes, parks, UNESCO sites and lines of latitude.</span></div>
+        <div><b class="n">2</b><span>Everyone gets the same questions. A new set starts at midnight, India time.</span></div>
+        <div><b class="n">3</b><span>Your first attempt counts. Share your score card and keep your streak alive.</span></div>
+      </div></section>
     </div>`;
     $("#dstart").onclick = () => { haptic("medium"); startQuiz("daily"); };
-    const ds = $("#dshare"); if (ds) ds.onclick = () => copyText(shareText(done), ds);
   }
 
   // ---------- Tabs, navigation and routing ----------
