@@ -1,0 +1,66 @@
+# Cloud builds for Search UPSC Atlas (https://codemagic.io).
+# Connect this GitHub repository in Codemagic, then set up the items marked SETUP below in the Codemagic UI.
+workflows:
+  android-release:
+    name: Android release (Google Play)
+    instance_type: linux_x2
+    max_build_duration: 30
+    environment:
+      node: 22
+      java: 21
+      android_signing:
+        - searchupsc_upload_key        # SETUP: upload your keystore under Team settings > Code signing identities
+      groups:
+        - google_play                  # SETUP: variable GCLOUD_SERVICE_ACCOUNT_CREDENTIALS (Play Console service account JSON)
+    scripts:
+      - name: Install and build the web app
+        script: |
+          npm ci
+          node build.mjs
+          npx cap sync android
+      - name: Build signed app bundle
+        script: |
+          cd android
+          chmod +x gradlew
+          ./gradlew bundleRelease
+    artifacts:
+      - android/app/build/outputs/bundle/release/*.aab
+    publishing:
+      google_play:
+        credentials: $GCLOUD_SERVICE_ACCOUNT_CREDENTIALS
+        track: internal                # Start on internal testing; promote to production in Play Console.
+        submit_as_draft: true
+
+  ios-release:
+    name: iOS release (App Store)
+    instance_type: mac_mini_m2
+    max_build_duration: 45
+    integrations:
+      app_store_connect: searchupsc_asc_key   # SETUP: add an App Store Connect API key under Team integrations
+    environment:
+      node: 22
+      xcode: latest
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: com.searchupsc.atlas
+    scripts:
+      - name: Install and build the web app
+        script: |
+          npm ci
+          node build.mjs
+          npx cap sync ios
+      - name: Set up code signing
+        script: xcode-project use-profiles
+      - name: Set build number
+        script: |
+          cd ios/App
+          agvtool new-version -all $(($BUILD_NUMBER + 1))
+      - name: Build IPA
+        script: |
+          xcode-project build-ipa --project ios/App/App.xcodeproj --scheme App
+    artifacts:
+      - build/ios/ipa/*.ipa
+    publishing:
+      app_store_connect:
+        auth: integration
+        submit_to_testflight: true

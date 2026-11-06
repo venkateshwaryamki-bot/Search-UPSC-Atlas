@@ -1,0 +1,21 @@
+{
+  "name": "search-upsc-atlas",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Interactive UPSC atlas of India for Android and iOS.",
+  "scripts": {
+    "build": "node build.mjs",
+    "sync": "node build.mjs && npx cap sync",
+    "assets": "npx capacitor-assets generate --iconBackgroundColor '#FAE37A' --iconBackgroundColorDark '#111111' --splashBackgroundColor '#111111' --splashBackgroundColorDark '#111111'"
+  },
+  "dependencies": {
+    "@capacitor/android": "8.5.3",
+    "@capacitor/core": "8.5.3",
+    "@capacitor/ios": "8.5.3",
+    "@capacitor/share": "8.0.3"
+  },
+  "devDependencies": {
+    "@capacitor/assets": "3.0.5",
+    "@capacitor/cli": "8.5.3"
+  }
+}

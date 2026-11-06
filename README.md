@@ -1,4 +1,4 @@
-# India State Atlas
+# Search UPSC Atlas
 
 An interactive map of India's 28 states and 8 union territories, made for UPSC preparation. It builds to a single self-contained HTML page.
 
@@ -20,6 +20,15 @@ An interactive map of India's 28 states and 8 union territories, made for UPSC p
 - **Daily challenge:** the same ten mixed questions for everyone each day (India time), with a copyable result for sharing.
 - **Search** understands old and alternative names (Cauvery, Orissa, Bombay, Tapti, Port Blair and more).
 - **Practice:** eight ten-question rounds answered on the map: find the state, capitals, tiger reserves and parks, borders, rivers, passes, UNESCO sites, and ranges and lines.
+
+## Android and iOS apps
+
+The app is wrapped with [Capacitor](https://capacitorjs.com) (`android/`, `ios/`, `capacitor.config.json`) and built in the cloud with Codemagic (`codemagic.yaml`). App ID: `com.searchupsc.atlas`. See **[PUBLISHING.md](PUBLISHING.md)** for the full store guide, `store/` for screenshots and listing text, and `docs/privacy.html` for the privacy policy.
+
+```sh
+npm ci
+npm run sync      # builds www/ and copies it into the native projects
+```
 
 ## Build
 
