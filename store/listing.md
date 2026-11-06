@@ -53,6 +53,7 @@ Education
 
 ## Privacy policy URL
 https://venkateshwaryamki-bot.github.io/Search-UPSC-Atlas/privacy.html (works once GitHub Pages is turned on, see PUBLISHING.md)
+Fallback that works right away: https://github.com/venkateshwaryamki-bot/Search-UPSC-Atlas/blob/main/PRIVACY.md
 
 ## Content rating
 Google Play: complete the IARC questionnaire. Answer "No" to all content questions (no violence, no user interaction, no data sharing, no purchases). Expected rating: Everyone / 3+.
