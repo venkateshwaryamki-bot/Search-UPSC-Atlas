@@ -48,9 +48,10 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           cp android/app/build/outputs/apk/debug/app-debug.apk SearchUPSCAtlas-test.apk
-          NOTES="Test build from commit ${GITHUB_SHA::7}. Install it directly on an Android phone (allow installs from unknown sources). This is not the signed Play Store version."
+          cp android/app/build/outputs/bundle/release/app-release.aab SearchUPSCAtlas-unsigned.aab
+          NOTES="Test build ${GITHUB_RUN_NUMBER} from commit ${GITHUB_SHA::7}. The .aab is unsigned and must be signed with the upload key before it goes to Google Play. Install it directly on an Android phone (allow installs from unknown sources). This is not the signed Play Store version."
           gh release delete test-build --yes --cleanup-tag 2>/dev/null || true
-          gh release create test-build SearchUPSCAtlas-test.apk --title "Test build (Android APK)" --notes "$NOTES" --prerelease --target "$GITHUB_SHA"
+          gh release create test-build SearchUPSCAtlas-test.apk SearchUPSCAtlas-unsigned.aab --title "Test build (Android APK)" --notes "$NOTES" --prerelease --target "$GITHUB_SHA"
 
   # iOS is paused for now (Android first). Run it from the Actions tab with "Run workflow" when needed.
   ios:

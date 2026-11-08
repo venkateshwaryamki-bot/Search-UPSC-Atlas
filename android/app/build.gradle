@@ -7,8 +7,10 @@ android {
         applicationId "com.searchupsc.atlas"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        // Codemagic sets BUILD_NUMBER so every upload gets a higher versionCode, as Google Play requires.
-        versionCode System.getenv("BUILD_NUMBER") ? System.getenv("BUILD_NUMBER").toInteger() : 1
+        // Every upload to Google Play needs a higher versionCode. Codemagic sets BUILD_NUMBER;
+        // GitHub Actions sets GITHUB_RUN_NUMBER. Local builds use 1.
+        def ciBuild = System.getenv("BUILD_NUMBER") ?: System.getenv("GITHUB_RUN_NUMBER")
+        versionCode ciBuild ? ciBuild.toInteger() : 1
         versionName "1.0.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         aaptOptions {
